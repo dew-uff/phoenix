@@ -23,6 +23,18 @@ public class TelaInicial extends JFrame {
     private JButton btnDiff;
     private final int TAMANHO_HORIZONTAL_AREA = 30;
     private final int TAMANHO_VERTICAL_AREA = 30;
+    private String textoTeste = "<? xml version=“1.0” ?>\n" +
+            "<empregados>\n" +
+            "   <empregado cod=“E01” dept=“D01”>\n " +
+            "       <nome>João</nome>\n" +
+            "       <inicial-meio>S.</inicial-meio>\n" +
+            "       <sobrenome>Santos</sobrenome>\n" +
+            "   </empregado>\n" +
+            "   <empregado cod=“E02” dept=“D01”>\n" +
+            "       <nome>Ana</nome>\n" +
+            "       <sobrenome>Ferraz</sobrenome>\n" +
+            "   </empregado>\n" +
+            "</empregados>\n";
 
     public TelaInicial() {
         inicializarVariaveis();
@@ -33,8 +45,8 @@ public class TelaInicial extends JFrame {
 
     private void inicializarVariaveis() {
         JPanel panelNorte = new JPanel(new FlowLayout());
-        area1 = new JTextArea();
-        area2 = new JTextArea();
+        area1 = new JTextArea(textoTeste);
+        area2 = new JTextArea(textoTeste);
         area1.setColumns(TAMANHO_HORIZONTAL_AREA);
         area1.setRows(TAMANHO_VERTICAL_AREA);
         area2.setColumns(TAMANHO_HORIZONTAL_AREA);
