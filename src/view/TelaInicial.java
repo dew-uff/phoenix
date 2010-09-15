@@ -6,10 +6,13 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
+import javax.swing.border.Border;
 
 /**
  *
@@ -22,7 +25,7 @@ public class TelaInicial extends JFrame {
     private JTextArea resultadoComparacao;
     private JButton btnDiff;
     private final int TAMANHO_HORIZONTAL_AREA = 30;
-    private final int TAMANHO_VERTICAL_AREA = 30;
+    private final int TAMANHO_VERTICAL_AREA = 20;
     private String textoTeste = "<? xml version=“1.0” ?>\n" +
             "<empregados>\n" +
             "   <empregado cod=“E01” dept=“D01”>\n " +
@@ -45,6 +48,7 @@ public class TelaInicial extends JFrame {
 
     private void inicializarVariaveis() {
         JPanel panelNorte = new JPanel(new FlowLayout());
+        JPanel panelSul = new JPanel(new FlowLayout());
         area1 = new JTextArea(textoTeste);
         area2 = new JTextArea(textoTeste);
         area1.setColumns(TAMANHO_HORIZONTAL_AREA);
@@ -56,5 +60,14 @@ public class TelaInicial extends JFrame {
         panelNorte.add(btnDiff);
         panelNorte.add(area2);
         this.add(panelNorte, BorderLayout.NORTH);
+        JProgressBar percentual = new JProgressBar();
+        percentual.setStringPainted(true);
+        Border borda = BorderFactory.createTitledBorder("Similaridade");
+        percentual.setBorder(borda);
+        panelSul.add(percentual);
+        JButton btnLog = new JButton("Visualizar log");
+        panelSul.add(btnLog);
+        this.add(panelSul,BorderLayout.SOUTH);
+
     }
 }
