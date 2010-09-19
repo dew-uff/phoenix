@@ -91,7 +91,7 @@ public class TelaInicial extends JFrame {
         btnDiff.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                percentual.setValue(diffs.diffTextual3(area1.getText(), area2.getText()));
+                percentual.setValue(diffs.diffTextual(area1.getText(), area2.getText()));
             }
         });
         pnlSul = new JPanel();
