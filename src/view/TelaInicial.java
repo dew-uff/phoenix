@@ -4,6 +4,7 @@
  */
 package view;
 
+import controlador.Diffs;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
@@ -37,6 +38,8 @@ public class TelaInicial extends JFrame {
     private JButton btnDiff;
     private final int TAMANHO_HORIZONTAL_AREA = 30;
     private final int TAMANHO_VERTICAL_AREA = 20;
+    private Diffs diffs;
+    private JProgressBar percentual;
     private String textoTeste = "<? xml version=“1.0” ?>\n" +
             "<empregados>\n" +
             "   <empregado cod=“E01” dept=“D01”>\n " +
@@ -51,7 +54,11 @@ public class TelaInicial extends JFrame {
             "</empregados>\n";
 
     public TelaInicial() {
-
+        percentual = new JProgressBar();
+        percentual.setStringPainted(true);
+        Border borda = BorderFactory.createTitledBorder("Similaridade");
+        percentual.setBorder(borda);
+        diffs = new Diffs();
         inicializarVariaveis();
         this.pack();
         this.setLocationRelativeTo(null);
@@ -84,7 +91,7 @@ public class TelaInicial extends JFrame {
         btnDiff.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                System.out.println("ACAOOOOOOOOOOOOOOO ENTRA AQUI");
+                percentual.setValue(diffs.diffTextual3(area1.getText(), area2.getText()));
             }
         });
         pnlSul = new JPanel();
@@ -110,11 +117,6 @@ public class TelaInicial extends JFrame {
 //        panelNorte.add(btnDiff);
 //        panelNorte.add(area2);
 //        this.add(panelNorte, BorderLayout.NORTH);
-        JProgressBar percentual = new JProgressBar();
-        percentual.setValue(78);
-        percentual.setStringPainted(true);
-        Border borda = BorderFactory.createTitledBorder("Similaridade");
-        percentual.setBorder(borda);
         JPanel panelSul = new JPanel(new GridBagLayout());
         panelSul.add(percentual,gbc.adicionarComponenteComIsents(0, 0, 1, 1,new Insets(0, 0, 20, 0)));
         JButton btnLog = new JButton("Visualizar log");
