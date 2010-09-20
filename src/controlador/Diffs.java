@@ -17,27 +17,26 @@ public class Diffs {
     public Diffs() {
     }
 
-    public int diffTextual(String linha1, String linha2) {
-        String comparador = "";
+    public int diffTextual(String texto1, String texto2) {
+        String montaStringParaComparacao = "";
         int contadorDeSimilaridade = 0;
-        String linha1SemEspaco = linha1.replaceAll(" ", "");
-        System.out.println("stringggggggggggggggggggggggggggggg     " + linha1SemEspaco);
-//        String linha2SemEspaco = linha2.trim();
-        for (int i = 0; i < linha1.length(); i++) {
-            if (linha1.charAt(i) == ' ') {
-                contadorDeSimilaridade += this.procurarSimilaridade(comparador, linha2);
-                comparador = "";
+        String linha1SemEspaco = texto1.replaceAll(" ", ""); //necessario para calcucar a estatistica
+        System.out.println("stringggggggggggggggggggggggggggggg  => " + linha1SemEspaco);
+        for (int i = 0; i < texto1.length(); i++) {
+            if (texto1.charAt(i) != ' ') {          //varre todo textoe monta uma string para verificar se esta no texto2
+                montaStringParaComparacao += texto1.charAt(i);
             }else{
-                comparador += linha1.charAt(i);
+                contadorDeSimilaridade += this.procurarSimilaridade(montaStringParaComparacao, texto2);
+                montaStringParaComparacao = ""; //zera variavel para proxima comparacao
             }
         }
-        contadorDeSimilaridade += this.procurarSimilaridade(comparador, linha2); //caso se a string chega no final e nao compara
-        return (100* contadorDeSimilaridade / linha1SemEspaco.length());
+        contadorDeSimilaridade += this.procurarSimilaridade(montaStringParaComparacao, texto2); //caso se a string chega no final for e nao compara a string montada
+        return (100* contadorDeSimilaridade / linha1SemEspaco.length()); //calcula a estatistica
     }
 
-    private int procurarSimilaridade(String valorDesejado, String stringComparada) {
-        if (stringComparada.contains(valorDesejado)) {
-            return valorDesejado.length();
+    private int procurarSimilaridade(String stringMontada, String textoDesejado) {
+        if (textoDesejado.contains(stringMontada)) {
+            return stringMontada.length();
         }
         return 0;
     }
