@@ -6,7 +6,6 @@ package view;
 
 import controlador.Diffs;
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -33,13 +32,11 @@ public class TelaInicial extends JFrame {
     private GBC gbc;
     private JTextArea txtAreaComparador;
     private JTextArea txtAreaASerComparado;
-    private JTextArea resultadoComparacao;
     private JPanel pnlPrincipal;
     private JPanel pnlComparacao;
     private JButton btnComparacao;
     private final int TAMANHO_HORIZONTAL_AREA = 30;
     private final int TAMANHO_VERTICAL_AREA = 20;
-    private Diffs diffs;
     private JProgressBar percentual;
     private String textoTeste = "<? xml version=“1.0” ?>\n"
             + "<empregados>\n"
@@ -132,7 +129,7 @@ public class TelaInicial extends JFrame {
         btnComparacao.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                percentual.setValue(diffs.diffTextual(txtAreaComparador.getText(), txtAreaASerComparado.getText()));
+                percentual.setValue(Diffs.diffTextual(txtAreaComparador.getText(), txtAreaASerComparado.getText()));
             }
         });
 
@@ -156,7 +153,6 @@ public class TelaInicial extends JFrame {
     }
 
     private void inicializarVariaveis() {
-        diffs = new Diffs();
         gbc.fill = GBC.BOTH;
 
         //TODO remover o panelSul e adicionar os seus componentes ao painel de comparação.

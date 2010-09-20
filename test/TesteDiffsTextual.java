@@ -14,13 +14,11 @@ public class TesteDiffsTextual {
 
     @Test
     public void testeSimilaridadeStringsIgualsRetornandoSeuPercentual() {
-        Diffs diffs = new Diffs();
-        assertEquals(diffs.diffTextual3(linha1, linha1), 100);
+        assertEquals(Diffs.diffTextual3(linha1, linha1), 100);
     }
 
     @Test
     public void testeSimilaridadeStringsDifRetornandoSeuPercentual() {
-        Diffs diffs = new Diffs();
-        assertEquals(diffs.diffTextual3(linha1, linha2), 50);
+        assertEquals(Diffs.diffTextual3(linha1, linha2), 50);
     }
 }
