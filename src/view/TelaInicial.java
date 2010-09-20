@@ -21,6 +21,7 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 import util.GBC;
 
 /**
@@ -30,100 +31,140 @@ import util.GBC;
 public class TelaInicial extends JFrame {
 
     private GBC gbc;
-    private JTextArea area1;
-    private JTextArea area2;
+    private JTextArea txtAreaComparador;
+    private JTextArea txtAreaASerComparado;
     private JTextArea resultadoComparacao;
-    private JPanel pnlCentral;
-    private JPanel pnlSul;
-    private JButton btnDiff;
+    private JPanel pnlPrincipal;
+    private JPanel pnlComparacao;
+    private JButton btnComparacao;
     private final int TAMANHO_HORIZONTAL_AREA = 30;
     private final int TAMANHO_VERTICAL_AREA = 20;
     private Diffs diffs;
     private JProgressBar percentual;
-    private String textoTeste = "<? xml version=“1.0” ?>\n" +
-            "<empregados>\n" +
-            "   <empregado cod=“E01” dept=“D01”>\n " +
-            "       <nome>João</nome>\n" +
-            "       <inicial-meio>S.</inicial-meio>\n" +
-            "       <sobrenome>Santos</sobrenome>\n" +
-            "   </empregado>\n" +
-            "   <empregado cod=“E02” dept=“D01”>\n" +
-            "       <nome>Ana</nome>\n" +
-            "       <sobrenome>Ferraz</sobrenome>\n" +
-            "   </empregado>\n" +
-            "</empregados>\n";
+    private String textoTeste = "<? xml version=“1.0” ?>\n"
+            + "<empregados>\n"
+            + "   <empregado cod=“E01” dept=“D01”>\n "
+            + "       <nome>João</nome>\n"
+            + "       <inicial-meio>S.</inicial-meio>\n"
+            + "       <sobrenome>Santos</sobrenome>\n"
+            + "   </empregado>\n"
+            + "   <empregado cod=“E02” dept=“D01”>\n"
+            + "       <nome>Ana</nome>\n"
+            + "       <sobrenome>Ferraz</sobrenome>\n"
+            + "   </empregado>\n"
+            + "</empregados>\n";
 
     public TelaInicial() {
-        percentual = new JProgressBar();
-        percentual.setStringPainted(true);
-        Border borda = BorderFactory.createTitledBorder("Similaridade");
-        percentual.setBorder(borda);
-        diffs = new Diffs();
+        inicializarAreaDeTextos();
+        inicializarAreaDeComparacao();
         inicializarVariaveis();
+
         this.pack();
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
     }
 
-    private void inicializarVariaveis() {
-
+    /**
+     * Inicializa o painel principal com os seus subcomponentes.
+     */
+    private void inicializarAreaDeTextos() {
+        pnlPrincipal = new JPanel(new GridBagLayout());
         gbc = new GBC();
-        pnlCentral = new JPanel(new GridBagLayout());
-        area1 = new JTextArea(TAMANHO_HORIZONTAL_AREA, TAMANHO_VERTICAL_AREA);
-        area1.setText(textoTeste);
-        JScrollPane scroll = new JScrollPane(area1);
-        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        pnlCentral.add(new JLabel("Texto 1"), gbc.adicionarComponente(0, 0, 1, 1));
-        gbc.fill = GBC.BOTH;
-        pnlCentral.add(scroll, gbc.adicionarComponente(0, 1, 1, 1));
 
-        area2 = new JTextArea(TAMANHO_HORIZONTAL_AREA, TAMANHO_VERTICAL_AREA);
-        area2.setText(textoTeste);
-        pnlCentral.add(new JLabel("Texto 2", JLabel.CENTER), gbc.adicionarComponente(1, 0, 1, 1));
-        JScrollPane scroll2 = new JScrollPane(area2);
-        scroll2.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-        scroll2.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        pnlCentral.add(scroll2, gbc.adicionarComponenteComIsents(1, 1, 0, 0, new Insets(0, 15, 45, 0)));
+        inicializarAreaDeTextoDoArquivoComparador();
+        inicializarAreaDeTextoDoArquivoASerComparado();
+        
+        this.add(pnlPrincipal, BorderLayout.CENTER);
+    }
 
-        btnDiff = new JButton("Comparar");
-        btnDiff.addActionListener(new ActionListener() {
+    /**
+     * Inicializa a área de exibição do texto do arquivo comparador.
+     */
+    private void inicializarAreaDeTextoDoArquivoComparador() {
+        //TextArea
+        txtAreaComparador = new JTextArea(TAMANHO_HORIZONTAL_AREA, TAMANHO_VERTICAL_AREA);
+        txtAreaComparador.setText(textoTeste);
+        txtAreaComparador.setEditable(false);
+
+        pnlPrincipal.add(new JLabel("Texto Comparador"), gbc.adicionarComponente(0, 0, 1, 1));
+
+        //Barra de Scroll
+        JScrollPane scroll = new JScrollPane(txtAreaComparador);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        pnlPrincipal.add(scroll, gbc.adicionarComponente(0, 1, 1, 1));
+    }
+
+    /**
+     * Inicializa a área de exibição do texto do arquivo a ser comparado.
+     */
+    private void inicializarAreaDeTextoDoArquivoASerComparado() {
+        //TextArea
+        txtAreaASerComparado = new JTextArea(TAMANHO_HORIZONTAL_AREA, TAMANHO_VERTICAL_AREA);
+        txtAreaASerComparado.setText(textoTeste);
+
+        pnlPrincipal.add(new JLabel("Texto A Ser Comparado"), gbc.adicionarComponente(1, 0, 1, 1));
+
+        //Barra de Scroll
+        JScrollPane scroll = new JScrollPane(txtAreaASerComparado);
+        scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        pnlPrincipal.add(scroll, gbc.adicionarComponenteComIsents(1, 1, 0, 0, new Insets(0, 15, 45, 0)));
+    }
+
+    /**
+     * Inicialize a área de ação/relatório da comparação.
+     */
+    private void inicializarAreaDeComparacao() {
+        pnlComparacao = new JPanel();
+
+        inicializarBotaoDeComparacao();
+        inicializarBarraDePercentualDeComparacao();
+    }
+
+    /**
+     * Inicializa o botão de comparação dos arquivos a serem comparados.
+     */
+    private void inicializarBotaoDeComparacao() {
+        btnComparacao = new JButton("Comparar");
+        btnComparacao.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                percentual.setValue(diffs.diffTextual(area1.getText(), area2.getText()));
+                percentual.setValue(diffs.diffTextual(txtAreaComparador.getText(), txtAreaASerComparado.getText()));
             }
         });
-        pnlSul = new JPanel();
-        pnlSul.add(btnDiff);
-        pnlSul.setAlignmentY(JComponent.CENTER_ALIGNMENT);
 
-        pnlCentral.add(pnlSul,gbc.adicionarComponenteComIsents(0, 2, 1, 10,new Insets(10, 10, 0, 0)));
-//        pnlSul.add(btnDiff);
+        pnlComparacao.add(btnComparacao);
+        pnlComparacao.setAlignmentY(JComponent.CENTER_ALIGNMENT);
 
+        pnlPrincipal.add(pnlComparacao, gbc.adicionarComponenteComIsents(0, 2, 1, 10, new Insets(10, 10, 0, 0)));
+    }
 
-        this.add(pnlCentral, BorderLayout.CENTER);
-//        this.add(pnlSul, BorderLayout.SOUTH);
-//        JPanel panelNorte = new JPanel(new FlowLayout());
-//        JPanel panelSul = new JPanel(new FlowLayout());
-//        area1 = new JTextArea(textoTeste);
-//        area2 = new JTextArea(textoTeste);
-//        area1.setColumns(TAMANHO_HORIZONTAL_AREA);
-//        area1.setRows(TAMANHO_VERTICAL_AREA);
-//        area2.setColumns(TAMANHO_HORIZONTAL_AREA);
-//        area2.setRows(TAMANHO_VERTICAL_AREA);
-//        btnDiff = new JButton("Comparar");
-//        panelNorte.add(area1);
-//        panelNorte.add(btnDiff);
-//        panelNorte.add(area2);
-//        this.add(panelNorte, BorderLayout.NORTH);
+    /**
+     * Inicializa a barra de percentual de comparação dos arquivos.
+     */
+    private void inicializarBarraDePercentualDeComparacao() {
+        //Barra de percentual
+        percentual = new JProgressBar();
+        percentual.setStringPainted(true);
+
+        //Borda
+        Border borda = BorderFactory.createTitledBorder(null, "Similaridade", TitledBorder.CENTER, TitledBorder.DEFAULT_POSITION);
+        percentual.setBorder(borda);
+    }
+
+    private void inicializarVariaveis() {
+        diffs = new Diffs();
+        gbc.fill = GBC.BOTH;
+
+        //TODO remover o panelSul e adicionar os seus componentes ao painel de comparação.
         JPanel panelSul = new JPanel(new GridBagLayout());
-        panelSul.add(percentual,gbc.adicionarComponenteComIsents(0, 0, 1, 1,new Insets(0, 0, 20, 0)));
+        panelSul.add(percentual, gbc.adicionarComponenteComIsents(0, 0, 1, 1, new Insets(0, 0, 20, 0)));
         JButton btnLog = new JButton("Visualizar log");
-        panelSul.add(btnLog,gbc.adicionarComponenteComIsents(1, 0, 1, 1, new Insets(0, 10, 20, 0)));
-        this.add(panelSul,BorderLayout.SOUTH);
-//        this.add(panelSul,BorderLayout.SOUTH);
-
+        panelSul.add(btnLog, gbc.adicionarComponenteComIsents(1, 0, 1, 1, new Insets(0, 10, 20, 0)));
+        this.add(panelSul, BorderLayout.SOUTH);
     }
 
     public static void main(String[] args) {
