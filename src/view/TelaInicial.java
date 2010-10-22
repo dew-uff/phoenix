@@ -21,6 +21,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import util.XML;
 import util.GBC;
 
 /**
@@ -38,20 +39,16 @@ public class TelaInicial extends JFrame {
     private final int TAMANHO_HORIZONTAL_AREA = 30;
     private final int TAMANHO_VERTICAL_AREA = 20;
     private JProgressBar percentual;
-    private String textoTeste = "<? xml version=“1.0” ?>\n"
-            + "<empregados>\n"
-            + "   <empregado cod=“E01” dept=“D01”>\n "
-            + "       <nome>João</nome>\n"
-            + "       <inicial-meio>S.</inicial-meio>\n"
-            + "       <sobrenome>Santos</sobrenome>\n"
-            + "   </empregado>\n"
-            + "   <empregado cod=“E02” dept=“D01”>\n"
-            + "       <nome>Ana</nome>\n"
-            + "       <sobrenome>Ferraz</sobrenome>\n"
-            + "   </empregado>\n"
-            + "</empregados>\n";
+    private XML xml;
+    private String filePath = "books.xml";
 
     public TelaInicial() {
+        try {
+            xml = new XML(filePath);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+        
         inicializarAreaDeTextos();
         inicializarAreaDeComparacao();
         inicializarVariaveis();
@@ -81,7 +78,7 @@ public class TelaInicial extends JFrame {
     private void inicializarAreaDeTextoDoArquivoComparador() {
         //TextArea
         txtAreaComparador = new JTextArea(TAMANHO_HORIZONTAL_AREA, TAMANHO_VERTICAL_AREA);
-        txtAreaComparador.setText(textoTeste);
+        txtAreaComparador.setText(xml.toString());
         txtAreaComparador.setEditable(false);
 
         pnlPrincipal.add(new JLabel("Texto Comparador"), gbc.adicionarComponente(0, 0, 1, 1));
@@ -100,7 +97,7 @@ public class TelaInicial extends JFrame {
     private void inicializarAreaDeTextoDoArquivoASerComparado() {
         //TextArea
         txtAreaASerComparado = new JTextArea(TAMANHO_HORIZONTAL_AREA, TAMANHO_VERTICAL_AREA);
-        txtAreaASerComparado.setText(textoTeste);
+        txtAreaASerComparado.setText(xml.toString());
 
         pnlPrincipal.add(new JLabel("Texto A Ser Comparado"), gbc.adicionarComponente(1, 0, 1, 1));
 
