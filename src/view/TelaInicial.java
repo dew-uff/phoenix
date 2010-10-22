@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
 import controlador.Diffs;
@@ -40,11 +36,13 @@ public class TelaInicial extends JFrame {
     private final int TAMANHO_VERTICAL_AREA = 20;
     private JProgressBar percentual;
     private XML xml;
+    private XML xml2;
     private String filePath = "books.xml";
 
     public TelaInicial() {
         try {
-            xml = new XML("<a>b</a>");
+            xml = new XML(filePath);
+            xml2 = new XML("<inventory>Teste</inventory>");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -97,7 +95,7 @@ public class TelaInicial extends JFrame {
     private void inicializarAreaDeTextoDoArquivoASerComparado() {
         //TextArea
         txtAreaASerComparado = new JTextArea(TAMANHO_HORIZONTAL_AREA, TAMANHO_VERTICAL_AREA);
-        txtAreaASerComparado.setText(xml.toString());
+        txtAreaASerComparado.setText(xml2.toString());
 
         pnlPrincipal.add(new JLabel("Texto A Ser Comparado"), gbc.adicionarComponente(1, 0, 1, 1));
 
