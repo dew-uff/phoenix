@@ -44,7 +44,7 @@ public class TelaInicial extends JFrame {
 
     public TelaInicial() {
         try {
-            xml = new XML(filePath);
+            xml = new XML("<a>b</a>");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
