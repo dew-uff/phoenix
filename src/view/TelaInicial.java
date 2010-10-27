@@ -17,6 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
+import lcs.LcsString;
 import util.XML;
 import util.GBC;
 
@@ -124,7 +125,8 @@ public class TelaInicial extends JFrame {
         btnComparacao.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                percentual.setValue(Diffs.diffTextual(txtAreaComparador.getText(), txtAreaASerComparado.getText()));
+                LcsString seq = new LcsString(txtAreaComparador.getText(), txtAreaASerComparado.getText());
+                percentual.setValue(seq.getLcsLength());
             }
         });
 
