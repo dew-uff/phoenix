@@ -1,6 +1,5 @@
 package view;
 
-import controlador.Diffs;
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -17,7 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-import lcs.LcsString;
+import modelo.LcsString;
 import util.XML;
 import util.GBC;
 
