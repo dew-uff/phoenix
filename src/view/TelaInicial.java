@@ -17,6 +17,7 @@ import javax.swing.JTextArea;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import modelo.LcsString;
+import modelo.LcsXML;
 import util.XML;
 import util.GBC;
 
@@ -77,7 +78,7 @@ public class TelaInicial extends JFrame {
         //TextArea
         txtAreaComparador = new JTextArea(TAMANHO_HORIZONTAL_AREA, TAMANHO_VERTICAL_AREA);
         txtAreaComparador.setText(xml.toString());
-        txtAreaComparador.setEditable(false);
+//        txtAreaComparador.setEditable(false);
 
         pnlPrincipal.add(new JLabel("Texto Comparador"), gbc.adicionarComponente(0, 0, 1, 1));
 
@@ -124,8 +125,11 @@ public class TelaInicial extends JFrame {
         btnComparacao.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
-                LcsString seq = new LcsString(txtAreaComparador.getText(), txtAreaASerComparado.getText());
-                percentual.setValue(seq.getLcsLength());
+                xml = new XML(txtAreaComparador.getText());
+                xml2 = new XML(txtAreaASerComparado.getText());
+                
+                LcsXML seq = new LcsXML(xml, xml2);
+                percentual.setValue((int) (seq.similaridade() * 100));
             }
         });
 

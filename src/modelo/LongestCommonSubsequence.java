@@ -29,9 +29,9 @@ public abstract class LongestCommonSubsequence<VALUE> {
     protected LongestCommonSubsequence() {
     }
 
-    protected abstract int lengthOfY();
-
     protected abstract int lengthOfX();
+
+    protected abstract int lengthOfY();
 
     protected abstract VALUE valueOfX(int index);
 
@@ -142,6 +142,14 @@ public abstract class LongestCommonSubsequence<VALUE> {
                 backtrack(i - 1, j);
             }
         }
+    }
+    
+    public double similaridade() {
+        calculateLcs();
+        
+        int lcsLength = getLcsLength();
+        
+        return lcsLength / ((lengthOfX() + lengthOfY()) / 2.0);
     }
 
 //    public List<DiffEntry<VALUE>> diff() {
