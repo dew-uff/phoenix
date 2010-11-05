@@ -40,4 +40,9 @@ public class SimilarNode extends Similar<SimilarNode> {
     public Node getNode() {
         return node;
     }
+
+    @Override
+    public String toString() {
+        return node.toString();
+    }
 }
