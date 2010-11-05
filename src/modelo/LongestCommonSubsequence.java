@@ -14,7 +14,7 @@ import java.util.List;
  * @author jhess
  *
  */
-public abstract class LongestCommonSubsequence<VALUE> {
+public abstract class LongestCommonSubsequence<VALUE extends Similar> {
 
     private int[][] c;
 //    private ArrayList<DiffEntry<VALUE>> diff;
@@ -36,13 +36,19 @@ public abstract class LongestCommonSubsequence<VALUE> {
     protected abstract VALUE valueOfX(int index);
 
     protected abstract VALUE valueOfY(int index);
-
-    protected boolean equals(VALUE x1, VALUE y1) {
-        return (null == x1 && null == y1) || x1.equals(y1);
+    
+    protected double similar(VALUE x1, VALUE y1) {
+        double similarity = 0;
+        
+        if (x1 != null && y1 != null) {
+            similarity = x1.similar(y1);
+        }
+        
+        return similarity;
     }
 
-    private boolean isXYEqual(int i, int j) {
-        return equals(valueOfXInternal(i), valueOfYInternal(j));
+    private boolean ixXYSimilar(int i, int j) {
+        return similar(valueOfXInternal(i), valueOfYInternal(j)) > 0.5;
     }
 
     private VALUE valueOfXInternal(int i) {
@@ -77,7 +83,7 @@ public abstract class LongestCommonSubsequence<VALUE> {
         //Seta os valores na tabela.
         for (int i = 1; i < c.length; i++) {
             for (int j = 1; j < c[i].length; j++) {
-                if (isXYEqual(i, j)) {
+                if (ixXYSimilar(i, j)) {
                     c[i][j] = c[i - 1][j - 1] + 1;
                 } else {
                     c[i][j] = max(c[i][j - 1], c[i - 1][j]);
@@ -132,7 +138,7 @@ public abstract class LongestCommonSubsequence<VALUE> {
 
         if (i == 0 || j == 0) {
             return;
-        } else if (isXYEqual(i, j)) {
+        } else if (ixXYSimilar(i, j)) {
             backtrack(i - 1, j - 1);
             backtrack.add(valueOfXInternal(i));
         } else {

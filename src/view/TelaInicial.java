@@ -16,9 +16,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-import modelo.LcsString;
 import modelo.LcsXML;
-import util.XML;
+import modelo.XML;
 import util.GBC;
 
 /**
@@ -78,7 +77,6 @@ public class TelaInicial extends JFrame {
         //TextArea
         txtAreaComparador = new JTextArea(TAMANHO_HORIZONTAL_AREA, TAMANHO_VERTICAL_AREA);
         txtAreaComparador.setText(xml.toString());
-//        txtAreaComparador.setEditable(false);
 
         pnlPrincipal.add(new JLabel("Texto Comparador"), gbc.adicionarComponente(0, 0, 1, 1));
 
@@ -104,6 +102,7 @@ public class TelaInicial extends JFrame {
         JScrollPane scroll = new JScrollPane(txtAreaASerComparado);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        
         pnlPrincipal.add(scroll, gbc.adicionarComponenteComIsents(1, 1, 0, 0, new Insets(0, 15, 45, 0)));
     }
 
