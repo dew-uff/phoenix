@@ -1,8 +1,11 @@
 package modelo;
 
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+/**
+ * Classe que encapsula a classe Node do DOM, adicionando um comportamento
+ * de similaridade a ela.
+ */
 public class SimilarNode extends Similar<SimilarNode> {
 
     public static final double ATTRIBUTE_WEIGTH = 0.5;
@@ -19,9 +22,9 @@ public class SimilarNode extends Similar<SimilarNode> {
         if (node.getNodeName().equals(otherNode.getNodeName())) {
             if (node.hasAttributes() || otherNode.hasAttributes()) {
                 if (node.hasAttributes() && otherNode.hasAttributes()) {
-                    NamedNodeMap attributesFromNode = node.getAttributes();
-                    NamedNodeMap attributesFromOtherNode = otherNode.getAttributes();
-                    
+                    //TODO: Usar um método de conjunto para medir a similaridade
+//                    NamedNodeMap attributesFromNode = node.getAttributes();
+//                    NamedNodeMap attributesFromOtherNode = otherNode.getAttributes();
                     return 1;
                 } else {
                     return 0.5;
