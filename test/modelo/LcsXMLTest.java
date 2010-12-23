@@ -1,5 +1,7 @@
 package modelo;
 
+import gems.ic.uff.br.modelo.XML;
+import gems.ic.uff.br.modelo.LcsXML;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

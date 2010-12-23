@@ -1,5 +1,6 @@
 package modelo;
 
+import gems.ic.uff.br.modelo.SimilarNode;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.w3c.dom.Node;

@@ -1,5 +1,6 @@
 package modelo;
 
+import gems.ic.uff.br.modelo.DiffXML;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

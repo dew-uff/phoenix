@@ -1,5 +1,5 @@
 
-import controlador.Diffs;
+import gems.ic.uff.br.controlador.Diffs;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
