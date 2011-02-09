@@ -1,14 +1,11 @@
 package gems.ic.uff.br.modelo;
 
-import gems.ic.uff.br.modelo.XML;
-import gems.ic.uff.br.modelo.LcsXML;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.w3c.dom.Node;
 
 public class LcsXMLTest {
 
@@ -39,19 +36,27 @@ public class LcsXMLTest {
     }
 
     @Test
-    public void deveriaTerOTamanhoDeXComoSendoONumeroDeNosDoPrimeiroXML() {
-        xmlInterno1 = new XML("<root><tag>content</tag></root>");
+    public void deveriaTerOTamanhoDeXComoSendo1CasoSoPossuaElementoRoot() {
+        xmlInterno1 = new XML("<root></root>");
 
         LcsXML lcs = new LcsXML(xmlInterno1, xml2);
         assertEquals(1, lcs.lengthOfX());
     }
+    
+    @Test
+    public void deveriaTerOTamanhoDeXComoSendoONumeroDeNosDoPrimeiroXMLMaisORoot() {
+        xmlInterno1 = new XML("<root><tag>content</tag></root>");
+
+        LcsXML lcs = new LcsXML(xmlInterno1, xml2);
+        assertEquals(2, lcs.lengthOfX());
+    }
 
     @Test
-    public void deveriaTerOTamanhoDeYComoSendoONumeroDeNosDoSegundoXML() {
+    public void deveriaTerOTamanhoDeYComoSendoONumeroDeNosDoSegundoXMLMaisORoot() {
         xmlInterno2 = new XML("<root><tag>content</tag><tag2>content2</tag2></root>");
 
         LcsXML lcs = new LcsXML(xml1, xmlInterno2);
-        assertEquals(2, lcs.lengthOfY());
+        assertEquals(3, lcs.lengthOfY());
     }
 
     @Test
@@ -59,16 +64,25 @@ public class LcsXMLTest {
         xmlInterno1 = new XML("<root><tag><nestedTag>content</nestedTag></tag></root>");
 
         LcsXML lcs = new LcsXML(xmlInterno1, xml2);
-        assertEquals(1, lcs.lengthOfX());
+        assertEquals(2, lcs.lengthOfX());
     }
 
+    @Test
+    public void deveriaRetornarORootCasoOIndicePassadoPorParametroEmXSeja0() {
+        xmlInterno1 = new XML("<root><tag>content</tag><tag2>content2</tag2></root>");
+
+
+        LcsXML lcs = new LcsXML(xmlInterno1, xml2);
+        assertEquals("[root: null]", lcs.valueOfX(0).toString());
+    }
+    
     @Test
     public void deveriaRetornarONoDoIndicePassadoPorParametroEmX() {
         xmlInterno1 = new XML("<root><tag>content</tag><tag2>content2</tag2></root>");
 
 
         LcsXML lcs = new LcsXML(xmlInterno1, xml2);
-        assertEquals("[tag: null]", lcs.valueOfX(0).toString());
+        assertEquals("[tag: null]", lcs.valueOfX(1).toString());
     }
 
     @Test
@@ -77,18 +91,18 @@ public class LcsXMLTest {
 
 
         LcsXML lcs = new LcsXML(xml1, xmlInterno2);
-        assertEquals("[tag2: null]", lcs.valueOfY(1).toString());
+        assertEquals("[tag2: null]", lcs.valueOfY(2).toString());
     }
 
     @Test
-    public void deveriaTerOValorDoLcsIgualAoNumeroDeNosSeOsXmlsForemIguais() {
+    public void deveriaTerOValorDoLcsIgualAoNumeroDeNosMaisORootSeOsXmlsForemIguais() {
         xmlInterno1 = new XML("<root><tag>content</tag><tag2>content2</tag2></root>");
 
 
         LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno1);
-        assertEquals(2, lcs.getLcsLength());
+        assertEquals(3, lcs.getLcsLength());
     }
-
+    
     @Test
     public void similaridade100Porcento() {
         xmlInterno1 = new XML("<root><tag>content</tag><tag2>content2</tag2></root>");
@@ -100,8 +114,8 @@ public class LcsXMLTest {
 
     @Test
     public void similaridade50Porcento() {
-        xmlInterno1 = new XML("<root><tag>content</tag><tag2>content2</tag2></root>");
-        xmlInterno2 = new XML("<root><tag>content</tag><tag3>content2</tag3></root>");
+        xmlInterno1 = new XML("<root><tag>content</tag></root>");
+        xmlInterno2 = new XML("<root><tag2>content</tag2></root>");
 
         LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
         assertEquals(0.5, lcs.similaridade(), 0);
@@ -109,10 +123,72 @@ public class LcsXMLTest {
 
     @Test
     public void similaridade66Porcento() {
-        xmlInterno1 = new XML("<root><tag>content</tag><tag2>content2</tag2></root>");
-        xmlInterno2 = new XML("<root><tag>content</tag></root>");
+        xmlInterno1 = new XML("<root><tag>content</tag></root>");
+        xmlInterno2 = new XML("<root></root>");
 
         LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
         assertEquals(0.6, lcs.similaridade(), 0.1);
     }
+    
+    /*
+     * Testes de XMLs específicos
+     */
+    
+    @Test
+    public void similaridadeEntreRoots() {
+        xmlInterno1 = new XML("<root></root>");
+        xmlInterno2 = new XML("<root></root>");
+
+        LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
+        assertEquals(1, lcs.similaridade(), 0);
+    }
+    
+    @Test
+    public void similaridadeEntreRoots2() {
+        xmlInterno1 = new XML("<root></root>");
+        xmlInterno2 = new XML("<root2></root2>");
+
+        LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
+        assertEquals(0, lcs.similaridade(), 0);
+    }
+    
+    //Tags - Início
+    
+    @Test
+    public void similaridadeEntreTagsVazias() {
+        xmlInterno1 = new XML("<root><tag></tag></root>");
+        xmlInterno2 = new XML("<root><tag></tag></root>");
+
+        LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
+        assertEquals(1, lcs.similaridade(), 0);
+    }
+    
+    @Test
+    public void similaridadeEntreTagsVazias2() {
+        xmlInterno1 = new XML("<root><tag></tag></root>");
+        xmlInterno2 = new XML("<root><tag2></tag2></root>");
+
+        LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
+        assertEquals(0.5, lcs.similaridade(), 0);
+    }
+    
+    @Test
+    public void similaridadeEntreTagsVazias3() {
+        xmlInterno1 = new XML("<root><tag/></root>");
+        xmlInterno2 = new XML("<root><tag2/></root>");
+
+        LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
+        assertEquals(0.5, lcs.similaridade(), 0);
+    }
+    
+//    @Test
+//    public void similaridadeEntreConteudoDasTags() {
+//        xmlInterno1 = new XML("<root><tag>Texto</tag></root>");
+//        xmlInterno2 = new XML("<root><tag>Texto</tag></root>");
+//
+//        LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
+//        assertEquals(0.5, lcs.similaridade(), 0);
+//    }
+    
+    //Tags - Fim
 }
