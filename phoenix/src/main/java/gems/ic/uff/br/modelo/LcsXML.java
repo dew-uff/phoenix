@@ -12,21 +12,29 @@ public class LcsXML extends LongestCommonSubsequence<SimilarNode> {
 
     @Override
     protected int lengthOfX() {
-        return x.getDocument().getDocumentElement().getChildNodes().getLength();
+        return x.getDocument().getDocumentElement().getChildNodes().getLength() + 1; //+1 Elemento root
     }
 
     @Override
     protected int lengthOfY() {
-        return y.getDocument().getDocumentElement().getChildNodes().getLength();
+        return y.getDocument().getDocumentElement().getChildNodes().getLength() + 1; //+1 Elemento Root
     }
 
     @Override
     protected SimilarNode valueOfX(int index) {
-        return new SimilarNode(x.getDocument().getDocumentElement().getChildNodes().item(index));
+        if (index == 0) {
+            return new SimilarNode(x.getDocument().getDocumentElement()); //Root
+        } else {
+            return new SimilarNode(x.getDocument().getDocumentElement().getChildNodes().item(index - 1)); //Tem que diminuir de 1 por causa do root (+1)
+        }
     }
 
     @Override
     protected SimilarNode valueOfY(int index) {
-        return new SimilarNode(y.getDocument().getDocumentElement().getChildNodes().item(index));
+        if (index == 0) {
+            return new SimilarNode(y.getDocument().getDocumentElement()); //Root
+        } else {
+            return new SimilarNode(y.getDocument().getDocumentElement().getChildNodes().item(index - 1)); //Tem que diminuir de 1 por causa do root (+1)
+        }
     }
 }
