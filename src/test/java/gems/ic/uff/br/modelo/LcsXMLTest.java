@@ -124,15 +124,6 @@ public class LcsXMLTest {
     }
 
     @Test
-    public void similaridade66Porcento() {
-        xmlInterno1 = new XML("<root><tag></tag></root>");
-        xmlInterno2 = new XML("<root></root>");
-
-        LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
-        assertEquals(0.6, lcs.similaridade(), 0.1);
-    }
-    
-    @Test
     public void similaridadeEntreRoots() {
         xmlInterno1 = new XML("<root></root>");
         xmlInterno2 = new XML("<root></root>");
