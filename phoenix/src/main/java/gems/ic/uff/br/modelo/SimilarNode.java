@@ -8,8 +8,10 @@ import org.w3c.dom.Node;
  */
 public class SimilarNode extends Similar<SimilarNode> {
 
-    public static final double ATTRIBUTE_WEIGTH = 0.5;
     private Node node;
+    public static final double ATTRIBUTE_WEIGTH = 0.5;
+    public static final double ELEMENT_VALUE_WEIGTH = 0.5;
+    public static final double ELEMENT_WEIGTH = 1;
 
     public SimilarNode(Node node) {
         this.node = node;
@@ -18,6 +20,7 @@ public class SimilarNode extends Similar<SimilarNode> {
     @Override
     public double similar(SimilarNode y) {
         Node otherNode = y.getNode();
+        double similarity = 1;
 
         if (node.getNodeName().equals(otherNode.getNodeName())) {
             if (node.hasAttributes() || otherNode.hasAttributes()) {
@@ -25,16 +28,24 @@ public class SimilarNode extends Similar<SimilarNode> {
                     //TODO: Usar um método de conjunto para medir a similaridade
 //                    NamedNodeMap attributesFromNode = node.getAttributes();
 //                    NamedNodeMap attributesFromOtherNode = otherNode.getAttributes();
-                    return 1;
                 } else {
-                    return 0.5;
+                    similarity -= ATTRIBUTE_WEIGTH;
                 }
             } else {
-                return 1;
+                String nodeValue = node.getTextContent();
+                String otherNodeValue = otherNode.getTextContent();
+
+                if (nodeValue != null || otherNodeValue != null) {
+                    if (nodeValue == null || otherNodeValue == null || !nodeValue.equals(otherNodeValue)) {
+                        similarity -= ELEMENT_VALUE_WEIGTH;
+                    }
+                }
             }
         } else {
-            return 0;
+            similarity -= ELEMENT_WEIGTH;
         }
+
+        return similarity;
     }
 
     public Node getNode() {

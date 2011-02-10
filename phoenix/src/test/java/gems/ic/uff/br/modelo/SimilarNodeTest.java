@@ -1,6 +1,13 @@
 package gems.ic.uff.br.modelo;
 
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.InputSource;
+import java.io.StringReader;
+import javax.xml.parsers.DocumentBuilderFactory;
 import gems.ic.uff.br.modelo.SimilarNode;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.w3c.dom.Node;
@@ -11,9 +18,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
+import org.xml.sax.SAXException;
 
 public class SimilarNodeTest {
-    
+
     @Mock
     private Node mockNode;
     @Mock
@@ -39,6 +47,15 @@ public class SimilarNodeTest {
     public void tearDown() {
     }
 
+    public SimilarNode createSimilarNode(String xml) {
+        try {
+            return new SimilarNode(DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(xml))).getDocumentElement());
+        } catch (Exception ex) {
+            System.out.println(ex.getClass() + ": " + ex.getMessage());
+            return null;
+        }
+    }
+
     @Test
     public void oPesoDoAtributoDeveriaSer05() {
         assertEquals(0.5, SimilarNode.ATTRIBUTE_WEIGTH, 0);
@@ -46,62 +63,71 @@ public class SimilarNodeTest {
 
     @Test
     public void deveriaTerSimilaridade1CasoOsDoisPossuamApenasUmaTagVaziaEIgual() {
-        SimilarNode similarNode = new SimilarNode(mockNode);
-        when(mockNode.getNodeName()).thenReturn("igual");
+        SimilarNode similarNode = createSimilarNode("<igual/>");
 
-        SimilarNode similarNode2 = new SimilarNode(mockNode2);
-        when(mockNode2.getNodeName()).thenReturn("igual");
-
-        assertEquals(1, similarNode.similar(similarNode2), 0);
+        assertEquals(1, similarNode.similar(similarNode), 0);
     }
 
     @Test
     public void deveriaTerSimilaridade0CasoNenhumaTagSejaIgual() {
-        SimilarNode similarNode = new SimilarNode(mockNode);
-        when(mockNode.getNodeName()).thenReturn("diferente1");
-
-        SimilarNode similarNode2 = new SimilarNode(mockNode2);
-        when(mockNode2.getNodeName()).thenReturn("diferente2");
+        SimilarNode similarNode = createSimilarNode("<diferente/>");
+        SimilarNode similarNode2 = createSimilarNode("<diferente2/>");
 
         assertEquals(0, similarNode.similar(similarNode2), 0);
     }
 
     @Test
     public void deveriaTerSimilaridade1CasoAsTagsSejamIguaisENaoPossuamAtributos() {
-        SimilarNode similarNode = new SimilarNode(mockNode);
-        when(mockNode.getNodeName()).thenReturn("igual");
-        when(mockNode.hasAttributes()).thenReturn(false);
+        SimilarNode similarNode = createSimilarNode("<igual></igual>");
 
-        SimilarNode similarNode2 = new SimilarNode(mockNode2);
-        when(mockNode2.getNodeName()).thenReturn("igual");
-        when(mockNode2.hasAttributes()).thenReturn(false);
-
-        assertEquals(1, similarNode.similar(similarNode2), 0);
+        assertEquals(1, similarNode.similar(similarNode), 0);
     }
-    
+
     @Test
     public void deveriaTerSimilaridade05CasoAsTagsSejamIguaisMasApenasOPrimeiroTenhaAtributo() {
-        SimilarNode similarNode = new SimilarNode(mockNode);
-        when(mockNode.getNodeName()).thenReturn("igual");
-        when(mockNode.hasAttributes()).thenReturn(true);
-
-        SimilarNode similarNode2 = new SimilarNode(mockNode2);
-        when(mockNode2.getNodeName()).thenReturn("igual");
-        when(mockNode2.hasAttributes()).thenReturn(false);
+        SimilarNode similarNode = createSimilarNode("<igual atributo='sim'></igual>");
+        SimilarNode similarNode2 = createSimilarNode("<igual></igual>");
 
         assertEquals(0.5, similarNode.similar(similarNode2), 0);
     }
 
     @Test
     public void deveriaTerSimilaridade05CasoAsTagsSejamIguaisMasApenasOSegundoTenhaAtributo() {
-        SimilarNode similarNode = new SimilarNode(mockNode);
-        when(mockNode.getNodeName()).thenReturn("igual");
-        when(mockNode.hasAttributes()).thenReturn(false);
-
-        SimilarNode similarNode2 = new SimilarNode(mockNode2);
-        when(mockNode2.getNodeName()).thenReturn("igual");
-        when(mockNode2.hasAttributes()).thenReturn(true);
+        SimilarNode similarNode = createSimilarNode("<igual></igual>");
+        SimilarNode similarNode2 = createSimilarNode("<igual atributo='sim'></igual>");
 
         assertEquals(0.5, similarNode.similar(similarNode2), 0);
+    }
+
+    @Test
+    public void similaridadeEntreConteudoDasTags() {
+        SimilarNode similarNode = createSimilarNode("<tag>Texto</tag>");
+        SimilarNode similarNode2 = createSimilarNode("<tag>Texto</tag>");
+
+        assertEquals(1, similarNode.similar(similarNode2), 0);
+    }
+    
+    @Test
+    public void similaridadeEntreConteudoDasTags2() {
+        SimilarNode similarNode = createSimilarNode("<tag>Texto</tag>");
+        SimilarNode similarNode2 = createSimilarNode("<tag>Texto2</tag>");
+
+        assertEquals(SimilarNode.ELEMENT_VALUE_WEIGTH, similarNode.similar(similarNode2), 0);
+    }
+    
+    @Test
+    public void similaridadeEntreConteudoDasTags3() {
+        SimilarNode similarNode = createSimilarNode("<tag>Texto</tag>");
+        SimilarNode similarNode2 = createSimilarNode("<tag></tag>");
+
+        assertEquals(SimilarNode.ELEMENT_VALUE_WEIGTH, similarNode.similar(similarNode2), 0);
+    }
+    
+    @Test
+    public void similaridadeEntreConteudoDasTags4() {
+        SimilarNode similarNode = createSimilarNode("<tag></tag>");
+        SimilarNode similarNode2 = createSimilarNode("<tag>Texto</tag>");
+
+        assertEquals(SimilarNode.ELEMENT_VALUE_WEIGTH, similarNode.similar(similarNode2), 0);
     }
 }

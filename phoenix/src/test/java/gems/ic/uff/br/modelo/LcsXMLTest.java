@@ -1,5 +1,7 @@
 package gems.ic.uff.br.modelo;
 
+import com.sun.org.apache.xerces.internal.dom.NodeImpl;
+import org.w3c.dom.Node;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -123,16 +125,12 @@ public class LcsXMLTest {
 
     @Test
     public void similaridade66Porcento() {
-        xmlInterno1 = new XML("<root><tag>content</tag></root>");
+        xmlInterno1 = new XML("<root><tag></tag></root>");
         xmlInterno2 = new XML("<root></root>");
 
         LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
         assertEquals(0.6, lcs.similaridade(), 0.1);
     }
-    
-    /*
-     * Testes de XMLs específicos
-     */
     
     @Test
     public void similaridadeEntreRoots() {
@@ -151,44 +149,4 @@ public class LcsXMLTest {
         LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
         assertEquals(0, lcs.similaridade(), 0);
     }
-    
-    //Tags - Início
-    
-    @Test
-    public void similaridadeEntreTagsVazias() {
-        xmlInterno1 = new XML("<root><tag></tag></root>");
-        xmlInterno2 = new XML("<root><tag></tag></root>");
-
-        LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
-        assertEquals(1, lcs.similaridade(), 0);
-    }
-    
-    @Test
-    public void similaridadeEntreTagsVazias2() {
-        xmlInterno1 = new XML("<root><tag></tag></root>");
-        xmlInterno2 = new XML("<root><tag2></tag2></root>");
-
-        LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
-        assertEquals(0.5, lcs.similaridade(), 0);
-    }
-    
-    @Test
-    public void similaridadeEntreTagsVazias3() {
-        xmlInterno1 = new XML("<root><tag/></root>");
-        xmlInterno2 = new XML("<root><tag2/></root>");
-
-        LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
-        assertEquals(0.5, lcs.similaridade(), 0);
-    }
-    
-//    @Test
-//    public void similaridadeEntreConteudoDasTags() {
-//        xmlInterno1 = new XML("<root><tag>Texto</tag></root>");
-//        xmlInterno2 = new XML("<root><tag>Texto</tag></root>");
-//
-//        LcsXML lcs = new LcsXML(xmlInterno1, xmlInterno2);
-//        assertEquals(0.5, lcs.similaridade(), 0);
-//    }
-    
-    //Tags - Fim
 }
