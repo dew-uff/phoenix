@@ -57,46 +57,41 @@ public class SimilarNodeTest {
     }
 
     @Test
-    public void oPesoDoAtributoDeveriaSer05() {
-        assertEquals(0.5, SimilarNode.ATTRIBUTE_WEIGTH, 0);
-    }
-
-    @Test
-    public void deveriaTerSimilaridade1CasoOsDoisPossuamApenasUmaTagVaziaEIgual() {
+    public void similaridadeEntreNomes() {
         SimilarNode similarNode = createSimilarNode("<igual/>");
 
         assertEquals(1, similarNode.similar(similarNode), 0);
     }
 
     @Test
-    public void deveriaTerSimilaridade0CasoNenhumaTagSejaIgual() {
-        SimilarNode similarNode = createSimilarNode("<diferente/>");
-        SimilarNode similarNode2 = createSimilarNode("<diferente2/>");
-
-        assertEquals(0, similarNode.similar(similarNode2), 0);
-    }
-
-    @Test
-    public void deveriaTerSimilaridade1CasoAsTagsSejamIguaisENaoPossuamAtributos() {
+    public void similaridadeEntreNomes2() {
         SimilarNode similarNode = createSimilarNode("<igual></igual>");
 
         assertEquals(1, similarNode.similar(similarNode), 0);
     }
 
     @Test
-    public void deveriaTerSimilaridade05CasoAsTagsSejamIguaisMasApenasOPrimeiroTenhaAtributo() {
-        SimilarNode similarNode = createSimilarNode("<igual atributo='sim'></igual>");
-        SimilarNode similarNode2 = createSimilarNode("<igual></igual>");
+    public void similaridadeEntreNomes3() {
+        SimilarNode similarNode = createSimilarNode("<diferente/>");
+        SimilarNode similarNode2 = createSimilarNode("<diferente2/>");
 
-        assertEquals(0.5, similarNode.similar(similarNode2), 0);
+        assertEquals(1 - SimilarNode.ELEMENT_NAME_WEIGTH, similarNode.similar(similarNode2), 0);
     }
 
     @Test
-    public void deveriaTerSimilaridade05CasoAsTagsSejamIguaisMasApenasOSegundoTenhaAtributo() {
+    public void similaridadeEntreAtributos() {
+        SimilarNode similarNode = createSimilarNode("<igual atributo='sim'></igual>");
+        SimilarNode similarNode2 = createSimilarNode("<igual></igual>");
+
+        assertEquals(1 - SimilarNode.ATTRIBUTE_WEIGTH, similarNode.similar(similarNode2), 0);
+    }
+
+    @Test
+    public void similaridadeEntreAtributos2() {
         SimilarNode similarNode = createSimilarNode("<igual></igual>");
         SimilarNode similarNode2 = createSimilarNode("<igual atributo='sim'></igual>");
 
-        assertEquals(0.5, similarNode.similar(similarNode2), 0);
+        assertEquals(1 - SimilarNode.ATTRIBUTE_WEIGTH, similarNode.similar(similarNode2), 0);
     }
 
     @Test
@@ -106,28 +101,60 @@ public class SimilarNodeTest {
 
         assertEquals(1, similarNode.similar(similarNode2), 0);
     }
-    
+
     @Test
     public void similaridadeEntreConteudoDasTags2() {
         SimilarNode similarNode = createSimilarNode("<tag>Texto</tag>");
         SimilarNode similarNode2 = createSimilarNode("<tag>Texto2</tag>");
 
-        assertEquals(SimilarNode.ELEMENT_VALUE_WEIGTH, similarNode.similar(similarNode2), 0);
+        assertEquals(1 - SimilarNode.ELEMENT_VALUE_WEIGTH, similarNode.similar(similarNode2), 0);
     }
-    
+
     @Test
     public void similaridadeEntreConteudoDasTags3() {
         SimilarNode similarNode = createSimilarNode("<tag>Texto</tag>");
         SimilarNode similarNode2 = createSimilarNode("<tag></tag>");
 
-        assertEquals(SimilarNode.ELEMENT_VALUE_WEIGTH, similarNode.similar(similarNode2), 0);
+        assertEquals(1 - SimilarNode.ELEMENT_VALUE_WEIGTH, similarNode.similar(similarNode2), 0);
     }
-    
+
     @Test
     public void similaridadeEntreConteudoDasTags4() {
         SimilarNode similarNode = createSimilarNode("<tag></tag>");
         SimilarNode similarNode2 = createSimilarNode("<tag>Texto</tag>");
 
-        assertEquals(SimilarNode.ELEMENT_VALUE_WEIGTH, similarNode.similar(similarNode2), 0);
+        assertEquals(1 - SimilarNode.ELEMENT_VALUE_WEIGTH, similarNode.similar(similarNode2), 0);
+    }
+
+    @Test
+    public void similaridadeEntreFilhosDoElemento() {
+        SimilarNode similarNode = createSimilarNode("<father><son></son></father>");
+        SimilarNode similarNode2 = createSimilarNode("<father><son></son></father>");
+
+        assertEquals(1, similarNode.similar(similarNode2), 0);
+    }
+
+//    @Test
+    public void similaridadeEntreFilhosDoElemento2() {
+        SimilarNode similarNode = createSimilarNode("<father><son></son></father>");
+        SimilarNode similarNode2 = createSimilarNode("<father><son2></son2></father>");
+
+        assertEquals(1 - SimilarNode.ELEMENT_CHILDREN_WEIGTH, similarNode.similar(similarNode2), 0);
+    }
+    
+    @Test
+    public void similaridadeNoMinimoIgualA0() {
+        double similaridade = 1;
+        similaridade -= SimilarNode.ELEMENT_NAME_WEIGTH;
+        similaridade -= SimilarNode.ELEMENT_VALUE_WEIGTH;
+        similaridade -= SimilarNode.ATTRIBUTE_WEIGTH;
+        
+        assertTrue(similaridade < 0);
+        
+        
+        SimilarNode similarNode = createSimilarNode("<tag attribute='yes'>Texto</tag>");
+        SimilarNode similarNode2 = createSimilarNode("<tag2>TextoDiferente</tag2>");
+        
+        assertEquals(0, similarNode.similar(similarNode2), 0);
     }
 }
