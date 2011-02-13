@@ -26,6 +26,10 @@ public class SimilarNode extends Similar<SimilarNode> {
     public double similar(SimilarNode y) {
         double similarity = 1;
         Node otherNode = y.getNode();
+        
+        if (node == null || otherNode == null) {
+            throw new IllegalArgumentException("O XML não é válido pois possui valores na TAG root."); //TODO: Validar com a Vanessa.
+        }
 
         if (!node.getNodeName().equals(otherNode.getNodeName())) {
             similarity -= ELEMENT_NAME_WEIGTH;

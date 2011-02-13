@@ -1,7 +1,5 @@
 package gems.ic.uff.br.modelo;
 
-import com.sun.org.apache.xerces.internal.dom.NodeImpl;
-import org.w3c.dom.Node;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

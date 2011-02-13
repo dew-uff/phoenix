@@ -27,25 +27,40 @@ public class XML {
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 
-            //Parse the XML file and build the Document object in RAM
-            if (file.endsWith(".xml")) {
-                //Arquivo XML.
+            if (file.endsWith(".xml")) { //Arquivo
                 doc = docBuilder.parse(file);
-            } else {
-                //String.
+            } else { //String
                 doc = docBuilder.parse(new InputSource(new StringReader(file)));
             }
 
-            //Normalize text representation.
-            //Collapses adjacent text nodes into one node.
-            //doc.getDocumentElement().normalize();
-        } catch (Exception ex) {
-            //TODO: Todas as exceções estão sendo 'tratadas', quando não conseguir
-            //criar um XML, o que deveria acontecer?
-            System.out.println(ex.getMessage());
+            removeWhiteSpaces(doc); //TODO: Testar! Utilizando o nosso comparador?
+        } catch (Exception ignoredException) {
+            System.out.println(ignoredException.getMessage());
         }
 
         return doc;
+    }
+
+    public void removeWhiteSpaces(Document doc) {
+//        doc.getDocumentElement().normalize();
+        XPathFactory xpathFactory = XPathFactory.newInstance();
+
+        try {
+            // XPath para procurar por nós com textos vazios
+            XPathExpression xpathExp = xpathFactory.newXPath().compile("//text()[normalize-space(.) = '']");
+            NodeList emptyTextNodes = (NodeList) xpathExp.evaluate(doc, XPathConstants.NODESET);
+
+            // Remove cada texto vazio do documento
+            for (int i = 0; i < emptyTextNodes.getLength(); i++) {
+                Node emptyTextNode = emptyTextNodes.item(i);
+                emptyTextNode.getParentNode().removeChild(emptyTextNode);
+            }
+        } catch (Exception ignoredException) {
+        }
+    }
+
+    public Document getDocument() {
+        return document;
     }
 
     @Override
@@ -56,16 +71,13 @@ public class XML {
             Transformer serializer = TransformerFactory.newInstance().newTransformer();
             //Omitindo a declaração do XML
             serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-            
+            serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+
             serializer.transform(new DOMSource(document), new StreamResult(writer));
         } catch (TransformerException ex) {
             System.out.println(ex.getMessage());
         }
 
         return writer.toString();
-    }
-
-    public Document getDocument() {
-        return document;
     }
 }

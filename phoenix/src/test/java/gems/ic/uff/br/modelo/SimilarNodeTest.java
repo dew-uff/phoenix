@@ -56,6 +56,12 @@ public class SimilarNodeTest {
         }
     }
 
+    @Test(expected=IllegalArgumentException.class)
+    public void similaridadeEntreElementosInvalidos() {
+        SimilarNode similarNode = createSimilarNode("<igual/>");
+        similarNode.similar(new SimilarNode(null));
+    }
+
     @Test
     public void similaridadeEntreNomes() {
         SimilarNode similarNode = createSimilarNode("<igual/>");
