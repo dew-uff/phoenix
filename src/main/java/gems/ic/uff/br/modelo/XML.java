@@ -25,6 +25,8 @@ public class XML {
 
         try {
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+            docBuilderFactory.setNamespaceAware(true);
+            
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 
             if (file.endsWith(".xml")) { //Arquivo

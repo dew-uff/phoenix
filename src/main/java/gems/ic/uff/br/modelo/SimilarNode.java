@@ -1,6 +1,9 @@
 package gems.ic.uff.br.modelo;
 
+import com.sun.org.apache.xpath.internal.NodeSet;
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Classe que encapsula a classe Node do DOM, adicionando um comportamento
@@ -20,41 +23,44 @@ public class SimilarNode extends Similar<SimilarNode> {
     }
 
     @Override
-    //Esse método deveria ser quebrado em vários?
-    //Testar se o valor da similaridade é menor do que 0 durante o código para
-    //aumentar o desempenho?
     public double similar(SimilarNode y) {
         double similarity = 1;
         Node otherNode = y.getNode();
-        
+
+        //TODO: Validar com a Vanessa.
         if (node == null || otherNode == null) {
-            throw new IllegalArgumentException("O XML não é válido pois possui valores na TAG root."); //TODO: Validar com a Vanessa.
+            throw new IllegalArgumentException("O XML não é válido pois possui valores no elemento root.");
         }
 
+        similarity = elementsNameSimilarity(otherNode, similarity);
+        similarity = elementsValueSimilarity(otherNode, similarity);
+        similarity = elementsAttributesSimilarity(otherNode, similarity);
+        similarity = elementsChildrenSimilarity(otherNode, similarity);
+
+        return similarity > 0 ? similarity : 0; //Não testado.
+    }
+
+    public double elementsNameSimilarity(Node otherNode, double similarity) {
         if (!node.getNodeName().equals(otherNode.getNodeName())) {
             similarity -= ELEMENT_NAME_WEIGTH;
         }
 
+        return similarity;
+    }
+
+    public double elementsValueSimilarity(Node otherNode, double similarity) throws DOMException {
         if (node.hasChildNodes() || otherNode.hasChildNodes()) {
             String nodeValue = null;
             String otherNodeValue = null;
 
-            //O valor do elemento é um de seus filhos.
             if (node.hasChildNodes()) {
+                //O valor do elemento é um de seus filhos.
                 nodeValue = node.getFirstChild().getNodeValue();
-
-                if (nodeValue != null) {
-                    //É necessário removê-lo para depois comparar os elementos filhos.
-                    node.removeChild(node.getFirstChild());
-                }
             }
 
             if (otherNode.hasChildNodes()) {
+                //O valor do elemento é um de seus filhos.
                 otherNodeValue = otherNode.getFirstChild().getNodeValue();
-
-                if (otherNodeValue != null) {
-                    otherNode.removeChild(otherNode.getFirstChild());
-                }
             }
 
             if (nodeValue != null || otherNodeValue != null) {
@@ -63,7 +69,11 @@ public class SimilarNode extends Similar<SimilarNode> {
                 }
             }
         }
+        
+        return similarity;
+    }
 
+    public double elementsAttributesSimilarity(Node otherNode, double similarity) {
         if (node.hasAttributes() || otherNode.hasAttributes()) {
             if (node.hasAttributes() && otherNode.hasAttributes()) {
                 //TODO: Usar um método de conjunto para medir a similaridade
@@ -73,18 +83,43 @@ public class SimilarNode extends Similar<SimilarNode> {
                 similarity -= ATTRIBUTE_WEIGTH;
             }
         }
+        
+        return similarity;
+    }
 
-        if (node.hasChildNodes() || otherNode.hasChildNodes()) {
-            if (node.hasChildNodes() && otherNode.hasChildNodes()) {
-                //TODO: Usar um método de conjunto para medir a similaridade
-                //NodeList nodeChildren = node.getChildNodes();
-                //NodeList otherNodeChildren = node.getChildNodes();
-            } else {
+    public double elementsChildrenSimilarity(Node otherNode, double similarity) {
+        NodeList childNodes = node.getChildNodes();
+        NodeList otherChildNodes = otherNode.getChildNodes();
+
+        if (childNodes != null && otherChildNodes != null) {
+            NodeSet elementNodes = getElementNodes(childNodes);
+            NodeSet otherElementNodes = getElementNodes(otherChildNodes);
+
+            if ((elementNodes.size() != 0 && otherElementNodes.size() == 0) || (elementNodes.size() == 0 && otherElementNodes.size() != 0)) {
                 similarity -= ELEMENT_CHILDREN_WEIGTH;
+            } else {
+                //TODO: Usar um método de conjunto para medir a similaridade
+            }
+
+        } else {
+            similarity -= ELEMENT_CHILDREN_WEIGTH;
+        }
+        
+        return similarity;
+    }
+
+    private NodeSet getElementNodes(NodeList nodeList) {
+        NodeSet elementNodes = new NodeSet();
+
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node item = nodeList.item(i);
+
+            if (item.getNodeType() == Node.ELEMENT_NODE) {
+                elementNodes.addNode(item);
             }
         }
 
-        return similarity > 0 ? similarity : 0; //Não testado.
+        return elementNodes;
     }
 
     public Node getNode() {
