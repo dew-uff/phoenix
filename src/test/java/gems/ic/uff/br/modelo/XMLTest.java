@@ -1,6 +1,5 @@
-package util;
+package gems.ic.uff.br.modelo;
 
-import gems.ic.uff.br.modelo.XML;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -30,8 +29,8 @@ public class XMLTest {
     }
 
     @Test
-    public void deveriaCriarUmXmlAtravesDeUmXmlEmString() {
-        XML xml = new XML("<tag>content</tag>");
+    public void deveriaSerCriadoAtravesDeUmaString() {
+        XML xml = new XML("<root><tag/></root>");
         assertNotNull(xml.getDocument());
     }
 
@@ -47,12 +46,5 @@ public class XMLTest {
     public void naoDeveriaCriarUmXmlSeOArquivoXMLNaoExistir() {
         XML xml = new XML("arquivo.xml");
         assertNull(xml.getDocument());
-    }
-
-    @Test
-    public void deveriaImprimirOXmlIgualAoOriginal() {
-        XML xml = new XML("<tag>content</tag>");
-
-        assertEquals("<tag>content</tag>", xml.toString());
     }
 }
