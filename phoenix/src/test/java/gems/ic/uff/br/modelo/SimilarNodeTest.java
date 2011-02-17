@@ -1,13 +1,8 @@
 package gems.ic.uff.br.modelo;
 
-import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.InputSource;
 import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilderFactory;
-import gems.ic.uff.br.modelo.SimilarNode;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.w3c.dom.Node;
@@ -17,8 +12,9 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-import org.xml.sax.SAXException;
+import uk.ac.shef.wit.simmetrics.similaritymetrics.*;
+
+
 
 public class SimilarNodeTest {
 
@@ -72,7 +68,6 @@ public class SimilarNodeTest {
     @Test
     public void similaridadeEntreNomes2() {
         SimilarNode similarNode = createSimilarNode("<igual></igual>");
-
         assertEquals(1, similarNode.elementsNameSimilarity(similarNode.getNode(), 1), 0);
     }
 
@@ -96,7 +91,6 @@ public class SimilarNodeTest {
     public void similaridadeEntreConteudoDasTags2() {
         SimilarNode similarNode = createSimilarNode("<tag>Texto</tag>");
         SimilarNode similarNode2 = createSimilarNode("<tag>Texto2</tag>");
-
         assertEquals(1 - SimilarNode.ELEMENT_VALUE_WEIGTH, similarNode.elementsValueSimilarity(similarNode2.getNode(), 1), 0);
     }
 
