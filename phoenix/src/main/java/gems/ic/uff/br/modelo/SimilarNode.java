@@ -1,9 +1,13 @@
 package gems.ic.uff.br.modelo;
 
 import com.sun.org.apache.xpath.internal.NodeSet;
+import java.util.ArrayList;
+import java.util.List;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import uk.ac.shef.wit.simmetrics.similaritymetrics.EuclideanDistance;
+import uk.ac.shef.wit.simmetrics.similaritymetrics.MongeElkan;
 
 /**
  * Classe que encapsula a classe Node do DOM, adicionando um comportamento
@@ -69,7 +73,7 @@ public class SimilarNode extends Similar<SimilarNode> {
                 }
             }
         }
-        
+
         return similarity;
     }
 
@@ -83,7 +87,7 @@ public class SimilarNode extends Similar<SimilarNode> {
                 similarity -= ATTRIBUTE_WEIGTH;
             }
         }
-        
+
         return similarity;
     }
 
@@ -98,13 +102,29 @@ public class SimilarNode extends Similar<SimilarNode> {
             if ((elementNodes.size() != 0 && otherElementNodes.size() == 0) || (elementNodes.size() == 0 && otherElementNodes.size() != 0)) {
                 similarity -= ELEMENT_CHILDREN_WEIGTH;
             } else {
-                //TODO: Usar um método de conjunto para medir a similaridade
+
+                //testando
+                List<String> elementoNodes = new ArrayList();
+                for (int i = 0; i < elementNodes.getLength(); i++) {
+                    elementoNodes.add(elementNodes.item(i).getNodeName());
+                }
+                List<String> otherElementoNodes = new ArrayList();
+//                MongeElkan me =  new MongeElkan(new EuclideanDistance());
+                for (int i = 0; i < otherElementNodes.getLength(); i++) {
+                    otherElementoNodes.add(otherElementNodes.item(i).getNodeName());
+                }
+
+                System.out.println("ANTESSSSSSS     " + otherElementoNodes.size());
+                otherElementoNodes.removeAll(elementoNodes);
+                System.out.println("DEPOISSSSSS     " + otherElementoNodes.size());
+
+
             }
 
         } else {
             similarity -= ELEMENT_CHILDREN_WEIGTH;
         }
-        
+
         return similarity;
     }
 
