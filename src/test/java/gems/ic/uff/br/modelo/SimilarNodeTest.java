@@ -6,7 +6,9 @@ import java.util.logging.Logger;
 import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.InputSource;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.mockito.Mock;
@@ -17,6 +19,7 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import static org.junit.Assert.*;
@@ -168,7 +171,20 @@ public class SimilarNodeTest {
 
         NodeList listaXml1 = xml1.getElementsByTagName("*");
         NodeList listaXml2 = xml2.getElementsByTagName("*");
-        System.out.println("TODOSSSSS OS VALORESSSSS        " + procurarSimilaridades(listaXml1.item(0).getChildNodes(), listaXml2.item(0).getChildNodes()));
+        List<DadosEstatisticos> resultadoGeral = procurarSimilaridades(listaXml1, listaXml2);
+        for (DadosEstatisticos dadosEstatisticos : resultadoGeral) {
+            System.out.printf("%s   <====>   %s  percentual de similaridade  = %.3f\n", dadosEstatisticos.getNode1(), dadosEstatisticos.getNode2(), dadosEstatisticos.getPercentual());
+        }
+        System.out.printf("\n\n");
+        System.out.println("SIMILARIDADES ENTRE NODES COM O PERCENTUAL ACIMA DO ESTABELECIDO:");
+        for (DadosEstatisticos dadosEstatisticos : resultadoGeral) {
+            if (dadosEstatisticos.getPercentual() > 0.7) {
+                System.out.printf("%s   <====>   %s  percentual de similaridade  = %.3f\n", dadosEstatisticos.getNode1(), dadosEstatisticos.getNode2(), dadosEstatisticos.getPercentual());
+            }
+        }
+
+
+//        System.out.println("TODOSSSSS OS VALORESSSSS        " + procurarSimilaridades(listaXml1.item(0).getChildNodes(), listaXml2.item(0).getChildNodes(), resultadoGeral));
 //        System.out.println("TOTAL DE SIMILARIDADES ENCONTRADAS     " + qtdSimilaridadesEncontradas);
     }
 
@@ -180,7 +196,7 @@ public class SimilarNodeTest {
 
         NodeList listaXml1 = xml1.getElementsByTagName("*");
         NodeList listaXml2 = xml2.getElementsByTagName("*");
-        System.out.println("TODOSSSSS OS VALORESSSSS        " + procurarSimilaridades(listaXml1.item(0).getChildNodes(), listaXml2.item(0).getChildNodes()));
+//        System.out.println("TODOSSSSS OS VALORESSSSS        " + procurarSimilaridades(listaXml1.item(0).getChildNodes(), listaXml2.item(0).getChildNodes()));
 //        System.out.println("TOTAL DE SIMILARIDADES ENCONTRADAS     " + qtdSimilaridadesEncontradas);
     }
 
@@ -281,26 +297,31 @@ public class SimilarNodeTest {
         }
     }
 
-    private double procurarSimilaridades(NodeList lista1, NodeList lista2) {
+    private List<DadosEstatisticos> procurarSimilaridades(NodeList lista1, NodeList lista2) {
         double similaridade = 0.0;
+        List<DadosEstatisticos> resultado = new ArrayList<DadosEstatisticos>();
         MongeElkan me = new MongeElkan();
         for (int i = 0; i < lista1.getLength(); i++) {
             for (int j = 0; j < lista2.getLength(); j++) {
 //                if (me.getSimilarity(lista1.item(i).getNodeName(), lista2.item(j).getNodeName()) > 0.7) {
 //                qtdSimilaridadesEncontradas++;
                 double similaridadeCorrente = me.getSimilarity(lista1.item(i).getNodeName(), lista2.item(j).getNodeName());
-                System.out.printf("%s  =======  %s ====> Percentual de similaridade  = %.4f\n", lista1.item(i).getNodeName(), lista2.item(j).getNodeName(), similaridadeCorrente);
-//                System.out.println(lista1.item(i).getNodeName() + "  =======   " + lista2.item(j).getNodeName() + "   ===>     PERCENTUAL DE SIMILARIDADE  =  " + similaridadeCorrente);
+                DadosEstatisticos dadosEstatisticos = new DadosEstatisticos();
+                dadosEstatisticos.setNode1(lista1.item(i).getNodeName());
+                dadosEstatisticos.setNode2(lista2.item(j).getNodeName());
+                dadosEstatisticos.setPercentual(similaridadeCorrente);
+                resultado.add(dadosEstatisticos);
                 similaridade += similaridadeCorrente;
                 if (lista1.item(i).hasChildNodes() && lista2.item(j).hasChildNodes()) {
-                    similaridade += procurarSimilaridades(lista1.item(i).getChildNodes(), lista2.item(j).getChildNodes());
+//                    similaridade += procurarSimilaridades(lista1.item(i).getChildNodes(), lista2.item(j).getChildNodes());
                 }
 //                }
             }
         }
 
         int totalDeDesconto = Math.abs(lista1.getLength() - lista2.getLength());
-        System.out.println("TOTALLLLLL DE SIMILARIDADESSSSSS        " + similaridade);
-        return similaridade / (lista1.getLength() * lista1.getLength() - (totalDeDesconto * DESCONTO));
+        System.out.println("TOTAL DE DESCONTO POR EXCESSO DE FILHOS    " + totalDeDesconto);
+        return resultado;
+//        return similaridade / (lista1.getLength() * lista1.getLength() - (totalDeDesconto * DESCONTO));
     }
 }
