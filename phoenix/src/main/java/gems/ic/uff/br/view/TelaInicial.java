@@ -1,6 +1,5 @@
 package gems.ic.uff.br.view;
 
-import gems.ic.uff.br.modelo.SimilarNode;
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -20,7 +19,6 @@ import javax.swing.border.TitledBorder;
 import gems.ic.uff.br.modelo.LcsXML;
 import gems.ic.uff.br.modelo.XML;
 import gems.ic.uff.br.util.GBC;
-import java.util.List;
 
 /**
  *
@@ -52,7 +50,7 @@ public class TelaInicial extends JFrame {
         inicializarAreaDeTextos();
         inicializarAreaDeComparacao();
         inicializarVariaveis();
-
+        
         this.pack();
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -131,12 +129,6 @@ public class TelaInicial extends JFrame {
                 
                 LcsXML seq = new LcsXML(xml, xml2);
                 percentual.setValue((int) (seq.similaridade() * 100));
-                List<SimilarNode> sequenciaEmComum = seq.backtrack();
-                System.out.println("=========  MAIOR SEQUENCIA COMUM ENCONTRADA ======== ");
-                for (SimilarNode similarNode : sequenciaEmComum) {
-                    System.out.println("" + similarNode.toString());
-                }
-
             }
         });
 
