@@ -166,7 +166,7 @@ public class SimilarNodeTest {
 
     }
 
-//    @Test
+    @Test
     public void similaridadeDeconjuntosComDoisXmlDeMesmoTamanho() throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
@@ -177,24 +177,14 @@ public class SimilarNodeTest {
 
         NodeList listaXml1 = xml1.getElementsByTagName("*");
         NodeList listaXml2 = xml2.getElementsByTagName("*");
-        List<DadosEstatisticos> resultadoGeral = procurarSimilaridades(listaXml1, listaXml2);
+        List<DadosEstatisticos> resultadoGeral = procurarSimilaridades(listaXml1.item(0).getChildNodes(), listaXml2.item(0).getChildNodes());
         for (DadosEstatisticos dadosEstatisticos : resultadoGeral) {
             System.out.printf("%s   <====>   %s  percentual de similaridade  = %.3f\n", dadosEstatisticos.getNode1(), dadosEstatisticos.getNode2(), dadosEstatisticos.getPercentual());
         }
-        System.out.printf("\n\n");
-        System.out.println("SIMILARIDADES ENTRE NODES COM O PERCENTUAL ACIMA DO ESTABELECIDO:");
-        for (DadosEstatisticos dadosEstatisticos : resultadoGeral) {
-            if (dadosEstatisticos.getPercentual() > 0.7) {
-                System.out.printf("%s   <====>   %s  percentual de similaridade  = %.3f\n", dadosEstatisticos.getNode1(), dadosEstatisticos.getNode2(), dadosEstatisticos.getPercentual());
-            }
-        }
-
-
-//        System.out.println("TODOSSSSS OS VALORESSSSS        " + procurarSimilaridades(listaXml1.item(0).getChildNodes(), listaXml2.item(0).getChildNodes(), resultadoGeral));
-//        System.out.println("TOTAL DE SIMILARIDADES ENCONTRADAS     " + qtdSimilaridadesEncontradas);
+        System.out.println("=============================================");
     }
 
-//    @Test
+    @Test
     public void similaridadeDeconjuntosComDoisXmlComMesmosElementosMasTamanhoDiferentes() throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
@@ -208,26 +198,14 @@ public class SimilarNodeTest {
         for (DadosEstatisticos dadosEstatisticos : resultadoGeral) {
             System.out.printf("%s   <====>   %s  percentual de similaridade  = %.3f\n", dadosEstatisticos.getNode1(), dadosEstatisticos.getNode2(), dadosEstatisticos.getPercentual());
         }
-        System.out.printf("\n\n");
-        System.out.println("SIMILARIDADES ENTRE NODES COM O PERCENTUAL ACIMA DO ESTABELECIDO:");
-        int totalDeElementosAcimaPercentual = 0;
-        double somatorioSimilaridades = 0.0;
-        for (DadosEstatisticos dadosEstatisticos : resultadoGeral) {
-            if (dadosEstatisticos.getPercentual() > 0.7) {
-                System.out.printf("%s   <====>   %s  percentual de similaridade  = %.3f\n", dadosEstatisticos.getNode1(), dadosEstatisticos.getNode2(), dadosEstatisticos.getPercentual());
-                totalDeElementosAcimaPercentual++;
-                somatorioSimilaridades += dadosEstatisticos.getPercentual();
-            }
-        }
-        System.out.printf("Total da similaridade do conjunto : %.3f\n", somatorioSimilaridades / totalDeElementosAcimaPercentual);
     }
 
     @Test
-    public void similaridadeDeconjuntosComDoisXmlComMesmosElementosComFilhos() throws ParserConfigurationException, SAXException, IOException {
+    public void similaridadeDeconjuntosComDoisXmlComMesmosElementosComFilhosDeTamanhosIguais() throws ParserConfigurationException, SAXException, IOException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         DocumentBuilder db = dbf.newDocumentBuilder();
         Document xml1 = db.parse(new InputSource(new StringReader("<raiz><a/><b/><c><d/><e/></c></raiz>")));
-        Document xml2 = db.parse(new InputSource(new StringReader("<raiz><a/><b/><c><d/><e/></c></raiz>")));
+        Document xml2 = db.parse(new InputSource(new StringReader("<raiz><c><e/><d/></c><a/><b/></raiz>")));
 
         NodeList listaXml1 = xml1.getElementsByTagName("*");
         NodeList listaXml2 = xml2.getElementsByTagName("*");
@@ -236,18 +214,40 @@ public class SimilarNodeTest {
         for (DadosEstatisticos dadosEstatisticos : resultadoGeral) {
             System.out.printf("%s   <====>   %s  percentual de similaridade  = %.3f\n", dadosEstatisticos.getNode1(), dadosEstatisticos.getNode2(), dadosEstatisticos.getPercentual());
         }
-        System.out.printf("\n\n");
-        System.out.println("SIMILARIDADES ENTRE NODES COM O PERCENTUAL ACIMA DO ESTABELECIDO:");
-        int totalDeElementosAcimaPercentual = 0;
-        double somatorioSimilaridades = 0.0;
+        System.out.println("==================================================");
+    }
+
+    @Test
+    public void similaridadeDeconjuntosComDoisXmlComMesmosElementosComFilhosDeTamanhosDiferente() throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document xml1 = db.parse(new InputSource(new StringReader("<raiz><a/><b/><c><d/><e/></c><teste><g><h/></g></teste></raiz>")));
+        Document xml2 = db.parse(new InputSource(new StringReader("<raiz><c><d/></c><a/><b/><f><g><h/></g></f></raiz>")));
+
+        NodeList listaXml1 = xml1.getElementsByTagName("*");
+        NodeList listaXml2 = xml2.getElementsByTagName("*");
+        List<DadosEstatisticos> resultadoGeral = procurarSimilaridades(listaXml1.item(0).getChildNodes(), listaXml2.item(0).getChildNodes());
+
         for (DadosEstatisticos dadosEstatisticos : resultadoGeral) {
-            if (dadosEstatisticos.getPercentual() > 0.7) {
-                System.out.printf("%s   <====>   %s  percentual de similaridade  = %.3f\n", dadosEstatisticos.getNode1(), dadosEstatisticos.getNode2(), dadosEstatisticos.getPercentual());
-                totalDeElementosAcimaPercentual++;
-                somatorioSimilaridades += dadosEstatisticos.getPercentual();
-            }
+            System.out.printf("%s   <====>   %s  percentual de similaridade  = %.3f\n", dadosEstatisticos.getNode1(), dadosEstatisticos.getNode2(), dadosEstatisticos.getPercentual());
         }
-        System.out.printf("Total da similaridade do conjunto : %.3f\n", somatorioSimilaridades / totalDeElementosAcimaPercentual);
+        System.out.println("==============================================");
+    }
+
+    @Test
+    public void similaridadeDeconjuntosComDoisXmlQualquer() throws ParserConfigurationException, SAXException, IOException {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        Document xml1 = db.parse(new InputSource(new StringReader("<artigo><autor><nome></nome></autor><titulo></titulo><resumo></resumo><secao></secao><bibliografia><referencia><obra></obra><autor><nome></nome></autor><ano></ano><local></local></referencia></bibliografia></artigo>")));
+        Document xml2 = db.parse(new InputSource(new StringReader("<artigo><autor><nome></nome></autor><titulo></titulo><resumo></resumo><secao></secao><bibliografia><referencia><obra></obra><autor><nome></nome></autor><ano></ano><local></local></referencia></bibliografia></artigo>")));
+
+        NodeList listaXml1 = xml1.getElementsByTagName("*");
+        NodeList listaXml2 = xml2.getElementsByTagName("*");
+        List<DadosEstatisticos> resultadoGeral = procurarSimilaridades(listaXml1.item(0).getChildNodes(), listaXml2.item(0).getChildNodes());
+
+        for (DadosEstatisticos dadosEstatisticos : resultadoGeral) {
+            System.out.printf("%s   <====>   %s  percentual de similaridade  = %.3f\n", dadosEstatisticos.getNode1(), dadosEstatisticos.getNode2(), dadosEstatisticos.getPercentual());
+        }
     }
 
 //    @Test
@@ -269,23 +269,47 @@ public class SimilarNodeTest {
     private List<DadosEstatisticos> procurarSimilaridades(NodeList lista1, NodeList lista2) {
         List<DadosEstatisticos> resultado = new ArrayList<DadosEstatisticos>();
         MongeElkan me = new MongeElkan();
+        double totalSimilaridadeRaiz = 0.0;
         for (int i = 0; i < lista1.getLength(); i++) {
             for (int j = 0; j < lista2.getLength(); j++) {
                 if (lista1.item(i).hasChildNodes() && lista2.item(j).hasChildNodes()) {
                     resultado.addAll(procurarSimilaridades(lista1.item(i).getChildNodes(), lista2.item(j).getChildNodes()));
                 } else if (!lista1.item(i).hasChildNodes() && !lista2.item(j).hasChildNodes()) {
                     double similaridadeCorrente = me.getSimilarity(lista1.item(i).getNodeName(), lista2.item(j).getNodeName());
-                    DadosEstatisticos dadosEstatisticos = new DadosEstatisticos();
-                    dadosEstatisticos.setNode1(lista1.item(i).getNodeName());
-                    dadosEstatisticos.setNode2(lista2.item(j).getNodeName());
-                    dadosEstatisticos.setPercentual(similaridadeCorrente);
-                    resultado.add(dadosEstatisticos);
+                    if (similaridadeCorrente >= 0.6) {
+                        DadosEstatisticos dadosEstatisticos = new DadosEstatisticos();
+                        dadosEstatisticos.setNode1(lista1.item(i).getNodeName());
+                        dadosEstatisticos.setNode2(lista2.item(j).getNodeName());
+                        dadosEstatisticos.setPercentual(similaridadeCorrente);
+                        resultado.add(dadosEstatisticos);
+//                        totalSimilaridadeRaiz += similaridadeCorrente;
+                    }
                 }
             }
         }
-        int totalDeDesconto = Math.abs(lista1.getLength() - lista2.getLength());
-        System.out.println("TOTAL DE DESCONTO POR EXCESSO DE FILHOS    " + totalDeDesconto);
-        return resultado;
-//        return similaridade / (lista1.getLength() * lista1.getLength() - (totalDeDesconto * DESCONTO));
+        for (DadosEstatisticos dadosEstatisticos : resultado) {
+            totalSimilaridadeRaiz += dadosEstatisticos.getPercentual();
         }
+        int totalDeDesconto = Math.abs(lista1.getLength() - lista2.getLength());
+        DadosEstatisticos dadosEstatisticos = new DadosEstatisticos();
+        dadosEstatisticos.setNode1(lista1.item(0).getParentNode().getNodeName());
+        dadosEstatisticos.setNode2(lista2.item(0).getParentNode().getNodeName());
+        if (totalDeDesconto > 0) {
+            if (resultado.size() > 0) {
+                dadosEstatisticos.setPercentual((totalSimilaridadeRaiz / resultado.size()) - totalDeDesconto * SimilarNode.ELEMENT_CHILDREN_WEIGTH);
+            } else {
+                dadosEstatisticos.setPercentual(0.0);
+            }
+        } else {
+            if (resultado.size() > 0) {
+                dadosEstatisticos.setPercentual((totalSimilaridadeRaiz / resultado.size()));
+            } else {
+                dadosEstatisticos.setPercentual(0.0);
+            }
+        }
+        if (dadosEstatisticos.getPercentual() >= 0.6) {
+            resultado.add(dadosEstatisticos);
+        }
+        return resultado;
+    }
 }

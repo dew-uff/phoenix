@@ -1,8 +1,7 @@
 package gems.ic.uff.br.modelo;
 
 import com.sun.org.apache.xpath.internal.NodeSet;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -20,7 +19,7 @@ public class SimilarNode extends Similar<SimilarNode> {
     public static final double ATTRIBUTE_WEIGTH = 0.4;
     public static final double ELEMENT_VALUE_WEIGTH = 0.5;
     public static final double ELEMENT_NAME_WEIGTH = 1;
-    public static final double ELEMENT_CHILDREN_WEIGTH = 0.6;
+    public static final double ELEMENT_CHILDREN_WEIGTH = 0.1;
 
     public SimilarNode(Node node) {
         this.node = node;
@@ -102,29 +101,9 @@ public class SimilarNode extends Similar<SimilarNode> {
             if ((elementNodes.size() != 0 && otherElementNodes.size() == 0) || (elementNodes.size() == 0 && otherElementNodes.size() != 0)) {
                 similarity -= ELEMENT_CHILDREN_WEIGTH;
             } else {
-
-                //testando
-                List<String> elementoNodes = new ArrayList();
-                for (int i = 0; i < elementNodes.getLength(); i++) {
-                    elementoNodes.add(elementNodes.item(i).getNodeName());
-                }
-                List<String> otherElementoNodes = new ArrayList();
-//                MongeElkan me =  new MongeElkan(new EuclideanDistance());
-                for (int i = 0; i < otherElementNodes.getLength(); i++) {
-                    otherElementoNodes.add(otherElementNodes.item(i).getNodeName());
-                }
-
-                System.out.println("ANTESSSSSSS     " + otherElementoNodes.size());
-                otherElementoNodes.removeAll(elementoNodes);
-                System.out.println("DEPOISSSSSS     " + otherElementoNodes.size());
-
-
+                similarity -= ELEMENT_CHILDREN_WEIGTH;
             }
-
-        } else {
-            similarity -= ELEMENT_CHILDREN_WEIGTH;
         }
-
         return similarity;
     }
 
