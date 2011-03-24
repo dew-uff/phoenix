@@ -1,7 +1,10 @@
 package gems.ic.uff.br.modelo;
 
-public class LcsXML extends LongestCommonSubsequence<SimilarNode> {
+import gems.ic.uff.br.modelo.algorithm.LongestCommonSubsequence;
+import gems.ic.uff.br.modelo.similar.SimilarNode;
+import gems.ic.uff.br.modelo.similar.Similar;
 
+public class LcsXML extends LongestCommonSubsequence<Similar> {
     private XML x;
     private XML y;
 

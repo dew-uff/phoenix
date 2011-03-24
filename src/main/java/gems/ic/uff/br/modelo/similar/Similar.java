@@ -1,4 +1,4 @@
-package gems.ic.uff.br.modelo;
+package gems.ic.uff.br.modelo.similar;
 
 /**
  * Classe criada para usar a similaridade ao invéz da igualdade nos algoritmos

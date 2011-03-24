@@ -45,11 +45,10 @@ public class XML {
 
     public void removeWhiteSpaces(Document doc) {
 //        doc.getDocumentElement().normalize();
-        XPathFactory xpathFactory = XPathFactory.newInstance();
 
         try {
             // XPath para procurar por nós com textos vazios
-            XPathExpression xpathExp = xpathFactory.newXPath().compile("//text()[normalize-space(.) = '']");
+            XPathExpression xpathExp = factory.newXPath().compile("//text()[normalize-space(.) = '']");
             NodeList emptyTextNodes = (NodeList) xpathExp.evaluate(doc, XPathConstants.NODESET);
 
             // Remove cada texto vazio do documento

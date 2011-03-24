@@ -40,10 +40,5 @@
             <version>1.8.5</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>uk.ac.shef.wit</groupId>
-            <artifactId>simmetrics</artifactId>
-            <version>1.6.2</version>
-        </dependency>
     </dependencies>
 </project>
