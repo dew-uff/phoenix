@@ -10,16 +10,16 @@ import gems.ic.uff.br.modelo.similar.Similar;
  */
 public abstract class MongeElkan<VALUE extends Similar> extends AbstractAlgorithm {
 
-    public double similaridade() {
-        double sumMatches = 0.0;
+    public float similaridade() {
+        float sumMatches = 0f;
         for (int i = 0; i < this.lengthOfX(); i++) {
-            double maxFound = 0.0;
+            float maxFound = 0f;
             Similar valueX = valueOfX(i);
 
             for (int j = 0; j < this.lengthOfY(); j++) {
                 Similar valueY = valueOfY(j);
 
-                final double found = valueX.similar(valueY);
+                final float found = valueX.similar(valueY);
                 if (found > maxFound) {
                     maxFound = found;
                 }
@@ -27,6 +27,6 @@ public abstract class MongeElkan<VALUE extends Similar> extends AbstractAlgorith
             sumMatches += maxFound;
         }
 
-        return sumMatches / ((lengthOfX() + lengthOfY()) / 2.0);
+        return sumMatches / ((lengthOfX() + lengthOfY()) / 2f);
     }
 }

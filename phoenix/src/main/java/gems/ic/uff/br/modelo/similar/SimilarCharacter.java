@@ -13,7 +13,7 @@ public class SimilarCharacter extends Similar<SimilarCharacter> {
     }
 
     @Override
-    public double similar(SimilarCharacter otherCharacter) {
+    public float similar(SimilarCharacter otherCharacter) {
         return this.character.equals(otherCharacter.getChar())? 1 : 0;
     }
 

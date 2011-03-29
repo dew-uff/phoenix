@@ -27,7 +27,7 @@ public class MongeElkanListTest {
     public void similaridadeEntreElementosIguais() {
         similarList.add(new SimilarString("a"));
 
-        assertEquals(1, new MongeElkanList(similarList, similarList).similaridade(), 0);
+        assertEquals(1, new HungarianList(similarList, similarList).similaridade(), 0);
     }
     
     @Test
@@ -35,7 +35,7 @@ public class MongeElkanListTest {
         similarList.add(new SimilarString("a"));
         otherSimilarList.add(new SimilarString("b"));
 
-        assertEquals(0, new MongeElkanList(similarList, otherSimilarList).similaridade(), 0);
+        assertEquals(0, new HungarianList(similarList, otherSimilarList).similaridade(), 0);
     }
     
     @Test
@@ -44,6 +44,6 @@ public class MongeElkanListTest {
         similarList.add(new SimilarString("b"));
         otherSimilarList.add(new SimilarString("b"));
 
-        assertEquals(0.6, new MongeElkanList(similarList, otherSimilarList).similaridade(), 0.1);
+        assertEquals(0.6, new HungarianList(similarList, otherSimilarList).similaridade(), 0.1);
     }
 }

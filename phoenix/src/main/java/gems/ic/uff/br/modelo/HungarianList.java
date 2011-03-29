@@ -7,17 +7,17 @@ import gems.ic.uff.br.modelo.similar.SimilarNode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MongeElkanList extends MongeElkan<Similar> {
+public class HungarianList extends MongeElkan<Similar> {
 
     private List<Similar> x;
     private List<Similar> y;
 
-    public MongeElkanList(List<Similar> from, List<Similar> to) {
+    public HungarianList(List<Similar> from, List<Similar> to) {
         this.x = from;
         this.y = to;
     }
     
-    public MongeElkanList(NodeSet from, NodeSet to) {
+    public HungarianList(NodeSet from, NodeSet to) {
         this.x = new ArrayList<Similar>(from.getLength());
         this.y = new ArrayList<Similar>(to.getLength());
         

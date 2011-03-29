@@ -1,9 +1,10 @@
 package gems.ic.uff.br.modelo.algorithm;
 
 import gems.ic.uff.br.modelo.similar.Similar;
-import org.w3c.dom.NodeList;
 
 public abstract class AbstractAlgorithm<VALUE extends Similar> {
+
+    float similarThreshold = 0.5f;
 
     protected abstract int lengthOfX();
 
@@ -21,8 +22,8 @@ public abstract class AbstractAlgorithm<VALUE extends Similar> {
         return valueOfY(j - 1);
     }
 
-    protected double similar(VALUE x1, VALUE y1) {
-        double similarity = 0;
+    protected float similar(VALUE x1, VALUE y1) {
+        float similarity = 0;
 
         if (x1 != null && y1 != null) {
             similarity = x1.similar(y1);
@@ -31,11 +32,9 @@ public abstract class AbstractAlgorithm<VALUE extends Similar> {
         return similarity;
     }
 
-    protected boolean ixXYSimilar(int i, int j) {
-        return similar(valueOfXInternal(i), valueOfYInternal(j)) > 0.5;
+    protected boolean isXYSimilar(int i, int j) {
+        return similar(valueOfXInternal(i), valueOfYInternal(j)) > similarThreshold;
     }
-    
-    public abstract double similaridade();
-    
-//    public abstract double similaridadeCriandoDiffs(NodeList diff1, NodeList diff2);
+
+    public abstract float similaridade();
 }

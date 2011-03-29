@@ -13,7 +13,7 @@ public class SimilarString extends Similar<SimilarString> {
     }
 
     @Override
-    public double similar(SimilarString otherString) {
+    public float similar(SimilarString otherString) {
         return this.string.equals(otherString.getString())? 1 : 0;
     }
 

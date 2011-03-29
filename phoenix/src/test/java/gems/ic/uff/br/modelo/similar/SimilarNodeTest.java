@@ -1,50 +1,14 @@
 package gems.ic.uff.br.modelo.similar;
 
-import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
 import org.xml.sax.InputSource;
 import java.io.StringReader;
 import javax.xml.parsers.DocumentBuilderFactory;
-import gems.ic.uff.br.modelo.similar.SimilarNode;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.w3c.dom.Node;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-import org.xml.sax.SAXException;
 
 public class SimilarNodeTest {
 
-    @Mock
-    private Node mockNode;
-    @Mock
-    private Node mockNode2;
-
     public SimilarNodeTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
-
-    @After
-    public void tearDown() {
     }
 
     public SimilarNode createSimilarNode(String xml) {
@@ -171,7 +135,7 @@ public class SimilarNodeTest {
         SimilarNode similarNode = createSimilarNode("<father><son></son></father>");
         SimilarNode similarNode2 = createSimilarNode("<father><son></son><son2></son2></father>");
 
-        assertEquals(1 - ((1 - (1 / (3/2.0))) * SimilarNode.ELEMENT_CHILDREN_WEIGTH), similarNode.elementsChildrenSimilarity(similarNode2.getNode(), 1), 0);
+        assertEquals(1 - ((1 - (1 / (3/2.0))) * SimilarNode.ELEMENT_CHILDREN_WEIGTH), similarNode.elementsChildrenSimilarity(similarNode2.getNode(), 1), 0.01);
     }
     
     @Test
@@ -184,7 +148,7 @@ public class SimilarNodeTest {
 
     @Test
     public void similaridadeNoMinimoIgualA0() {
-        double similaridade = 1;
+        float similaridade = 1;
         similaridade -= SimilarNode.ELEMENT_NAME_WEIGTH;
         similaridade -= SimilarNode.ELEMENT_VALUE_WEIGTH;
         similaridade -= SimilarNode.ATTRIBUTE_WEIGTH;
