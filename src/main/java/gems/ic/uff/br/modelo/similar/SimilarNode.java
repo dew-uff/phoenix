@@ -2,7 +2,7 @@ package gems.ic.uff.br.modelo.similar;
 
 import com.sun.org.apache.xpath.internal.NodeSet;
 import gems.ic.uff.br.modelo.LcsBatch;
-import gems.ic.uff.br.modelo.MongeElkanList;
+import gems.ic.uff.br.modelo.HungarianList;
 import java.util.ArrayList;
 import java.util.List;
 import org.w3c.dom.DOMException;
@@ -18,19 +18,19 @@ public class SimilarNode extends Similar<SimilarNode> {
 
     private Node node;
     //Depois de definidos, testar os valores padrões.
-    public static final double ATTRIBUTE_WEIGTH = 0.4;
-    public static final double ELEMENT_VALUE_WEIGTH = 0.5;
-    public static final double ELEMENT_NAME_WEIGTH = 1;
-    public static final double ELEMENT_CHILDREN_WEIGTH = 0.6;
-//    public static final double ELEMENT_TYPE = 0.6;
+    public static final float ATTRIBUTE_WEIGTH = 0.4f;
+    public static final float ELEMENT_VALUE_WEIGTH = 0.5f;
+    public static final float ELEMENT_NAME_WEIGTH = 1f;
+    public static final float ELEMENT_CHILDREN_WEIGTH = 0.6f;
+//    public static final float ELEMENT_TYPE = 0.6;
 
     public SimilarNode(Node node) {
         this.node = node;
     }
 
     @Override
-    public double similar(SimilarNode y) {
-        double similarity = 1;
+    public float similar(SimilarNode y) {
+        float similarity = 1;
         Node otherNode = y.getNode();
 
         if (node == null || otherNode == null) {
@@ -42,11 +42,10 @@ public class SimilarNode extends Similar<SimilarNode> {
             similarity = elementsChildrenSimilarity(otherNode, similarity);
         }
 
-        //TODO: Testar
         return similarity > 0 ? similarity : 0;
     }
 
-    public double elementsNameSimilarity(Node otherNode, double similarity) {
+    protected float elementsNameSimilarity(Node otherNode, float similarity) {
         if (!node.getNodeName().equals(otherNode.getNodeName())) {
             similarity -= ELEMENT_NAME_WEIGTH;
         }
@@ -54,7 +53,7 @@ public class SimilarNode extends Similar<SimilarNode> {
         return similarity;
     }
 
-    public double elementsValueSimilarity(Node otherNode, double similarity) throws DOMException {
+    protected float elementsValueSimilarity(Node otherNode, float similarity) throws DOMException {
         if (node.hasChildNodes() || otherNode.hasChildNodes()) {
             String nodeValue = null;
             String otherNodeValue = null;
@@ -79,7 +78,7 @@ public class SimilarNode extends Similar<SimilarNode> {
         return similarity;
     }
 
-    public double elementsAttributesSimilarity(Node otherNode, double similarity) {
+    protected float elementsAttributesSimilarity(Node otherNode, float similarity) {
         if (node.hasAttributes() || otherNode.hasAttributes()) {
             if (node.hasAttributes() && otherNode.hasAttributes()) {
                 NamedNodeMap attributesFromNode = node.getAttributes();
@@ -96,7 +95,7 @@ public class SimilarNode extends Similar<SimilarNode> {
         return similarity;
     }
 
-    public double elementsChildrenSimilarity(Node otherNode, double similarity) {
+    protected float elementsChildrenSimilarity(Node otherNode, float similarity) {
         NodeList childNodes = node.getChildNodes();
         NodeList otherChildNodes = otherNode.getChildNodes();
 
@@ -105,7 +104,7 @@ public class SimilarNode extends Similar<SimilarNode> {
             NodeSet otherElementNodes = getElementNodes(otherChildNodes);
 
             if ((elementNodes.size() != 0 && otherElementNodes.size() != 0)) {
-                MongeElkanList mongeElkanList = new MongeElkanList(elementNodes, otherElementNodes);
+                HungarianList mongeElkanList = new HungarianList(elementNodes, otherElementNodes);
                 similarity -= (1 - mongeElkanList.similaridade()) * ELEMENT_CHILDREN_WEIGTH;
             } else {
                 if (!(elementNodes.size() == 0 && otherElementNodes.size() == 0)) {
@@ -119,7 +118,7 @@ public class SimilarNode extends Similar<SimilarNode> {
         return similarity;
     }
 
-    private NodeSet getElementNodes(NodeList nodeList) {
+    protected NodeSet getElementNodes(NodeList nodeList) {
         NodeSet elementNodes = new NodeSet();
 
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -142,7 +141,7 @@ public class SimilarNode extends Similar<SimilarNode> {
      * @param otherNodeMap
      * @return 
      */
-    private List<List<Similar>> getAttributesFromNamedNodeMaps(NamedNodeMap nodeMap, NamedNodeMap otherNodeMap) {
+    protected List<List<Similar>> getAttributesFromNamedNodeMaps(NamedNodeMap nodeMap, NamedNodeMap otherNodeMap) {
         int nodeMapLength = nodeMap.getLength();
         int otherNodeMapLength = otherNodeMap.getLength();
 

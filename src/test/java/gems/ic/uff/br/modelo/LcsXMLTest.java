@@ -97,16 +97,6 @@ public class LcsXMLTest {
     }
 
     @Test
-    public void deveriaTerOValorDoLcsIgualAoNumeroDeNosMaisORootSeOsXmlsForemIguais() {
-        xml1 = new XML("<root><tag>content</tag><tag2>content2</tag2></root>");
-        xml2 = new XML("<root><tag>content</tag></root>");
-
-
-        LcsXML lcs = new LcsXML(xml1, xml1);
-        assertEquals(3, lcs.getLcsLength());
-    }
-
-    @Test
     public void testeCompleto() {
         xml1 = new XML("<root></root>");
         xml2 = new XML("<root></root>");

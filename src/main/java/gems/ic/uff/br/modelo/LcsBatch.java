@@ -14,8 +14,8 @@ public class LcsBatch {
         this.y = to;
     }
 
-    public double similaridade() {
-        double similaridade = 0;
+    public float similaridade() {
+        float similaridade = 0;
 
         //TODO: É melhor deixar dessa forma?
         if (x.get(0) instanceof SimilarString) {

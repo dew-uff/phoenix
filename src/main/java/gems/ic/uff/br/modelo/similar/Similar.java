@@ -12,5 +12,5 @@ public abstract class Similar<T extends Similar> {
      * @param y objeto a ser comparado
      * @return similaridade entre os objetos
      */
-    public abstract double similar(T y);
+    public abstract float similar(T y);
 }

@@ -22,7 +22,7 @@ public abstract class LongestCommonSubsequence<VALUE extends Similar> extends Ab
     A	0	1	1	1	2	2
     C	0	1	1	2	2	2
      */
-    public void calculateLcs() {
+    private void calculateLcs() {
         //Verifica se a tabela já foi montada anteriormente.
         if (table != null) {
             return;
@@ -37,7 +37,7 @@ public abstract class LongestCommonSubsequence<VALUE extends Similar> extends Ab
         //Seta os valores na tabela.
         for (int i = 1; i < table.length; i++) {
             for (int j = 1; j < table[i].length; j++) {
-                if (ixXYSimilar(i, j)) {
+                if (isXYSimilar(i, j)) {
                     table[i][j] = table[i - 1][j - 1] + 1;
                 } else {
                     table[i][j] = max(table[i][j - 1], table[i - 1][j]);
@@ -49,17 +49,15 @@ public abstract class LongestCommonSubsequence<VALUE extends Similar> extends Ab
     /**
      * @return o tamanho da maior sequência comum.
      */
-    public int getLcsLength() {
+    private int getLcsLength() {
         calculateLcs();
 
         return table[lengthOfX()][lengthOfY()];
     }
 
-    public double similaridade() {
+    public float similaridade() {
         calculateLcs();
-        
-        int lcsLength = getLcsLength();
-        
-        return lcsLength / ((lengthOfX() + lengthOfY()) / 2.0);
+
+        return getLcsLength() / ((lengthOfX() + lengthOfY()) / 2f);
     }
 }
