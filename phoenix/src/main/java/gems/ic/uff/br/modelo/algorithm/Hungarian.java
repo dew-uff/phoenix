@@ -46,7 +46,7 @@ import java.util.Set;
  * @author gary baker, http://www.thegarybakery.com
  * @author Peter Karich, peat_hal 'at' users 'dot' sourceforge 'dot' net
  */
-public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm  {
+public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm {
 
     /**
      * We need these arrays to ignore the invalid (all entries are MAX_VALUE)
@@ -58,12 +58,13 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
     private boolean[] coveredCols;
     private int[] starsByRow;
     private int[] starsByCol;
+    private float maiorElementoMatrix;
 
     private int[][] computeAssignments(float[][] matrix) {
         return originalComputeAssignments(matrix);
     }
 
-    private int[][] originalComputeAssignments(float[][] matrix) {
+    public int[][] originalComputeAssignments(float[][] matrix) {
         //assert matrix[0].length <= matrix.length : "Do not process matrices where cols > rows!";
 
         initialCovRows = new boolean[matrix.length];
@@ -95,7 +96,7 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
 
             while (primedZero == null) {
                 // keep making more zeroes until we find something that we can
-                // prime (i.e. a zero that is uncovered)                
+                // prime (i.e. a zero that is uncovered)
                 if (!makeMoreZeroes(matrix)) {
                     onlyInvalidEntries = true;
                     break;
@@ -133,8 +134,6 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
         for (int i = 0; i < matrix[0].length; i++) {
             if (starsByCol[i] != -1) {
                 retval[i] = new int[]{starsByCol[i], i};
-            } else {
-                retval[i] = new int[]{};
             }
             //else could happen if we covered an invalid col, because no valid entries
             //-> no assignment possible
@@ -397,6 +396,13 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
     @Override
     public float similaridade() {
         float[][] matrix = createSimilarityMatrix();
+        System.out.println("MATRIX DEPOIS DA NORMALIZACAO");
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                System.out.printf("%.2f  ", matrix[i][j]);
+            }
+            System.out.println("");
+        }
         int[][] result = computeAssignments(matrix);
 
         System.out.println("Similaridade:");
@@ -409,22 +415,46 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
 
         return 0f;
     }
-    
+
     private float[][] createSimilarityMatrix() {
         int xLength = this.lengthOfX();
         int yLength = this.lengthOfY();
-        
-        float[][] matrix = new float[xLength][yLength];
-        
-        for (int i = 0; i < xLength; i++) {
-            Similar valueX = valueOfX(i);
+        float[][] matrix;
 
-            for (int j = 0; j < yLength; j++) {
-                Similar valueY = valueOfY(j);
-                matrix[i][j] = valueX.similar(valueY);
+        if (xLength >= yLength) {
+            matrix = new float[xLength][xLength];
+        } else {
+            matrix = new float[yLength][yLength];
+        }
+
+        for (int i = 0; i < matrix.length; i++) {
+
+            for (int j = 0; j < matrix[i].length; j++) {
+                try {
+                    Similar valueX = valueOfX(i);
+                    Similar valueY = valueOfY(j);
+                    matrix[i][j] = valueX.similar(valueY);
+                    System.out.printf("%.2f  ", matrix[i][j]);
+                    if (matrix[i][j] > maiorElementoMatrix) {
+                        maiorElementoMatrix = matrix[i][j];
+                    }
+                } catch (Exception e) {
+                    matrix[i][j] = 0l;
+                    System.out.printf("%.2f  ", matrix[i][j]);
+                }
+            }
+            System.out.println("");
+        }
+        return normalizacaoElementos(matrix);
+//        return matrix;
+    }
+
+    public float[][] normalizacaoElementos(float[][] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                matrix[i][j] = maiorElementoMatrix - matrix[i][j];
             }
         }
-        
         return matrix;
     }
 }
