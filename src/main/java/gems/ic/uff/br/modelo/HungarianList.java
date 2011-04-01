@@ -1,13 +1,13 @@
 package gems.ic.uff.br.modelo;
 
 import com.sun.org.apache.xpath.internal.NodeSet;
-import gems.ic.uff.br.modelo.algorithm.MongeElkan;
+import gems.ic.uff.br.modelo.algorithm.Hungarian;
 import gems.ic.uff.br.modelo.similar.Similar;
 import gems.ic.uff.br.modelo.similar.SimilarNode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HungarianList extends MongeElkan<Similar> {
+public class HungarianList extends Hungarian<Similar> {
 
     private List<Similar> x;
     private List<Similar> y;
@@ -29,6 +29,7 @@ public class HungarianList extends MongeElkan<Similar> {
             y.add(new SimilarNode(to.item(i)));
         }
     }
+
 
     @Override
     protected int lengthOfX() {
