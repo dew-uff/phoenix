@@ -132,8 +132,8 @@ public class SimilarNodeTest {
 
     @Test
     public void similaridadeEntreFilhosDoElemento3() {
-        SimilarNode similarNode = createSimilarNode("<father><son></son></father>");
-        SimilarNode similarNode2 = createSimilarNode("<father><son></son><son2></son2></father>");
+        SimilarNode similarNode = createSimilarNode("<father><son></son><a/><b/><c/><d/><e/></father>");
+        SimilarNode similarNode2 = createSimilarNode("<father><son></son><a/><b/><c/><d/><e/></father>");
 
         assertEquals(1 - ((1 - (1 / (3/2.0))) * SimilarNode.ELEMENT_CHILDREN_WEIGTH), similarNode.elementsChildrenSimilarity(similarNode2.getNode(), 1), 0.01);
     }
