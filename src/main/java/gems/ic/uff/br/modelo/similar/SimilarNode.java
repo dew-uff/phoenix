@@ -104,8 +104,8 @@ public class SimilarNode extends Similar<SimilarNode> {
             NodeSet otherElementNodes = getElementNodes(otherChildNodes);
 
             if ((elementNodes.size() != 0 && otherElementNodes.size() != 0)) {
-                HungarianList mongeElkanList = new HungarianList(elementNodes, otherElementNodes);
-                similarity -= (1 - mongeElkanList.similaridade()) * ELEMENT_CHILDREN_WEIGTH;
+                HungarianList hungarianList = new HungarianList(elementNodes, otherElementNodes);
+                similarity -= (1 - hungarianList.similaridade()) * ELEMENT_CHILDREN_WEIGTH;
             } else {
                 if (!(elementNodes.size() == 0 && otherElementNodes.size() == 0)) {
                     similarity -= ELEMENT_CHILDREN_WEIGTH;

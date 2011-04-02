@@ -395,25 +395,28 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
 
     @Override
     public float similaridade() {
-        float[][] matrix = createSimilarityMatrix();
+        float[][] matrixComValoresOriginais = createSimilarityMatrix();
+        float[][] matrixNormalizada = createSimilarityMatrix();
+        matrixNormalizada = normalizacaoElementos(matrixNormalizada);
+
         System.out.println("MATRIX DEPOIS DA NORMALIZACAO");
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[i].length; j++) {
-                System.out.printf("%.2f  ", matrix[i][j]);
+        for (int i = 0; i < matrixNormalizada.length; i++) {
+            for (int j = 0; j < matrixNormalizada[i].length; j++) {
+                System.out.printf("%.2f  ", matrixNormalizada[i][j]);
             }
             System.out.println("");
         }
-        int[][] result = computeAssignments(matrix);
+        int[][] result = computeAssignments(matrixNormalizada);
 
+        float somatorioValores = 0l;
         System.out.println("Similaridade:");
         for (int i = 0; i < result.length; i++) {
-            for (int j = 0; j < result[i].length; j++) {
-                System.out.print(result[i][j] + " | ");
-            }
-            System.out.println("");
+            System.out.print(result[i][0] + " | ");
+            System.out.println(result[i][1] + " | ");
+            somatorioValores += matrixComValoresOriginais[result[i][0]][result[i][1]];
         }
 
-        return 0f;
+        return somatorioValores / result.length;
     }
 
     private float[][] createSimilarityMatrix() {
@@ -445,8 +448,7 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
             }
             System.out.println("");
         }
-        return normalizacaoElementos(matrix);
-//        return matrix;
+        return matrix;
     }
 
     public float[][] normalizacaoElementos(float[][] matrix) {
