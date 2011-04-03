@@ -24,6 +24,7 @@ public class SimilarNode extends Similar<SimilarNode> {
     public static final float ELEMENT_CHILDREN_WEIGTH = 0.6f;
 //    public static final float ELEMENT_TYPE = 0.6;
 
+
     public SimilarNode(Node node) {
         this.node = node;
     }
@@ -86,7 +87,7 @@ public class SimilarNode extends Similar<SimilarNode> {
 
                 List<List<Similar>> attributes = getAttributesFromNamedNodeMaps(attributesFromNode, attributesFromOtherNode);
                 similarity -= (1 - new LcsBatch(attributes.get(0), attributes.get(1)).similaridade()) * ATTRIBUTE_WEIGTH;
-                            
+
             } else {
                 similarity -= ATTRIBUTE_WEIGTH;
             }
@@ -131,7 +132,7 @@ public class SimilarNode extends Similar<SimilarNode> {
 
         return elementNodes;
     }
-    
+
     /**
      * Gera duas listas de strings com os valores dos atributos dos elementos.
      * Lista1: [month='3', year='2011']
@@ -148,7 +149,7 @@ public class SimilarNode extends Similar<SimilarNode> {
         //TODO: O tamanho do array não dá para ser descoberto, utilizar outra implementação de List?
         List<Similar> attributesFromNode = new ArrayList<Similar>(nodeMapLength + otherNodeMapLength);
         List<Similar> attributesFromOtherNode = new ArrayList<Similar>(nodeMapLength + otherNodeMapLength);
-        
+
         List<List<Similar>> attributesList = new ArrayList<List<Similar>>(2);
         attributesList.add(attributesFromNode);
         attributesList.add(attributesFromOtherNode);
@@ -159,11 +160,11 @@ public class SimilarNode extends Similar<SimilarNode> {
 
             //Adiciona todos os elementos da primeira lista.
             attributesFromNode.add(new SimilarString(item.getNodeValue()));
-            
+
             //Insere o elemento da/na segunda lista caso este exista na segunda lista.
             if (otherItem != null) {
                 attributesFromOtherNode.add(new SimilarString(otherItem.getNodeValue()));
-            //Caso contrário, insere uma String vazia.
+                //Caso contrário, insere uma String vazia.
             } else {
                 attributesFromOtherNode.add(new SimilarString(""));
             }
@@ -190,6 +191,7 @@ public class SimilarNode extends Similar<SimilarNode> {
 
     @Override
     public String toString() {
-        return node.toString();
+        return node.getNodeName();
     }
+
 }

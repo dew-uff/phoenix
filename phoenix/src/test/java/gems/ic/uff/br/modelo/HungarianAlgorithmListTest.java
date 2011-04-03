@@ -1,6 +1,5 @@
 package gems.ic.uff.br.modelo;
 
-import com.sun.org.apache.xpath.internal.NodeSet;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Before;
@@ -10,11 +9,8 @@ import gems.ic.uff.br.modelo.similar.SimilarNode;
 import gems.ic.uff.br.modelo.similar.SimilarString;
 import java.io.StringReader;
 import java.util.ArrayList;
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
@@ -63,9 +59,9 @@ public class HungarianAlgorithmListTest {
         similarList.add(new SimilarString("a"));
         similarList.add(new SimilarString("b"));
         similarList.add(new SimilarString("c"));
-        otherSimilarList.add(new SimilarString("b"));
-        otherSimilarList.add(new SimilarString("a"));
-        otherSimilarList.add(new SimilarString("c"));
+        otherSimilarList.add(new SimilarString("x"));
+        otherSimilarList.add(new SimilarString("y"));
+        otherSimilarList.add(new SimilarString("z"));
         assertEquals(0, new HungarianList(similarList, otherSimilarList).similaridade(), 0);
     }
 }

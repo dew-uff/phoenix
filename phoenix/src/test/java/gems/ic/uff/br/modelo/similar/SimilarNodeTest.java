@@ -135,7 +135,14 @@ public class SimilarNodeTest {
         SimilarNode similarNode = createSimilarNode("<father><son></son><a/><b/><c/><d/><e/></father>");
         SimilarNode similarNode2 = createSimilarNode("<father><son></son><a/><b/><c/><d/><e/></father>");
 
-        assertEquals(1 - ((1 - (1 / (3/2.0))) * SimilarNode.ELEMENT_CHILDREN_WEIGTH), similarNode.elementsChildrenSimilarity(similarNode2.getNode(), 1), 0.01);
+        assertEquals(1 , similarNode.elementsChildrenSimilarity(similarNode2.getNode(), 1), 0.01);
+    }
+//    @Test
+    public void similaridadeEntreFilhosDoElemento4() {
+        SimilarNode similarNode = createSimilarNode("<teste><nome>Fernando</nome><cpf>123</cpf><idade></idade><as></as><bs></bs><cidade></cidade></teste>");
+        SimilarNode similarNode2 = createSimilarNode("<teste><nome>Fernando</nome><cpf>123</cpf><idade></idade><cidade></cidade></teste>");
+
+        assertEquals(1 , similarNode.elementsChildrenSimilarity(similarNode2.getNode(), 1), 0.01);
     }
     
     @Test

@@ -1,0 +1,83 @@
+<?xml version='1.0'?>
+<artigo data="" ultima_revisao="" versao="1">
+   <autores>
+	   <autor>
+	      <nome>Arnaud Sahuguet</nome>
+	      <instituicao>University of Pennsylvania</instituicao>
+	      <endereco></endereco>
+	   </autor>
+	   <autor>
+	      <nome>Maria Ana</nome>
+	      <instituicao>UP</instituicao>
+	      <endereco></endereco>
+	   </autor>
+   </autores>
+   <!-- oi -->
+   <titulo_artigo>Everything you ever wanted to know about DTD's, but were afraid to ask</titulo_artigo>
+   <resumo></resumo>
+   <secao titulo = "Introduction" numero="s1">
+      <paragrafo>For the last TWO YEARS ... </paragrafo>
+      <paragrafo>For the last two years ... </paragrafo>
+      <paragrafo>From a database perspective <citacao ref="b1"/> for instance, DTDs can be useful to </paragrafo>
+   </secao>
+   <secao titulo="DTDs in a nutshell" numero="s2">
+      <paragrafo>We briefly describe the structure of a DTD, which can consists of the following items listed bellow.</paragrafo>
+      <paragrafo>...</paragrafo>
+   </secao>
+   <secao titulo="The DTD survey" numero="s3">
+      <paragrafo>We present the details of the survey ... </paragrafo>
+      <figura tipo = "gif" nome = "figura1.if"/>
+      <paragrafo>The experiments were done using sgrep , ....     </paragrafo>
+      <figura tipo = "gif" nome = "figura2.gif"/>
+   </secao>
+   <secao titulo="What we have benn looking at" numero="s3.1">
+      <paragrafo>We are interested in various properties of a DTD. </paragrafo>
+      <paragrafo numero="234" tipo="wildcards">Here you can find some wildcards, such as * or # </paragrafo>
+      <paragrafo>Second, we look at its structure, in terms of number of root elements...      </paragrafo>
+   </secao>
+   <secao titulo="Results" numero="s3.2">
+   	<paragrafo>As mentioned previously, ... </paragrafo>
+   	<figura tipo = "jpeg" nome = "figura3.gif"/>
+   	<paragrafo>We also notice that DTD authors ...</paragrafo>
+   	<paragrafo> The author Maria Ana from UP</paragrafo>
+   </secao>
+   <secao titulo="Shortcomings and requirements" numero="s4">
+      <paragrafo>The conclusions of the survey show that DTDs - as they are ...     </paragrafo>
+      <paragrafo>..<?ACME- paginator DO: new- page?>.</paragrafo>
+   </secao>
+   <bibliografia>
+      <referencia id="b1">
+         <obra>
+            <titulo>Data on the Web: From Relations to Semistructured Data and XML</titulo>
+            <autor>
+               <nome>Serge Abiteboul</nome>
+               <endereco></endereco>
+            </autor>
+            <autor>
+               <nome>Peter Buneman</nome>
+               <endereco></endereco>
+            </autor>
+            <autor>
+               <nome>Dan Suciu</nome>
+               <endereco></endereco>
+            </autor>
+            <ano>1999</ano>
+         </obra>
+      </referencia>
+      <referencia id="b2">
+         <obra>
+            <titulo>Union Types for Semistructured Data</titulo>
+            <autor>
+               <nome>Peter Buneman</nome>
+               <endereco></endereco>
+            </autor>
+            <autor>
+               <nome>Benjamin Pierce</nome>
+               <endereco></endereco>
+            </autor>
+            <ano>1999</ano>
+            <local>University of Pennsylvania</local>
+         </obra>
+      </referencia>
+   </bibliografia>
+</artigo>
