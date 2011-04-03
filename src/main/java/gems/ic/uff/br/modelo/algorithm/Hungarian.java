@@ -34,6 +34,7 @@
 package gems.ic.uff.br.modelo.algorithm;
 
 import gems.ic.uff.br.modelo.similar.Similar;
+import gems.ic.uff.br.modelo.similar.SimilarNode;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -59,6 +60,8 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
     private int[] starsByRow;
     private int[] starsByCol;
     private float maiorElementoMatrix;
+    public static String[] nomeElementoHorizontal;
+    public static String[] nomeElementoVertical;
 
     private int[][] computeAssignments(float[][] matrix) {
         return originalComputeAssignments(matrix);
@@ -141,6 +144,16 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
         return retval;
     }
 
+    private float[][] copiarMatrix(float[][] matrixComValoresOriginais) {
+        float[][] matrixNormalizada = new float[matrixComValoresOriginais.length][matrixComValoresOriginais.length];
+        for (int i = 0; i < matrixComValoresOriginais.length; i++) {
+            for (int j = 0; j < matrixComValoresOriginais.length; j++) {
+                matrixNormalizada[i][j] = matrixComValoresOriginais[i][j];
+            }
+        }
+        return matrixNormalizada;
+    }
+
     /**
      * @param b true if you want to cover the specified row; false to uncover
      */
@@ -176,6 +189,23 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
             }
         }
         return true;
+    }
+
+    private void imprimeNomeElementosComparadosConsole(float[][] matrix) {
+        System.out.printf("\n\n%6s","Elementos");
+        for (int i = 0; i < matrix.length; i++) {
+            try {
+                nomeElementoHorizontal[i] = valueOfX(i).toString();
+            } catch (Exception e) {
+                nomeElementoVertical[i] = "ELEMENTO VAZIO";
+            }
+            try {
+                nomeElementoVertical[i] = valueOfX(i).toString();
+            } catch (Exception e) {
+                nomeElementoVertical[i] = "ELEMENTO VAZIO";
+            }
+            System.out.printf("%15s|", nomeElementoVertical[i]);
+        }
     }
 
     private boolean[] initCoveredRows() {
@@ -396,9 +426,8 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
     @Override
     public float similaridade() {
         float[][] matrixComValoresOriginais = createSimilarityMatrix();
-        float[][] matrixNormalizada = createSimilarityMatrix();
+        float[][] matrixNormalizada = copiarMatrix(matrixComValoresOriginais);
         matrixNormalizada = normalizacaoElementos(matrixNormalizada);
-
         System.out.println("MATRIX DEPOIS DA NORMALIZACAO");
         for (int i = 0; i < matrixNormalizada.length; i++) {
             for (int j = 0; j < matrixNormalizada[i].length; j++) {
@@ -415,7 +444,7 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
             System.out.println(result[i][1] + " | ");
             somatorioValores += matrixComValoresOriginais[result[i][0]][result[i][1]];
         }
-
+        System.out.println("...FIM DA SIMILARIDADE");
         return somatorioValores / result.length;
     }
 
@@ -426,24 +455,31 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
 
         if (xLength >= yLength) {
             matrix = new float[xLength][xLength];
+            nomeElementoHorizontal = new String[xLength];
+            nomeElementoVertical = new String[xLength];
         } else {
+            nomeElementoHorizontal = new String[yLength];
+            nomeElementoVertical = new String[yLength];
             matrix = new float[yLength][yLength];
         }
+        
+        imprimeNomeElementosComparadosConsole(matrix);
 
+        System.out.println("");
         for (int i = 0; i < matrix.length; i++) {
-
+            System.out.printf("%-7s", nomeElementoHorizontal[i]);
             for (int j = 0; j < matrix[i].length; j++) {
                 try {
                     Similar valueX = valueOfX(i);
                     Similar valueY = valueOfY(j);
                     matrix[i][j] = valueX.similar(valueY);
-                    System.out.printf("%.2f  ", matrix[i][j]);
+                    System.out.printf("%15.2f  ", matrix[i][j]);
                     if (matrix[i][j] > maiorElementoMatrix) {
                         maiorElementoMatrix = matrix[i][j];
                     }
                 } catch (Exception e) {
                     matrix[i][j] = 0l;
-                    System.out.printf("%.2f  ", matrix[i][j]);
+                    System.out.printf("%12.2f  ", matrix[i][j]);
                 }
             }
             System.out.println("");

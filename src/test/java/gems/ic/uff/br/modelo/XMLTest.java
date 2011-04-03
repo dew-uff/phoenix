@@ -1,31 +1,14 @@
 package gems.ic.uff.br.modelo;
 
-import org.junit.After;
-import org.junit.AfterClass;
+import gems.ic.uff.br.modelo.similar.SimilarNode;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class XMLTest {
 
-    public XMLTest() {
-    }
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
     @Before
     public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test
@@ -43,8 +26,38 @@ public class XMLTest {
     }
 
     @Test
+    public void deveriaCriarUmXmlAtravesDeUmArquivoXML2() {
+        XML xml = new XML("artigo.xml");
+        assertNotNull(xml.getDocument());
+    }
+
+    @Test
     public void naoDeveriaCriarUmXmlSeOArquivoXMLNaoExistir() {
         XML xml = new XML("arquivo.xml");
         assertNull(xml.getDocument());
+    }
+
+    @Test
+    public void comparacaoDoisArquivosXMLIguais() {
+        XML xml = new XML("books.xml");
+
+//        System.out.println(xml.toString());
+
+        SimilarNode similarNode1 = new SimilarNode(xml.getDocument().getDocumentElement());
+        SimilarNode similarNode2 = new SimilarNode(xml.getDocument().getDocumentElement());
+        assertEquals(1, similarNode1.similar(similarNode2), 0.1);
+    }
+
+//    @Test
+    public void comparacaoDoisArquivosXMLDiferente() {
+        XML xml = new XML("books.xml");
+        XML xml2 = new XML("artigo.xml");
+
+        System.out.println(xml.toString());
+
+        SimilarNode similarNode1 = new SimilarNode(xml.getDocument().getDocumentElement());
+        SimilarNode similarNode2 = new SimilarNode(xml2.getDocument().getDocumentElement());
+//        assertEquals(1, similarNode1.similar(similarNode2), 0.1);
+        System.out.println("SIMILARIDADE => " + similarNode1.similar(similarNode2));
     }
 }
