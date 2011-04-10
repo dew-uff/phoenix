@@ -2,25 +2,32 @@ package gems.ic.uff.br.modelo;
 
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.junit.Before;
+
 import java.util.List;
+
 import gems.ic.uff.br.modelo.similar.Similar;
 import gems.ic.uff.br.modelo.similar.SimilarNode;
 import gems.ic.uff.br.modelo.similar.SimilarString;
+
 import java.io.StringReader;
 import java.util.ArrayList;
 import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.junit.Test;
 import org.xml.sax.InputSource;
+
 import static org.junit.Assert.*;
+
 import org.xml.sax.SAXException;
 
-public class HungarianAlgorithmListTest {
+public class HungarianTest {
 
     private List<Similar> similarList;
     private List<Similar> otherSimilarList;
 
-    public HungarianAlgorithmListTest() {
+    public HungarianTest() {
     }
 
     @Before
@@ -38,30 +45,39 @@ public class HungarianAlgorithmListTest {
         }
     }
 
-//    @Test
+    @Test
     public void similaridadeEntreElementosIguais() {
-        similarList.add(new SimilarString("a"));
+        similarList.add(createSimilarNode("<igual/>"));
 
         assertEquals(1, new HungarianList(similarList, similarList).similaridade(), 0);
     }
 
-//    @Test
+    @Test
     public void similaridadeEntreElementosDiferentes() {
-        similarList.add(new SimilarString("a"));
-        otherSimilarList.add(new SimilarString("b"));
+        similarList.add(createSimilarNode("<a/>"));
+        similarList.add(createSimilarNode("<b/>"));
 
         assertEquals(0, new HungarianList(similarList, otherSimilarList).similaridade(), 0);
 
     }
 
     @Test
-    public void similaridadeEntreUmElementoIgualEUmDiferente() throws ParserConfigurationException, SAXException, IOException {
-        similarList.add(new SimilarString("a"));
-        similarList.add(new SimilarString("b"));
-        similarList.add(new SimilarString("c"));
-        otherSimilarList.add(new SimilarString("x"));
-        otherSimilarList.add(new SimilarString("y"));
-        otherSimilarList.add(new SimilarString("z"));
-        assertEquals(0, new HungarianList(similarList, otherSimilarList).similaridade(), 0);
+    public void similaridadeEntreUmElementoIgualEUmDiferente() {
+        similarList.add(createSimilarNode("<igual/>"));
+        similarList.add(createSimilarNode("<a/>"));
+        otherSimilarList.add(createSimilarNode("<igual/>"));
+        otherSimilarList.add(createSimilarNode("<z/>"));
+        assertEquals(1.0 / (4.0 / 2.0), new HungarianList(similarList, otherSimilarList).similaridade(), 0);
+    }
+
+    @Test
+    public void similaridadeEntreDoisElementosIguaisEUmDiferente() {
+        similarList.add(createSimilarNode("<igual/>"));
+        similarList.add(createSimilarNode("<igual2/>"));
+        similarList.add(createSimilarNode("<a/>"));
+        otherSimilarList.add(createSimilarNode("<igual/>"));
+        otherSimilarList.add(createSimilarNode("<igual2/>"));
+        otherSimilarList.add(createSimilarNode("<z/>"));
+        assertEquals(2.0 / (6.0 / 2.0), new HungarianList(similarList, otherSimilarList).similaridade(), 0.01);
     }
 }
