@@ -34,7 +34,7 @@
 package gems.ic.uff.br.modelo.algorithm;
 
 import gems.ic.uff.br.modelo.similar.Similar;
-import gems.ic.uff.br.modelo.similar.SimilarNode;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -59,6 +59,8 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
     private boolean[] coveredCols;
     private int[] starsByRow;
     private int[] starsByCol;
+    private float[][] originalMatrix;
+    private int[][] result;
     private float maiorElementoMatrix;
     public static String[] nomeElementoHorizontal;
     public static String[] nomeElementoVertical;
@@ -144,16 +146,6 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
         return retval;
     }
 
-    private float[][] copiarMatrix(float[][] matrixComValoresOriginais) {
-        float[][] matrixNormalizada = new float[matrixComValoresOriginais.length][matrixComValoresOriginais.length];
-        for (int i = 0; i < matrixComValoresOriginais.length; i++) {
-            for (int j = 0; j < matrixComValoresOriginais.length; j++) {
-                matrixNormalizada[i][j] = matrixComValoresOriginais[i][j];
-            }
-        }
-        return matrixNormalizada;
-    }
-
     /**
      * @param b true if you want to cover the specified row; false to uncover
      */
@@ -189,23 +181,6 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
             }
         }
         return true;
-    }
-
-    private void imprimeNomeElementosComparadosConsole(float[][] matrix) {
-        System.out.printf("\n\n%6s","Elementos");
-        for (int i = 0; i < matrix.length; i++) {
-            try {
-                nomeElementoHorizontal[i] = valueOfX(i).toString();
-            } catch (Exception e) {
-                nomeElementoVertical[i] = "ELEMENTO VAZIO";
-            }
-            try {
-                nomeElementoVertical[i] = valueOfX(i).toString();
-            } catch (Exception e) {
-                nomeElementoVertical[i] = "ELEMENTO VAZIO";
-            }
-            System.out.printf("%15s|", nomeElementoVertical[i]);
-        }
     }
 
     private boolean[] initCoveredRows() {
@@ -423,76 +398,116 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
         return true;
     }
 
+    private void calculateHungarian() {
+        if (result == null) {
+            originalMatrix = createSimilarityMatrix();
+
+            float[][] matrixNormalizada = normalizarMatrix(copiarMatrix(originalMatrix));
+//            System.out.println("MATRIX DEPOIS DA NORMALIZACAO");
+//
+//            for (int i = 0; i < matrixNormalizada.length; i++) {
+//                for (int j = 0; j < matrixNormalizada[i].length; j++) {
+//                    System.out.printf("%.2f  ", matrixNormalizada[i][j]);
+//                }
+//                System.out.println("");
+//            }
+
+            result = computeAssignments(matrixNormalizada);
+        }
+    }
+
     @Override
     public float similaridade() {
-        float[][] matrixComValoresOriginais = createSimilarityMatrix();
-        float[][] matrixNormalizada = copiarMatrix(matrixComValoresOriginais);
-        matrixNormalizada = normalizacaoElementos(matrixNormalizada);
-        System.out.println("MATRIX DEPOIS DA NORMALIZACAO");
-        for (int i = 0; i < matrixNormalizada.length; i++) {
-            for (int j = 0; j < matrixNormalizada[i].length; j++) {
-                System.out.printf("%.2f  ", matrixNormalizada[i][j]);
-            }
-            System.out.println("");
-        }
-        int[][] result = computeAssignments(matrixNormalizada);
+        calculateHungarian();
+        float similaridade = 0;
 
-        float somatorioValores = 0l;
-        System.out.println("Similaridade:");
+//        System.out.println("Similaridade:");
         for (int i = 0; i < result.length; i++) {
-            System.out.print(result[i][0] + " | ");
-            System.out.println(result[i][1] + " | ");
-            somatorioValores += matrixComValoresOriginais[result[i][0]][result[i][1]];
+//            System.out.print(result[i][0] + " | ");
+//            System.out.println(result[i][1] + " | ");
+            similaridade += originalMatrix[result[i][0]][result[i][1]];
         }
-        System.out.println("...FIM DA SIMILARIDADE");
-        return somatorioValores / result.length;
+//        System.out.println("...FIM DA SIMILARIDADE");
+        return similaridade / result.length;
     }
 
     private float[][] createSimilarityMatrix() {
-        int xLength = this.lengthOfX();
-        int yLength = this.lengthOfY();
+        int length = this.lengthOfX() > this.lengthOfY() ? this.lengthOfX() : this.lengthOfY();
         float[][] matrix;
 
-        if (xLength >= yLength) {
-            matrix = new float[xLength][xLength];
-            nomeElementoHorizontal = new String[xLength];
-            nomeElementoVertical = new String[xLength];
-        } else {
-            nomeElementoHorizontal = new String[yLength];
-            nomeElementoVertical = new String[yLength];
-            matrix = new float[yLength][yLength];
-        }
-        
-        imprimeNomeElementosComparadosConsole(matrix);
+        matrix = new float[length][length];
+//        nomeElementoHorizontal = new String[length];
+//        nomeElementoVertical = new String[length];
 
-        System.out.println("");
+//        imprimeNomeElementosComparadosConsole(matrix);
+
+//        System.out.println("");
         for (int i = 0; i < matrix.length; i++) {
-            System.out.printf("%-7s", nomeElementoHorizontal[i]);
+//            System.out.printf("%-7s", nomeElementoHorizontal[i]);
             for (int j = 0; j < matrix[i].length; j++) {
-                try {
+                if (i >= lengthOfX() || j >= lengthOfY()) {
+                    matrix[i][j] = 0;
+//                    System.out.printf("%12.2f  ", matrix[i][j]);
+                } else {
                     Similar valueX = valueOfX(i);
                     Similar valueY = valueOfY(j);
+
                     matrix[i][j] = valueX.similar(valueY).getSimilarity();
-                    System.out.printf("%15.2f  ", matrix[i][j]);
-                    if (matrix[i][j] > maiorElementoMatrix) {
-                        maiorElementoMatrix = matrix[i][j];
-                    }
-                } catch (Exception e) {
-                    matrix[i][j] = 0l;
-                    System.out.printf("%12.2f  ", matrix[i][j]);
+//                    System.out.printf("%15.2f  ", matrix[i][j]);
                 }
             }
-            System.out.println("");
+//            System.out.println("");
         }
+
         return matrix;
     }
 
-    public float[][] normalizacaoElementos(float[][] matrix) {
+    public float[][] normalizarMatrix(float[][] matrix) {
+        float maiorElementoMatrix = 0;
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                if (matrix[i][j] > maiorElementoMatrix) {
+                    maiorElementoMatrix = matrix[i][j];
+                }
+            }
+        }
+
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
                 matrix[i][j] = maiorElementoMatrix - matrix[i][j];
             }
         }
+
         return matrix;
+    }
+
+    private float[][] copiarMatrix(float[][] originalMatrix) {
+        float[][] matrix = new float[originalMatrix.length][originalMatrix.length];
+
+        for (int i = 0; i < originalMatrix.length; i++) {
+            for (int j = 0; j < originalMatrix.length; j++) {
+                matrix[i][j] = originalMatrix[i][j];
+            }
+        }
+
+        return matrix;
+    }
+
+    private void imprimeNomeElementosComparadosConsole(float[][] matrix) {
+        System.out.printf("\n\n%6s", "Elementos");
+        for (int i = 0; i < matrix.length; i++) {
+            try {
+                nomeElementoHorizontal[i] = valueOfX(i).toString();
+            } catch (Exception e) {
+                nomeElementoVertical[i] = "ELEMENTO VAZIO";
+            }
+            try {
+                nomeElementoVertical[i] = valueOfX(i).toString();
+            } catch (Exception e) {
+                nomeElementoVertical[i] = "ELEMENTO VAZIO";
+            }
+            System.out.printf("%15s|", nomeElementoVertical[i]);
+        }
     }
 }
