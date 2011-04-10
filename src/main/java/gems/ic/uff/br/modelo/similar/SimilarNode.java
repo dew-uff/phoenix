@@ -84,30 +84,10 @@ public class SimilarNode extends Similar<SimilarNode> {
             if (nodeValue == null && otherNodeValue == null) {
                 similarity = ELEMENT_VALUE_WEIGTH;
             } else {
-                Node node;
+                result.setValue(nodeValue, otherNodeValue);
 
                 if (nodeValue != null && otherNodeValue != null) {
-                    if (nodeValue.equals(otherNodeValue)) {
-                        result.getNode().setTextContent(nodeValue);
-                        similarity = ELEMENT_VALUE_WEIGTH;
-                    } else {
-                        node = ResultXML.createLeftNode("value");
-                        node.setTextContent(nodeValue);
-                        result.getNode().appendChild(node);
-
-                        node = ResultXML.createRightNode("value");
-                        node.setTextContent(otherNodeValue);
-                        result.getNode().appendChild(node);
-                    }
-                } else {
-                    if (nodeValue != null) {
-                        node = ResultXML.createLeftNode("value");
-                    } else {
-                        node = ResultXML.createRightNode("value");
-                    }
-
-                    node.setTextContent(nodeValue);
-                    result.getNode().appendChild(node);
+                    similarity += new LcsString(nodeValue, otherNodeValue).similaridade() * ELEMENT_VALUE_WEIGTH;
                 }
             }
         }
@@ -120,19 +100,29 @@ public class SimilarNode extends Similar<SimilarNode> {
 
         if (!node.hasAttributes() && !otherNode.hasAttributes()) {
             similarity = ATTRIBUTE_WEIGTH;
-        } else if (node.hasAttributes() && otherNode.hasAttributes()) {
-            NamedNodeMap attributesFromNode = node.getAttributes();
-            NamedNodeMap attributesFromOtherNode = otherNode.getAttributes();
+        } else {
+            if (node.hasAttributes() && otherNode.hasAttributes()) {
+                NamedNodeMap attributesFromNode = node.getAttributes();
+                NamedNodeMap attributesFromOtherNode = otherNode.getAttributes();
 
-            Map<String, List<Similar>> attributesMap = getAttributesFromNamedNodeMaps(attributesFromNode, attributesFromOtherNode);
-            Iterator mapIterator = attributesMap.entrySet().iterator();
+                Map<String, List<SimilarString>> attributesMap = getAttributesFromNamedNodeMaps(attributesFromNode, attributesFromOtherNode);
+                Iterator mapIterator = attributesMap.entrySet().iterator();
 
-            while (mapIterator.hasNext()) {
-                Map.Entry<String, List<Similar>> entry = (Map.Entry) mapIterator.next();
-                similarity += new LcsString(entry.getValue().get(0).toString(), entry.getValue().get(1).toString()).similaridade();
+                while (mapIterator.hasNext()) {
+                    Map.Entry<String, List<SimilarString>> entry = (Map.Entry) mapIterator.next();
+
+                    String attributeName = entry.getKey();
+                    SimilarString firstElementAttributeValue = entry.getValue().get(0);
+                    SimilarString secondElementAttributeValue = entry.getValue().get(1);
+
+                    result.addAttribute(attributeName, firstElementAttributeValue.toString(), secondElementAttributeValue.toString());
+                    similarity += new LcsString(firstElementAttributeValue, secondElementAttributeValue).similaridade();
+                }
+
+                similarity = similarity / attributesMap.keySet().size() * ATTRIBUTE_WEIGTH;
+            } else {
+
             }
-
-            similarity = similarity / attributesMap.keySet().size() * ATTRIBUTE_WEIGTH;
         }
 
         return similarity;
@@ -182,24 +172,14 @@ public class SimilarNode extends Similar<SimilarNode> {
         return elementNodes;
     }
 
-    /**
-     * Gera duas listas de strings com os valores dos atributos dos elementos.
-     * Lista1: [month='3', year='2011']
-     * Lista2: [attribute='yes', month='4', year='2011']
-     * Retorno: [['3', '2011', ''], ['4', '2011', 'yes']]
-     *
-     * @param nodeMap
-     * @param otherNodeMap
-     * @return
-     */
-    protected Map<String, List<Similar>> getAttributesFromNamedNodeMaps(NamedNodeMap nodeMap, NamedNodeMap otherNodeMap) {
+    protected Map<String, List<SimilarString>> getAttributesFromNamedNodeMaps(NamedNodeMap nodeMap, NamedNodeMap otherNodeMap) {
 
-        Map<String, List<Similar>> attributesMap = new TreeMap<String, List<Similar>>();
+        Map<String, List<SimilarString>> attributesMap = new TreeMap<String, List<SimilarString>>();
 
         for (int i = 0; i < nodeMap.getLength(); i++) {
             Node item = nodeMap.item(i);
 
-            List<Similar> similarList = new ArrayList<Similar>(2);
+            List<SimilarString> similarList = new ArrayList<SimilarString>(2);
             similarList.add(new SimilarString(item.getNodeValue()));
             similarList.add(new SimilarString(""));
 
@@ -208,12 +188,12 @@ public class SimilarNode extends Similar<SimilarNode> {
         for (int i = 0; i < otherNodeMap.getLength(); i++) {
             Node item = otherNodeMap.item(i);
 
-            List<Similar> similarList = attributesMap.get(item.getNodeName());
+            List<SimilarString> similarList = attributesMap.get(item.getNodeName());
             if (similarList != null) {
                 similarList.remove(1);
                 similarList.add(new SimilarString(item.getNodeValue()));
             } else {
-                similarList = new ArrayList<Similar>(2);
+                similarList = new ArrayList<SimilarString>(2);
                 similarList.add(new SimilarString(""));
                 similarList.add(new SimilarString(item.getNodeValue()));
 

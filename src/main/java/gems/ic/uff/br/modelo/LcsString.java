@@ -2,6 +2,7 @@ package gems.ic.uff.br.modelo;
 
 import gems.ic.uff.br.modelo.algorithm.LongestCommonSubsequence;
 import gems.ic.uff.br.modelo.similar.SimilarCharacter;
+import gems.ic.uff.br.modelo.similar.SimilarString;
 
 public class LcsString extends LongestCommonSubsequence<SimilarCharacter> {
 
@@ -11,6 +12,10 @@ public class LcsString extends LongestCommonSubsequence<SimilarCharacter> {
     public LcsString(String from, String to) {
         this.x = from;
         this.y = to;
+    }
+    public LcsString(SimilarString from, SimilarString to) {
+        this.x = from.toString();
+        this.y = to.toString();
     }
 
     protected int lengthOfY() {
