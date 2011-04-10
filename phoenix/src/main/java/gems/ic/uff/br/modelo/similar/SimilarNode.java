@@ -7,6 +7,8 @@ import gems.ic.uff.br.modelo.HungarianList;
 import java.util.ArrayList;
 import java.util.List;
 
+import gems.ic.uff.br.modelo.Result;
+import gems.ic.uff.br.modelo.ResultXML;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -24,15 +26,17 @@ public class SimilarNode extends Similar<SimilarNode> {
     public static float ELEMENT_VALUE_WEIGTH = 0.5f;
     public static float ELEMENT_NAME_WEIGTH = 1f;
     public static float ELEMENT_CHILDREN_WEIGTH = 0.6f;
-//    public static float ELEMENT_TYPE = 0.6;
+    //    public static float ELEMENT_TYPE = 0.6;
+    private Result result;
 
 
     public SimilarNode(Node node) {
         this.node = node;
+        this.result = new Result(node);
     }
 
     @Override
-    public float similar(SimilarNode y) {
+    public Result similar(SimilarNode y) {
         Node otherNode = y.getNode();
         float similarity = 0;
 
@@ -49,7 +53,9 @@ public class SimilarNode extends Similar<SimilarNode> {
             }
         }
 
-        return similarity > 1 ? 1 : similarity;
+        result.setSimilarity(similarity > 1 ? 1 : similarity);
+
+        return result;
     }
 
     protected float elementsNameSimilarity(Node otherNode) {
@@ -81,8 +87,32 @@ public class SimilarNode extends Similar<SimilarNode> {
 
             if (nodeValue == null && otherNodeValue == null) {
                 similarity = ELEMENT_VALUE_WEIGTH;
-            } else if (nodeValue != null && otherNodeValue != null && nodeValue.equals(otherNodeValue)) {
-                similarity = ELEMENT_VALUE_WEIGTH;
+            } else {
+                Node node;
+
+                if (nodeValue != null && otherNodeValue != null) {
+                    if (nodeValue.equals(otherNodeValue)) {
+                        result.getNode().setTextContent(nodeValue);
+                        similarity = ELEMENT_VALUE_WEIGTH;
+                    } else {
+                        node = ResultXML.createLeftNode("value");
+                        node.setTextContent(nodeValue);
+                        result.getNode().appendChild(node);
+
+                        node = ResultXML.createRightNode("value");
+                        node.setTextContent(otherNodeValue);
+                        result.getNode().appendChild(node);
+                    }
+                } else {
+                    if (nodeValue != null) {
+                        node = ResultXML.createLeftNode("value");
+                    } else {
+                        node = ResultXML.createRightNode("value");
+                    }
+
+                    node.setTextContent(nodeValue);
+                    result.getNode().appendChild(node);
+                }
             }
         }
 

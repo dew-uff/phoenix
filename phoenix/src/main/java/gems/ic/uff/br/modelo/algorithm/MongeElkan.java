@@ -19,7 +19,7 @@ public abstract class MongeElkan<VALUE extends Similar> extends AbstractAlgorith
             for (int j = 0; j < this.lengthOfY(); j++) {
                 Similar valueY = valueOfY(j);
 
-                final float found = valueX.similar(valueY);
+                final float found = valueX.similar(valueY).getSimilarity();
                 if (found > maxFound) {
                     maxFound = found;
                 }

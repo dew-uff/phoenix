@@ -20,13 +20,18 @@ public class XML {
         this.factory = XPathFactory.newInstance();
     }
 
+    public XML(Document document) {
+        this.document = document;
+        this.factory = XPathFactory.newInstance();
+    }
+
     private Document createDOMDocument(String file) {
         Document doc = null;
 
         try {
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             docBuilderFactory.setNamespaceAware(true);
-            
+
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 
             if (file.endsWith(".xml")) { //Arquivo
