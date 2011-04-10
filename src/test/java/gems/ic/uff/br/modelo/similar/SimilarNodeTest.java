@@ -229,8 +229,8 @@ public class SimilarNodeTest {
 
     }
 
-    //    @Test
-    public void deveriaTerAMesmaQuantidadeDeElementosCasoSejaOMesmoElemento() {
+//    @Test
+    public void deveriaTerAMesmaQuantidadeDeAtributosCasoSejaOMesmoElemento() {
         SimilarNode similarNode = createSimilarNode("<element attribute='one'></element>");
         Result result = similarNode.similar(similarNode);
 
