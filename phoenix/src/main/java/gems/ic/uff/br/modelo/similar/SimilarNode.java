@@ -1,14 +1,10 @@
 package gems.ic.uff.br.modelo.similar;
 
 import com.sun.org.apache.xpath.internal.NodeSet;
-import gems.ic.uff.br.modelo.LcsBatch;
-import gems.ic.uff.br.modelo.HungarianList;
+import gems.ic.uff.br.modelo.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-import gems.ic.uff.br.modelo.Result;
-import gems.ic.uff.br.modelo.ResultXML;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -128,8 +124,15 @@ public class SimilarNode extends Similar<SimilarNode> {
             NamedNodeMap attributesFromNode = node.getAttributes();
             NamedNodeMap attributesFromOtherNode = otherNode.getAttributes();
 
-            List<List<Similar>> attributes = getAttributesFromNamedNodeMaps(attributesFromNode, attributesFromOtherNode);
-            similarity = new LcsBatch(attributes.get(0), attributes.get(1)).similaridade() * ATTRIBUTE_WEIGTH;
+            Map<String, List<Similar>> attributesMap = getAttributesFromNamedNodeMaps(attributesFromNode, attributesFromOtherNode);
+            Iterator mapIterator = attributesMap.entrySet().iterator();
+
+            while (mapIterator.hasNext()) {
+                Map.Entry<String, List<Similar>> entry = (Map.Entry) mapIterator.next();
+                similarity += new LcsString(entry.getValue().get(0).toString(), entry.getValue().get(1).toString()).similaridade();
+            }
+
+            similarity = similarity / attributesMap.keySet().size() * ATTRIBUTE_WEIGTH;
         }
 
         return similarity;
@@ -189,47 +192,36 @@ public class SimilarNode extends Similar<SimilarNode> {
      * @param otherNodeMap
      * @return
      */
-    protected List<List<Similar>> getAttributesFromNamedNodeMaps(NamedNodeMap nodeMap, NamedNodeMap otherNodeMap) {
-        int nodeMapLength = nodeMap.getLength();
-        int otherNodeMapLength = otherNodeMap.getLength();
+    protected Map<String, List<Similar>> getAttributesFromNamedNodeMaps(NamedNodeMap nodeMap, NamedNodeMap otherNodeMap) {
 
-        //TODO: O tamanho do array não dá para ser descoberto, utilizar outra implementação de List?
-        List<Similar> attributesFromNode = new ArrayList<Similar>(nodeMapLength + otherNodeMapLength);
-        List<Similar> attributesFromOtherNode = new ArrayList<Similar>(nodeMapLength + otherNodeMapLength);
+        Map<String, List<Similar>> attributesMap = new TreeMap<String, List<Similar>>();
 
-        List<List<Similar>> attributesList = new ArrayList<List<Similar>>(2);
-        attributesList.add(attributesFromNode);
-        attributesList.add(attributesFromOtherNode);
-
-        for (int i = 0; i < nodeMapLength; i++) {
+        for (int i = 0; i < nodeMap.getLength(); i++) {
             Node item = nodeMap.item(i);
-            Node otherItem = otherNodeMap.getNamedItem(item.getNodeName());
 
-            //Adiciona todos os elementos da primeira lista.
-            attributesFromNode.add(new SimilarString(item.getNodeValue()));
+            List<Similar> similarList = new ArrayList<Similar>(2);
+            similarList.add(new SimilarString(item.getNodeValue()));
+            similarList.add(new SimilarString(""));
 
-            //Insere o elemento da/na segunda lista caso este exista na segunda lista.
-            if (otherItem != null) {
-                attributesFromOtherNode.add(new SimilarString(otherItem.getNodeValue()));
-                //Caso contrário, insere uma String vazia.
+            attributesMap.put(item.getNodeName(), similarList);
+        }
+        for (int i = 0; i < otherNodeMap.getLength(); i++) {
+            Node item = otherNodeMap.item(i);
+
+            List<Similar> similarList = attributesMap.get(item.getNodeName());
+            if (similarList != null) {
+                similarList.remove(1);
+                similarList.add(new SimilarString(item.getNodeValue()));
             } else {
-                attributesFromOtherNode.add(new SimilarString(""));
+                similarList = new ArrayList<Similar>(2);
+                similarList.add(new SimilarString(""));
+                similarList.add(new SimilarString(item.getNodeValue()));
+
+                attributesMap.put(item.getNodeName(), similarList);
             }
         }
 
-        for (int i = 0; i < otherNodeMapLength; i++) {
-            Node otherItem = otherNodeMap.item(i);
-            Node item = nodeMap.getNamedItem(otherItem.getNodeName());
-
-            //Adiciona todos os elementos da/na segunda lista que não existem
-            //na primeira lista. E insere uma String vazia na primeira lista.
-            if (item == null) {
-                attributesFromOtherNode.add(new SimilarString(otherItem.getNodeValue()));
-                attributesFromNode.add(new SimilarString(""));
-            }
-        }
-
-        return attributesList;
+        return attributesMap;
     }
 
     public Node getNode() {
