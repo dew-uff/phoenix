@@ -75,7 +75,7 @@ public class LcsXMLTest {
 
 
         LcsXML lcs = new LcsXML(xml1, xml2);
-        assertEquals("[root: null]", lcs.valueOfX(0).toString());
+        assertEquals("root", lcs.valueOfX(0).toString());
     }
 
     @Test
@@ -84,7 +84,7 @@ public class LcsXMLTest {
         xml2 = new XML("<root><tag>content</tag></root>");
 
         LcsXML lcs = new LcsXML(xml1, xml2);
-        assertEquals("[tag: null]", lcs.valueOfX(1).toString());
+        assertEquals("tag", lcs.valueOfX(1).toString());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class LcsXMLTest {
         xml2 = new XML("<root><tag>content</tag><tag2>content2</tag2></root>");
 
         LcsXML lcs = new LcsXML(xml1, xml2);
-        assertEquals("[tag2: null]", lcs.valueOfY(2).toString());
+        assertEquals("tag2", lcs.valueOfY(2).toString());
     }
 
     @Test

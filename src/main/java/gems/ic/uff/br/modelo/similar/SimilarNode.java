@@ -3,8 +3,10 @@ package gems.ic.uff.br.modelo.similar;
 import com.sun.org.apache.xpath.internal.NodeSet;
 import gems.ic.uff.br.modelo.LcsBatch;
 import gems.ic.uff.br.modelo.HungarianList;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import org.w3c.dom.DOMException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -18,11 +20,11 @@ public class SimilarNode extends Similar<SimilarNode> {
 
     private Node node;
     //Depois de definidos, testar os valores padrões.
-    public static final float ATTRIBUTE_WEIGTH = 0.4f;
-    public static final float ELEMENT_VALUE_WEIGTH = 0.5f;
-    public static final float ELEMENT_NAME_WEIGTH = 1f;
-    public static final float ELEMENT_CHILDREN_WEIGTH = 0.6f;
-//    public static final float ELEMENT_TYPE = 0.6;
+    public static float ATTRIBUTE_WEIGTH = 0.4f;
+    public static float ELEMENT_VALUE_WEIGTH = 0.5f;
+    public static float ELEMENT_NAME_WEIGTH = 1f;
+    public static float ELEMENT_CHILDREN_WEIGTH = 0.6f;
+//    public static float ELEMENT_TYPE = 0.6;
 
 
     public SimilarNode(Node node) {
@@ -31,30 +33,38 @@ public class SimilarNode extends Similar<SimilarNode> {
 
     @Override
     public float similar(SimilarNode y) {
-        float similarity = 1;
         Node otherNode = y.getNode();
+        float similarity = 0;
 
         if (node == null || otherNode == null) {
-            similarity = 0;
         } else {
-            similarity = elementsNameSimilarity(otherNode, similarity);
-            similarity = elementsValueSimilarity(otherNode, similarity);
-            similarity = elementsAttributesSimilarity(otherNode, similarity);
-            similarity = elementsChildrenSimilarity(otherNode, similarity);
+            similarity += elementsNameSimilarity(otherNode);
+
+            //Se não houver similaridade no nome, então não são o mesmo elemento,
+            //portanto, não é necessário continuar a calcular a similaridade.
+            if (similarity != 0) {
+                similarity += elementsValueSimilarity(otherNode);
+                similarity += elementsAttributesSimilarity(otherNode);
+                similarity += elementsChildrenSimilarity(otherNode);
+            }
         }
 
-        return similarity > 0 ? similarity : 0;
+        return similarity > 1 ? 1 : similarity;
     }
 
-    protected float elementsNameSimilarity(Node otherNode, float similarity) {
-        if (!node.getNodeName().equals(otherNode.getNodeName())) {
-            similarity -= ELEMENT_NAME_WEIGTH;
+    protected float elementsNameSimilarity(Node otherNode) {
+        float similarity = 0;
+
+        if (node.getNodeName().equals(otherNode.getNodeName())) {
+            similarity = ELEMENT_NAME_WEIGTH;
         }
 
         return similarity;
     }
 
-    protected float elementsValueSimilarity(Node otherNode, float similarity) throws DOMException {
+    protected float elementsValueSimilarity(Node otherNode) throws DOMException {
+        float similarity = 0;
+
         if (node.hasChildNodes() || otherNode.hasChildNodes()) {
             String nodeValue = null;
             String otherNodeValue = null;
@@ -69,56 +79,62 @@ public class SimilarNode extends Similar<SimilarNode> {
                 otherNodeValue = otherNode.getFirstChild().getNodeValue();
             }
 
-            if (nodeValue != null || otherNodeValue != null) {
-                if (nodeValue == null || otherNodeValue == null || !nodeValue.equals(otherNodeValue)) {
-                    similarity -= ELEMENT_VALUE_WEIGTH;
-                }
+            if (nodeValue == null && otherNodeValue == null) {
+                similarity = ELEMENT_VALUE_WEIGTH;
+            } else if (nodeValue != null && otherNodeValue != null && nodeValue.equals(otherNodeValue)) {
+                similarity = ELEMENT_VALUE_WEIGTH;
             }
         }
 
         return similarity;
     }
 
-    protected float elementsAttributesSimilarity(Node otherNode, float similarity) {
-        if (node.hasAttributes() || otherNode.hasAttributes()) {
-            if (node.hasAttributes() && otherNode.hasAttributes()) {
-                NamedNodeMap attributesFromNode = node.getAttributes();
-                NamedNodeMap attributesFromOtherNode = otherNode.getAttributes();
+    protected float elementsAttributesSimilarity(Node otherNode) {
+        float similarity = 0;
 
-                List<List<Similar>> attributes = getAttributesFromNamedNodeMaps(attributesFromNode, attributesFromOtherNode);
-                similarity -= (1 - new LcsBatch(attributes.get(0), attributes.get(1)).similaridade()) * ATTRIBUTE_WEIGTH;
+        if (!node.hasAttributes() && !otherNode.hasAttributes()) {
+            similarity = ATTRIBUTE_WEIGTH;
+        } else if (node.hasAttributes() && otherNode.hasAttributes()) {
+            NamedNodeMap attributesFromNode = node.getAttributes();
+            NamedNodeMap attributesFromOtherNode = otherNode.getAttributes();
 
-            } else {
-                similarity -= ATTRIBUTE_WEIGTH;
-            }
+            List<List<Similar>> attributes = getAttributesFromNamedNodeMaps(attributesFromNode, attributesFromOtherNode);
+            similarity = new LcsBatch(attributes.get(0), attributes.get(1)).similaridade() * ATTRIBUTE_WEIGTH;
         }
 
         return similarity;
     }
 
-    protected float elementsChildrenSimilarity(Node otherNode, float similarity) {
+    protected float elementsChildrenSimilarity(Node otherNode) {
         NodeList childNodes = node.getChildNodes();
         NodeList otherChildNodes = otherNode.getChildNodes();
+        float similarity = 0;
 
-        if (childNodes != null && otherChildNodes != null) {
+        if (childNodes == null && otherChildNodes == null) {
+            similarity = ELEMENT_CHILDREN_WEIGTH;
+
+        } else if (childNodes != null && otherChildNodes != null) {
             NodeSet elementNodes = getElementNodes(childNodes);
             NodeSet otherElementNodes = getElementNodes(otherChildNodes);
 
-            if ((elementNodes.size() != 0 && otherElementNodes.size() != 0)) {
+            if ((elementNodes.size() == 0 && otherElementNodes.size() == 0)) {
+                similarity = ELEMENT_CHILDREN_WEIGTH;
+            } else if ((elementNodes.size() != 0 && otherElementNodes.size() != 0)) {
                 HungarianList hungarianList = new HungarianList(elementNodes, otherElementNodes);
-                similarity -= (1 - hungarianList.similaridade()) * ELEMENT_CHILDREN_WEIGTH;
-            } else {
-                if (!(elementNodes.size() == 0 && otherElementNodes.size() == 0)) {
-                    similarity -= ELEMENT_CHILDREN_WEIGTH;
-                }
+                similarity = hungarianList.similaridade() * ELEMENT_CHILDREN_WEIGTH;
             }
-        } else {
-            similarity -= ELEMENT_CHILDREN_WEIGTH;
         }
 
         return similarity;
     }
 
+    /**
+     * Retornar os nós de um NodeList que são do tipo elemento.
+     *
+     * @param nodeList
+     * @return
+     * @see Node
+     */
     protected NodeSet getElementNodes(NodeList nodeList) {
         NodeSet elementNodes = new NodeSet();
 
@@ -138,9 +154,10 @@ public class SimilarNode extends Similar<SimilarNode> {
      * Lista1: [month='3', year='2011']
      * Lista2: [attribute='yes', month='4', year='2011']
      * Retorno: [['3', '2011', ''], ['4', '2011', 'yes']]
+     *
      * @param nodeMap
      * @param otherNodeMap
-     * @return 
+     * @return
      */
     protected List<List<Similar>> getAttributesFromNamedNodeMaps(NamedNodeMap nodeMap, NamedNodeMap otherNodeMap) {
         int nodeMapLength = nodeMap.getLength();
