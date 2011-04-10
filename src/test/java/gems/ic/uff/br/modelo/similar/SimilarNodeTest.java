@@ -1,5 +1,7 @@
 package gems.ic.uff.br.modelo.similar;
 
+import gems.ic.uff.br.modelo.Result;
+import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.InputSource;
 
 import java.io.StringReader;
@@ -35,7 +37,7 @@ public class SimilarNodeTest {
 
         SimilarNode similarNode = createSimilarNode("<tag attribute='yes'>Texto</tag>");
 
-        assertEquals(1, similarNode.similar(similarNode), 1);
+        assertEquals(1, similarNode.similar(similarNode).getSimilarity(), 1);
     }
 
     @Test
@@ -168,5 +170,84 @@ public class SimilarNodeTest {
         SimilarNode similarNode2 = createSimilarNode("<father>Texto<son></son></father>");
 
         assertEquals(0, similarNode.elementsChildrenSimilarity(similarNode2.getNode()), 0);
+    }
+
+    //----------- Result ---------------//
+
+    @Test
+    public void resultDeveriaTerUmFilhoCasoApenasUmElementoTenhaValor() {
+        SimilarNode similarNode = createSimilarNode("<element>Value</element>");
+        SimilarNode similarNode2 = createSimilarNode("<element></element>");
+        Result result = similarNode.similar(similarNode2);
+
+        assertEquals(1, result.getNode().getChildNodes().getLength());
+    }
+
+    @Test
+    public void resultDeveriaTerUmFilhoComOMesmoValorDoElementoComValor() {
+        SimilarNode similarNode = createSimilarNode("<element>Value</element>");
+        SimilarNode similarNode2 = createSimilarNode("<element></element>");
+
+        Result result = similarNode.similar(similarNode2);
+        assertEquals("Value", result.getNode().getFirstChild().getFirstChild().getNodeValue());
+    }
+
+    @Test
+    public void resultDeveriaTerOMesmoValorCasoOsElementosSejamIguais() {
+        SimilarNode similarNode = createSimilarNode("<element>Value</element>");
+        Result result = similarNode.similar(similarNode);
+
+        assertEquals("Value", result.getNode().getFirstChild().getNodeValue());
+    }
+
+    @Test
+    public void resultDeveriaTerOMesmoValorCasoOsElementosTenhamValoresIguais() {
+        SimilarNode similarNode = createSimilarNode("<element>Value</element>");
+        SimilarNode similarNode2 = createSimilarNode("<element>Value</element>");
+        Result result = similarNode.similar(similarNode2);
+
+        assertEquals("Value", result.getNode().getFirstChild().getNodeValue());
+    }
+
+    @Test
+    public void resultDeveriaTerDoisFilhoCasoOsDoisElementosTenhamValoresDistintos() {
+        SimilarNode similarNode = createSimilarNode("<element>Value</element>");
+        SimilarNode similarNode2 = createSimilarNode("<element>AnotherValue</element>");
+        Result result = similarNode.similar(similarNode2);
+
+        assertEquals(2, result.getNode().getChildNodes().getLength());
+    }
+
+    @Test
+    public void resultDeveriaTerDoisFilhosComOsValoresDeCadaElementoCasoOsDoisElementosTenhamValoresDistintos() {
+        SimilarNode similarNode = createSimilarNode("<element>Value</element>");
+        SimilarNode similarNode2 = createSimilarNode("<element>AnotherValue</element>");
+        Result result = similarNode.similar(similarNode2);
+
+        assertEquals("Value", result.getNode().getChildNodes().item(0).getFirstChild().getNodeValue());
+        assertEquals("AnotherValue", result.getNode().getChildNodes().item(1).getFirstChild().getNodeValue());
+
+    }
+
+    //    @Test
+    public void deveriaTerAMesmaQuantidadeDeElementosCasoSejaOMesmoElemento() {
+        SimilarNode similarNode = createSimilarNode("<element attribute='one'></element>");
+        Result result = similarNode.similar(similarNode);
+
+        NamedNodeMap attributes = result.getNode().getAttributes();
+        assertEquals(1, attributes.getLength());
+    }
+
+    //    @Test
+    public void deveriaTerOsMesmosAtributosCasoSejaOMesmoElemento() {
+        SimilarNode similarNode = createSimilarNode("<element attribute='one'></element>");
+        Result result = similarNode.similar(similarNode);
+
+        NamedNodeMap attributes = result.getNode().getAttributes();
+
+        for (int i = 0; i < attributes.getLength(); i++) {
+            assertEquals(similarNode.getNode().getAttributes().item(i).getNodeName(), attributes.item(i).getNodeName());
+            assertEquals(similarNode.getNode().getAttributes().item(i).getNodeValue(), attributes.item(i).getNodeValue());
+        }
     }
 }

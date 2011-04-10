@@ -1,5 +1,7 @@
 package gems.ic.uff.br.modelo.similar;
 
+import gems.ic.uff.br.modelo.Result;
+
 /**
  * Classe criada para usar a similaridade ao invéz da igualdade nos algoritmos
  * de comparação.
@@ -12,5 +14,5 @@ public abstract class Similar<T extends Similar> {
      * @param y objeto a ser comparado
      * @return similaridade entre os objetos
      */
-    public abstract float similar(T y);
+    public abstract Result similar(T y);
 }

@@ -26,7 +26,7 @@ public abstract class AbstractAlgorithm<VALUE extends Similar> {
         float similarity = 0;
 
         if (x1 != null && y1 != null) {
-            similarity = x1.similar(y1);
+            similarity = x1.similar(y1).getSimilarity();
         }
 
         return similarity;

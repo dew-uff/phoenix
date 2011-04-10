@@ -45,7 +45,7 @@ public class XMLTest {
 
         SimilarNode similarNode1 = new SimilarNode(xml.getDocument().getDocumentElement());
         SimilarNode similarNode2 = new SimilarNode(xml.getDocument().getDocumentElement());
-        assertEquals(1, similarNode1.similar(similarNode2), 0.1);
+        assertEquals(1, similarNode1.similar(similarNode2).getSimilarity(), 0.1);
     }
 
 //    @Test

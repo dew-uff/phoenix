@@ -1,5 +1,7 @@
 package gems.ic.uff.br.modelo.similar;
 
+import gems.ic.uff.br.modelo.Result;
+
 /**
  * Classe que encapsula a classe Character, adicionando um comportamento
  * de similaridade a ela.
@@ -13,8 +15,8 @@ public class SimilarCharacter extends Similar<SimilarCharacter> {
     }
 
     @Override
-    public float similar(SimilarCharacter otherCharacter) {
-        return this.character.equals(otherCharacter.getChar())? 1 : 0;
+    public Result similar(SimilarCharacter otherCharacter) {
+        return new Result(this.character.equals(otherCharacter.getChar())? 1 : 0);
     }
 
     public Character getChar() {

@@ -472,7 +472,7 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
                 try {
                     Similar valueX = valueOfX(i);
                     Similar valueY = valueOfY(j);
-                    matrix[i][j] = valueX.similar(valueY);
+                    matrix[i][j] = valueX.similar(valueY).getSimilarity();
                     System.out.printf("%15.2f  ", matrix[i][j]);
                     if (matrix[i][j] > maiorElementoMatrix) {
                         maiorElementoMatrix = matrix[i][j];
