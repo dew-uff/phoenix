@@ -17,24 +17,24 @@ import org.w3c.dom.NodeList;
 public class SimilarNode extends Similar<SimilarNode> {
 
     private Node node;
-    //Depois de definidos, testar os valores padrões.
-    public static float ATTRIBUTE_WEIGTH = 0.4f;
-    public static float ELEMENT_VALUE_WEIGTH = 0.5f;
-    public static float ELEMENT_NAME_WEIGTH = 1f;
-    public static float ELEMENT_CHILDREN_WEIGTH = 0.6f;
+    public static float ATTRIBUTE_WEIGTH = 0.25f;
+    public static float ELEMENT_VALUE_WEIGTH = 0.25f;
+    public static float ELEMENT_NAME_WEIGTH = 0.25f;
+    public static float ELEMENT_CHILDREN_WEIGTH = 0.25f;
     //    public static float ELEMENT_TYPE = 0.6;
-    private Result result;
+    private Diff diff;
 
 
     public SimilarNode(Node node) {
         this.node = node;
-        this.result = new Result(node);
+        this.diff = new Diff(node);
     }
 
     @Override
-    public Result similar(SimilarNode y) {
+    public Diff similar(SimilarNode y) {
         Node otherNode = y.getNode();
         float similarity = 0;
+        this.diff = new Diff(node);
 
         if (node == null || otherNode == null) {
         } else {
@@ -49,9 +49,9 @@ public class SimilarNode extends Similar<SimilarNode> {
             }
         }
 
-        result.setSimilarity(similarity > 1 ? 1 : similarity);
+        diff.setSimilarity(similarity > 1 ? 1 : similarity);
 
-        return result;
+        return diff;
     }
 
     protected float elementsNameSimilarity(Node otherNode) {
@@ -84,12 +84,14 @@ public class SimilarNode extends Similar<SimilarNode> {
             if (nodeValue == null && otherNodeValue == null) {
                 similarity = ELEMENT_VALUE_WEIGTH;
             } else {
-                result.setValue(nodeValue, otherNodeValue);
+                diff.setValue(nodeValue, otherNodeValue);
 
                 if (nodeValue != null && otherNodeValue != null) {
                     similarity += new LcsString(nodeValue, otherNodeValue).similaridade() * ELEMENT_VALUE_WEIGTH;
                 }
             }
+        } else {
+            similarity = ELEMENT_VALUE_WEIGTH;
         }
 
         return similarity;
@@ -115,7 +117,7 @@ public class SimilarNode extends Similar<SimilarNode> {
                     SimilarString firstElementAttributeValue = entry.getValue().get(0);
                     SimilarString secondElementAttributeValue = entry.getValue().get(1);
 
-                    result.addAttribute(attributeName, firstElementAttributeValue.toString(), secondElementAttributeValue.toString());
+                    diff.addAttribute(attributeName, firstElementAttributeValue.toString(), secondElementAttributeValue.toString());
                     similarity += new LcsString(firstElementAttributeValue, secondElementAttributeValue).similaridade();
                 }
 
@@ -144,7 +146,9 @@ public class SimilarNode extends Similar<SimilarNode> {
                 similarity = ELEMENT_CHILDREN_WEIGTH;
             } else if ((elementNodes.size() != 0 && otherElementNodes.size() != 0)) {
                 HungarianList hungarianList = new HungarianList(elementNodes, otherElementNodes);
+
                 similarity = hungarianList.similaridade() * ELEMENT_CHILDREN_WEIGTH;
+                hungarianList.addResultParent(this.diff);
             }
         }
 
@@ -206,6 +210,10 @@ public class SimilarNode extends Similar<SimilarNode> {
 
     public Node getNode() {
         return node;
+    }
+
+    public Diff getDiff() {
+        return diff;
     }
 
     @Override

@@ -3,16 +3,20 @@ package gems.ic.uff.br.modelo;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-public class Result {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Diff {
     private float similarity;
     private Node node;
+    private List<Diff> children;
 
-    public Result(float similarity) {
+    public Diff(float similarity) {
         this.similarity = similarity;
     }
 
-    public Result(Node node) {
-        this.node = ResultXML.getInstance().getDocument().createElement(node.getNodeName());
+    public Diff(Node node) {
+        this.node = DiffXML.getInstance().getDocument().createElement(node.getNodeName());
     }
 
     public void setValue(String firstElementValue, String secondElementValue) {
@@ -21,11 +25,11 @@ public class Result {
                 if (firstElementValue.equals(secondElementValue)) {
                     this.node.setTextContent(firstElementValue);
                 } else {
-                    Node valueNode = ResultXML.createLeftNode("value");
+                    Node valueNode = DiffXML.createLeftSideNode("value");
                     valueNode.setTextContent(firstElementValue);
                     this.node.appendChild(valueNode);
 
-                    valueNode = ResultXML.createRightNode("value");
+                    valueNode = DiffXML.createRightSideNode("value");
                     valueNode.setTextContent(secondElementValue);
                     this.node.appendChild(valueNode);
                 }
@@ -55,6 +59,16 @@ public class Result {
                 ((Element) this.node).setAttributeNS("right", attributeName, secondElementAttributeValue);
             }
         }
+    }
+
+    //TODO: Passar para a interface os métodos abaixos do Húngaro.
+    public void addChildren(Diff anotherDiff) {
+        if (this.children == null) {
+            this.children = new ArrayList<Diff>();
+        }
+
+        this.children.add(anotherDiff);
+        this.node.appendChild(anotherDiff.getNode());
     }
 
     public float getSimilarity() {

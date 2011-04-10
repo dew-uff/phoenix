@@ -60,8 +60,7 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
     private int[] starsByRow;
     private int[] starsByCol;
     private float[][] originalMatrix;
-    private int[][] result;
-    private float maiorElementoMatrix;
+    protected int[][] result;
     public static String[] nomeElementoHorizontal;
     public static String[] nomeElementoVertical;
 
@@ -416,21 +415,6 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
         }
     }
 
-    @Override
-    public float similaridade() {
-        calculateHungarian();
-        float similaridade = 0;
-
-//        System.out.println("Similaridade:");
-        for (int i = 0; i < result.length; i++) {
-//            System.out.print(result[i][0] + " | ");
-//            System.out.println(result[i][1] + " | ");
-            similaridade += originalMatrix[result[i][0]][result[i][1]];
-        }
-//        System.out.println("...FIM DA SIMILARIDADE");
-        return similaridade / result.length;
-    }
-
     private float[][] createSimilarityMatrix() {
         int length = this.lengthOfX() > this.lengthOfY() ? this.lengthOfX() : this.lengthOfY();
         float[][] matrix;
@@ -462,7 +446,7 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
         return matrix;
     }
 
-    public float[][] normalizarMatrix(float[][] matrix) {
+    private float[][] normalizarMatrix(float[][] matrix) {
         float maiorElementoMatrix = 0;
 
         for (int i = 0; i < matrix.length; i++) {
@@ -509,5 +493,20 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
             }
             System.out.printf("%15s|", nomeElementoVertical[i]);
         }
+    }
+
+    @Override
+    public float similaridade() {
+        calculateHungarian();
+        float similaridade = 0;
+
+//        System.out.println("Similaridade:");
+        for (int i = 0; i < result.length; i++) {
+//            System.out.print(result[i][0] + " | ");
+//            System.out.println(result[i][1] + " | ");
+            similaridade += originalMatrix[result[i][0]][result[i][1]];
+        }
+//        System.out.println("...FIM DA SIMILARIDADE");
+        return similaridade / result.length;
     }
 }

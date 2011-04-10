@@ -1,7 +1,5 @@
 package gems.ic.uff.br.modelo.similar;
 
-import gems.ic.uff.br.modelo.Result;
-import org.w3c.dom.NamedNodeMap;
 import org.xml.sax.InputSource;
 
 import java.io.StringReader;
@@ -170,5 +168,15 @@ public class SimilarNodeTest {
         SimilarNode similarNode2 = createSimilarNode("<father>Texto<son></son></father>");
 
         assertEquals(0, similarNode.elementsChildrenSimilarity(similarNode2.getNode()), 0);
+    }
+
+//    @Test
+    public void deleteThisTest() {
+        SimilarNode similarNode = createSimilarNode("<father><son><grandson attribute='yes'/></son></father>");
+        SimilarNode similarNode2 = createSimilarNode("<father><son><grandson attribute='no'/></son><anotherson/></father>");
+
+        similarNode.similar(similarNode2);
+
+        assertEquals(SimilarNode.ELEMENT_CHILDREN_WEIGTH, similarNode.elementsChildrenSimilarity(similarNode2.getNode()), 0.01);
     }
 }
