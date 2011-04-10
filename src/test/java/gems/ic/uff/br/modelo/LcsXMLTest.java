@@ -111,7 +111,7 @@ public class LcsXMLTest {
         xml2 = new XML("<root2></root2>");
 
         LcsXML lcs = new LcsXML(xml1, xml2);
-        assertEquals(1 - SimilarNode.ELEMENT_NAME_WEIGTH, lcs.similaridade(), 0);
+        assertEquals(0, lcs.similaridade(), 0);
     }
 
     @Test

@@ -4,6 +4,7 @@ import com.sun.org.apache.xpath.internal.NodeSet;
 import gems.ic.uff.br.modelo.algorithm.Hungarian;
 import gems.ic.uff.br.modelo.similar.Similar;
 import gems.ic.uff.br.modelo.similar.SimilarNode;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,15 +17,15 @@ public class HungarianList extends Hungarian<Similar> {
         this.x = from;
         this.y = to;
     }
-    
+
     public HungarianList(NodeSet from, NodeSet to) {
         this.x = new ArrayList<Similar>(from.getLength());
         this.y = new ArrayList<Similar>(to.getLength());
-        
+
         for (int i = 0; i < from.getLength(); i++) {
             x.add(new SimilarNode(from.item(i)));
         }
-        
+
         for (int i = 0; i < to.getLength(); i++) {
             y.add(new SimilarNode(to.item(i)));
         }
@@ -49,5 +50,19 @@ public class HungarianList extends Hungarian<Similar> {
     @Override
     protected Similar valueOfY(int index) {
         return y.get(index);
+    }
+
+    //    @Override
+    public void addResultParent(Diff diff) {
+        for (int i = 0; i < result.length; i++) {
+            if (result[i][0] < lengthOfX() && result[i][1] < lengthOfY()) {
+                SimilarNode firstNode = (SimilarNode) x.get(result[i][0]);
+                firstNode.similar((SimilarNode) y.get(result[i][1]));
+
+                diff.addChildren(firstNode.getDiff());
+            } else {
+                //Adiciona o filho dizendo o lado
+            }
+        }
     }
 }
