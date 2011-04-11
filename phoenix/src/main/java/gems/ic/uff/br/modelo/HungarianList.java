@@ -52,7 +52,7 @@ public class HungarianList extends Hungarian<Similar> {
         return y.get(index);
     }
 
-    //    @Override
+    //    TODO: @Override
     public void addResultParent(Diff diff) {
         for (int i = 0; i < result.length; i++) {
             if (result[i][0] < lengthOfX() && result[i][1] < lengthOfY()) {
@@ -61,7 +61,11 @@ public class HungarianList extends Hungarian<Similar> {
 
                 diff.addChildren(firstNode.getDiff());
             } else {
-                //Adiciona o filho dizendo o lado
+                if (result[i][0] < lengthOfX()) {
+                    diff.addChildren(((SimilarNode) x.get(result[i][0])).getDiff());
+                } else {
+                    diff.addChildren(((SimilarNode) y.get(result[i][1])).getDiff());
+                }
             }
         }
     }

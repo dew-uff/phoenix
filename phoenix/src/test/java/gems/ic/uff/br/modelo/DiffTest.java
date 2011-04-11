@@ -9,6 +9,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class DiffTest {
 
@@ -85,12 +86,12 @@ public class DiffTest {
     }
 
     @Test
-    public void deveriaTerAMesmaQuantidadeDeAtributosCasoSejaOMesmoElemento() {
+    public void deveriaTerOAtributoSimilaridade() {
         SimilarNode similarNode = createSimilarNode("<element attribute='one'></element>");
         Diff diff = similarNode.similar(similarNode);
 
         NamedNodeMap attributes = diff.getNode().getAttributes();
-        assertEquals(1, attributes.getLength());
+        assertNotNull(attributes.getNamedItemNS("diff", "similarity").getNodeValue());
     }
 
     @Test
@@ -98,11 +99,6 @@ public class DiffTest {
         SimilarNode similarNode = createSimilarNode("<element attribute='one'></element>");
         Diff diff = similarNode.similar(similarNode);
 
-        NamedNodeMap attributes = diff.getNode().getAttributes();
-
-        for (int i = 0; i < attributes.getLength(); i++) {
-            assertEquals(similarNode.getNode().getAttributes().item(i).getNodeName(), attributes.item(i).getNodeName());
-            assertEquals(similarNode.getNode().getAttributes().item(i).getNodeValue(), attributes.item(i).getNodeValue());
-        }
+        assertEquals("attribute=\"one\"", similarNode.getNode().getAttributes().getNamedItem("attribute").toString());
     }
 }
