@@ -9,7 +9,6 @@ import java.util.List;
 public class Diff {
     private float similarity;
     private Node node;
-    private List<Diff> children;
 
     public Diff(float similarity) {
         this.similarity = similarity;
@@ -17,6 +16,7 @@ public class Diff {
 
     public Diff(Node node) {
         this.node = DiffXML.getInstance().getDocument().createElement(node.getNodeName());
+        setSimilarity(0);
     }
 
     public void setValue(String firstElementValue, String secondElementValue) {
@@ -61,13 +61,11 @@ public class Diff {
         }
     }
 
-    //TODO: Passar para a interface os métodos abaixos do Húngaro.
-    public void addChildren(Diff anotherDiff) {
-        if (this.children == null) {
-            this.children = new ArrayList<Diff>();
-        }
+    private void addSimilarityAttribute() {
+        ((Element) this.node).setAttributeNS("diff", "similarity", Float.toString(similarity));
+    }
 
-        this.children.add(anotherDiff);
+    public void addChildren(Diff anotherDiff) {
         this.node.appendChild(anotherDiff.getNode());
     }
 
@@ -77,6 +75,7 @@ public class Diff {
 
     public void setSimilarity(float similarity) {
         this.similarity = similarity;
+        addSimilarityAttribute();
     }
 
     public Node getNode() {

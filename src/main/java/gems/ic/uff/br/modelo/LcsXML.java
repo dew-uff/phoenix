@@ -7,10 +7,12 @@ import gems.ic.uff.br.modelo.similar.Similar;
 public class LcsXML extends LongestCommonSubsequence<Similar> {
     private XML x;
     private XML y;
+    private XML diffXML;
 
     public LcsXML(XML from, XML to) {
         this.x = from;
         this.y = to;
+        this.diffXML = DiffXML.getInstance();
     }
 
     @Override
