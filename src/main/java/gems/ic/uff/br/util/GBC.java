@@ -15,7 +15,7 @@ public class GBC extends GridBagConstraints {
 
     public GridBagConstraints adicionarComponente(int coluna, int linha,
             int colunasOcupadas, int linhasOcupadas) {
-
+        this.fill = GridBagConstraints.NONE;
         this.gridx = coluna;
         this.gridy = linha;
         this.gridheight = linhasOcupadas;
@@ -26,7 +26,7 @@ public class GBC extends GridBagConstraints {
     public GridBagConstraints adicionarComponenteComIsents(int coluna, int linha,
             int colunasOcupadas, int linhasOcupadas, Insets insets) {
 
-        this.fill = GridBagConstraints.BOTH;
+//        this.fill = GridBagConstraints.BOTH;
         this.gridx = coluna;
         this.gridy = linha;
         this.gridheight = linhasOcupadas;
