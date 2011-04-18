@@ -40,5 +40,41 @@
             <version>1.8.5</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>net.sf.jung</groupId>
+            <artifactId>jung-api</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jung</groupId>
+            <artifactId>jung-graph-impl</artifactId>
+            <version>2.0.1</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.jung</groupId>
+            <artifactId>jung-visualization</artifactId>
+            <version>2.0.1</version>
+            <type>jar</type>
+        </dependency>
+
     </dependencies>
+
+
+    <repositories>
+        <repository>
+            <id>Jung</id>
+            <name>Jung_teste</name>
+            <url>http://jung.cvs.sourceforge.net/jung/jung2/jung-api</url>
+        </repository>
+        <!--<pluginRepositories>
+            <pluginRepository>
+                <id>maven2-repository.dev.java.net</id>
+                <url>http://download.java.net/maven/2/</url>
+            </pluginRepository>
+        </pluginRepositories>-->
+    </repositories>
 </project>
+
+

@@ -19,6 +19,7 @@ import javax.swing.border.TitledBorder;
 import gems.ic.uff.br.modelo.LcsXML;
 import gems.ic.uff.br.modelo.XML;
 import gems.ic.uff.br.util.GBC;
+import java.awt.Color;
 
 /**
  *
@@ -134,8 +135,21 @@ public class TelaInicial extends JFrame {
 
         pnlComparacao.add(btnComparacao);
         pnlComparacao.setAlignmentY(JComponent.CENTER_ALIGNMENT);
+        JButton btnVisualizarGraficos = new JButton("Visualizar Grafico");
+        btnVisualizarGraficos.addActionListener(new ActionListener() {
 
+            public void actionPerformed(ActionEvent e) {
+                JFrame visualizar = new JFrame("Grafico");
+                VisualizarXML v = new VisualizarXML(Color.yellow);
+                visualizar.getContentPane().add(v);
+                visualizar.setLocationRelativeTo(null);
+                visualizar.setVisible(true);
+                visualizar.pack();
+            }
+        });
+        pnlComparacao.add(btnVisualizarGraficos);
         pnlPrincipal.add(pnlComparacao, gbc.adicionarComponenteComIsents(0, 2, 1, 10, new Insets(10, 10, 0, 0)));
+//        pnlPrincipal.add(this)
     }
 
     /**
