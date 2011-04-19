@@ -18,8 +18,10 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import gems.ic.uff.br.modelo.LcsXML;
 import gems.ic.uff.br.modelo.XML;
+import gems.ic.uff.br.modelo.similar.SimilarNode;
 import gems.ic.uff.br.util.GBC;
 import java.awt.Color;
+import javax.swing.border.BevelBorder;
 
 /**
  *
@@ -47,11 +49,11 @@ public class TelaInicial extends JFrame {
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
-        
+
         inicializarAreaDeTextos();
         inicializarAreaDeComparacao();
         inicializarVariaveis();
-        
+
         this.pack();
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -67,7 +69,7 @@ public class TelaInicial extends JFrame {
 
         inicializarAreaDeTextoDoArquivoComparador();
         inicializarAreaDeTextoDoArquivoASerComparado();
-        
+
         this.add(pnlPrincipal, BorderLayout.CENTER);
     }
 
@@ -103,7 +105,7 @@ public class TelaInicial extends JFrame {
         JScrollPane scroll = new JScrollPane(txtAreaASerComparado);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        
+
         pnlPrincipal.add(scroll, gbc.adicionarComponenteComIsents(1, 1, 0, 0, new Insets(0, 15, 45, 0)));
     }
 
@@ -127,9 +129,10 @@ public class TelaInicial extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 xml = new XML(txtAreaComparador.getText());
                 xml2 = new XML(txtAreaASerComparado.getText());
-                
-                LcsXML seq = new LcsXML(xml, xml2);
-                percentual.setValue((int) (seq.similaridade() * 100));
+
+                SimilarNode xmlComparador = new SimilarNode(xml.getDocument().getDocumentElement());
+                SimilarNode xmlASerComparada = new SimilarNode(xml2.getDocument().getDocumentElement());
+                percentual.setValue((int) ((xmlComparador.similar(xmlASerComparada)).getSimilarity() * 100));
             }
         });
 
@@ -140,8 +143,19 @@ public class TelaInicial extends JFrame {
 
             public void actionPerformed(ActionEvent e) {
                 JFrame visualizar = new JFrame("Grafico");
-                VisualizarXML v = new VisualizarXML(Color.yellow);
-                visualizar.getContentPane().add(v);
+                VisualizarXML v = new VisualizarXML(txtAreaComparador.getText(), Color.RED);
+                VisualizarXML v2 = new VisualizarXML(txtAreaASerComparado.getText(), Color.GREEN);
+                v.setBorder(new BevelBorder(BevelBorder.LOWERED));
+                v2.setBorder(new BevelBorder(BevelBorder.LOWERED));
+                JPanel pnlGraficos = new JPanel(new GridBagLayout());
+                gbc = new GBC();
+                JLabel txtTexto1 = new JLabel("Texto 1");
+                JLabel txtTexto2 = new JLabel("Texto 2");
+                pnlGraficos.add(txtTexto1, gbc.adicionarComponente(0, 0, 1, 1));
+                pnlGraficos.add(txtTexto2, gbc.adicionarComponente(1, 0, 1, 1));
+                pnlGraficos.add(v, gbc.adicionarComponente(0, 1, 1, 1));
+                pnlGraficos.add(v2, gbc.adicionarComponente(1, 1, 1, 1));
+                visualizar.getContentPane().add(pnlGraficos);
                 visualizar.setLocationRelativeTo(null);
                 visualizar.setVisible(true);
                 visualizar.pack();
