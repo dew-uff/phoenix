@@ -60,7 +60,7 @@ public class VisualizarXML extends JPanel {
         }
     };
 
-    public VisualizarXML(final Color chooseColor) {
+    public VisualizarXML(String caminhoOuTextoXML,final Color chooseColor) {
 
         Transformer<Node, Paint> changeColor = new Transformer<Node, Paint>() {
 
@@ -68,7 +68,7 @@ public class VisualizarXML extends JPanel {
                 return chooseColor;
             }
         };
-        xml = new XML("artigo.xml");
+        xml = new XML(caminhoOuTextoXML);
         floresta = new DelegateTree<Node, String>();
         Node raiz = xml.getDocument().getDocumentElement();
         floresta.addVertex(raiz);
@@ -81,6 +81,7 @@ public class VisualizarXML extends JPanel {
         vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
         vv.getRenderContext().setVertexLabelTransformer(mudarRotulo);
         vv.getRenderContext().setVertexFillPaintTransformer(changeColor);
+        vv.setBackground(Color.decode("0xffffbb"));
 
 
 
@@ -136,9 +137,7 @@ public class VisualizarXML extends JPanel {
                     insereFilhos(nl.item(i));
                 }
             } else {
-//                if(!nl.item(i).getNodeValue().isEmpty())
-//                floresta.addEdge(edgeFactory.create(), item, nl.item(i));
-                System.out.println("VALORRRRRRRRRRRR  " + nl.item(i).getNodeValue());
+                //TODO: inserir os nos com #Text
             }
         }
     }
