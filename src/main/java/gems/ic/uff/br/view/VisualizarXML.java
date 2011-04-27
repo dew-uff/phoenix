@@ -33,6 +33,7 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.Transformer;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -59,8 +60,27 @@ public class VisualizarXML extends JPanel {
             return arg0.getNodeName();
         }
     };
+    private Transformer<Node, String> criarToolTip = new Transformer<Node, String>() {
 
-    public VisualizarXML(String caminhoOuTextoXML,final Color chooseColor) {
+        public String transform(Node arg0) {
+            if (arg0.hasAttributes()) {
+                NamedNodeMap atributos = arg0.getAttributes();
+                String atributosConcatenados = "";
+                for (int i = 0; i < atributos.getLength(); i++) {
+                    atributosConcatenados += atributos.item(i).getNodeName() + " = ";
+                    if(atributos.item(i).getNodeValue().isEmpty()){
+                        atributosConcatenados += "Valor nulo \n\n";
+                    }else{
+                        atributosConcatenados += "" + atributos.item(i).getNodeValue() + "  \n\n";
+                    }
+                }
+                return atributosConcatenados;
+            }
+            return "Sem atributos";
+        }
+    };
+
+    public VisualizarXML(String caminhoOuTextoXML, final Color chooseColor) {
 
         Transformer<Node, Paint> changeColor = new Transformer<Node, Paint>() {
 
@@ -86,7 +106,7 @@ public class VisualizarXML extends JPanel {
 
 
         vv.getRenderer().setVertexLabelRenderer(vlasr);
-        vv.setVertexToolTipTransformer(mudarRotulo);
+        vv.setVertexToolTipTransformer(criarToolTip);
 
         GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
 
