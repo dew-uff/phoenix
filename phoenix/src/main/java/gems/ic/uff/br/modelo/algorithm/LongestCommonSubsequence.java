@@ -17,7 +17,7 @@ public abstract class LongestCommonSubsequence<VALUE extends Similar> extends Ab
     /**
      * Esse método monta a tabela LCS.
      * Ex.: AGCAT e GAC
-     * Ø	A	G	C	A	T
+     *          Ø	A	G	C	A	T
      * Ø	0	0	0	0	0	0
      * G	0	0	1	1	1	1
      * A	0	1	1	1	2	2
@@ -26,10 +26,7 @@ public abstract class LongestCommonSubsequence<VALUE extends Similar> extends Ab
     private void calculateLcs() {
         if (result == null) {
             //Cria a tabela.
-            result = new int[lengthOfX() + 1][];
-            for (int i = 0; i < result.length; i++) {
-                result[i] = new int[lengthOfY() + 1];
-            }
+            result = new int[lengthOfX() + 1][lengthOfY() + 1];
 
             //Seta os valores na tabela.
             for (int i = 1; i < result.length; i++) {
