@@ -12,7 +12,11 @@ public class LcsXML extends LongestCommonSubsequence<Similar> {
     public LcsXML(XML from, XML to) {
         this.x = from;
         this.y = to;
-        this.diffXML = DiffXML.getInstance();
+        this.diffXML = calculateDiff();
+    }
+    
+    private XML calculateDiff() {
+        return null;
     }
 
     @Override
