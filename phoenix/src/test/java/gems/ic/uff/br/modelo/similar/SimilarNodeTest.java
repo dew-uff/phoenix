@@ -158,7 +158,7 @@ public class SimilarNodeTest {
 
     @Test
     public void similaridadeEntreFilhosDosElementosNaoDeveriaContarElementosSemSerDoTipoElementNode() {
-        SimilarNode node = createSimilarNode("<father>Texto</father>");
+        SimilarNode node = createSimilarNode("<father atributo='valor'>Texto</father>");
         SimilarNode unequalNode = createSimilarNode("<father>Texto<son></son></father>");
 
         assertEquals(0, node.elementsChildrenSimilarity(unequalNode.getNode()), 0);
