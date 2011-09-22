@@ -87,14 +87,14 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
 
     public float[][] resultWithSimilarity() {
         calculateHungarian();
-        float[][] array = new float[result.length][3];
+        float[][] matrix = new float[result.length][3];
 
         for (int i = 0; i < result.length; i++) {
-            array[i][0] = result[i][0];
-            array[i][1] = result[i][1];
-            array[i][2] = originalMatrix[result[i][0]][result[i][1]];
+            matrix[i][0] = result[i][0];
+            matrix[i][1] = result[i][1];
+            matrix[i][2] = originalMatrix[result[i][0]][result[i][1]];
         }
         
-        return array;
+        return matrix;
     }
 }

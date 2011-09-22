@@ -1,15 +1,12 @@
-package gems.ic.uff.br.modelo;
+package gems.ic.uff.br.modelo.algorithm;
 
-import java.io.IOException;
-import javax.xml.parsers.ParserConfigurationException;
-
+import gems.ic.uff.br.modelo.HungarianList;
 import org.junit.Before;
 
 import java.util.List;
 
 import gems.ic.uff.br.modelo.similar.Similar;
 import gems.ic.uff.br.modelo.similar.SimilarNode;
-import gems.ic.uff.br.modelo.similar.SimilarString;
 
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -19,8 +16,6 @@ import org.junit.Test;
 import org.xml.sax.InputSource;
 
 import static org.junit.Assert.*;
-
-import org.xml.sax.SAXException;
 
 public class HungarianTest {
 

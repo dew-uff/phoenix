@@ -13,6 +13,7 @@ import static java.lang.Math.*;
 public abstract class LongestCommonSubsequence<VALUE extends Similar> extends AbstractAlgorithm {
 
     private int[][] result;
+    private float[][] backtrack;
 
     /**
      * Esse método monta a tabela LCS.
@@ -39,6 +40,38 @@ public abstract class LongestCommonSubsequence<VALUE extends Similar> extends Ab
                 }
             }
         }
+    }
+
+    public float[][] resultWithSimilarity() {
+        if (backtrack == null) {
+            calculateLcs();
+
+            int i = lengthOfX();
+            int j = lengthOfY();
+            int pos = getLcsLength();
+            
+            backtrack = new float[pos][3];
+
+            while (i != 0 && j != 0) {
+                if (isXYSimilar(i, j)) {
+                    i = i - 1;
+                    j = j - 1;
+                    pos = pos - 1;
+                    
+                    backtrack[pos][0] = i;
+                    backtrack[pos][1] = j;
+                    backtrack[pos][2] = similar(valueOfX(i), valueOfY(j));
+                } else {
+                    if (result[i][j - 1] > result[i - 1][j]) {
+                        j = j - 1;
+                    } else {
+                        i = i - 1;
+                    }
+                }
+            }
+        }
+
+        return backtrack;
     }
 
     /**
