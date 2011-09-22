@@ -138,13 +138,13 @@ public class TelaInicial extends JFrame {
 
         pnlComparacao.add(btnComparacao);
         pnlComparacao.setAlignmentY(JComponent.CENTER_ALIGNMENT);
-        JButton btnVisualizarGraficos = new JButton("Visualizar Grafico");
+        JButton btnVisualizarGraficos = new JButton("Visualizar Grafo");
         btnVisualizarGraficos.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
                 JFrame visualizar = new JFrame("Grafico");
                 VisualizarXML v = new VisualizarXML(txtAreaComparador.getText(), Color.RED);
-                VisualizarXML v2 = new VisualizarXML(txtAreaASerComparado.getText(), Color.GREEN);
+                VisualizarDiffXML v2 = new VisualizarDiffXML(txtAreaASerComparado.getText());
                 v.setBorder(new BevelBorder(BevelBorder.LOWERED));
                 v2.setBorder(new BevelBorder(BevelBorder.LOWERED));
                 JPanel pnlGraficos = new JPanel(new GridBagLayout());
