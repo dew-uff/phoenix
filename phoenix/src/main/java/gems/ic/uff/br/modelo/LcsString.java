@@ -26,11 +26,11 @@ public class LcsString extends LongestCommonSubsequence<SimilarCharacter> {
         return x.length();
     }
 
-    protected SimilarCharacter valueOfX(int index) {
+    public SimilarCharacter valueOfX(int index) {
         return new SimilarCharacter(x.charAt(index));
     }
 
-    protected SimilarCharacter valueOfY(int index) {
+    public SimilarCharacter valueOfY(int index) {
         return new SimilarCharacter(y.charAt(index));
     }
 }

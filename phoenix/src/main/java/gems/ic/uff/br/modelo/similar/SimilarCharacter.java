@@ -27,4 +27,26 @@ public class SimilarCharacter extends Similar<SimilarCharacter> {
     public String toString() {
         return character.toString();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SimilarCharacter other = (SimilarCharacter) obj;
+        if (this.character != other.character && (this.character == null || !this.character.equals(other.character))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 17 * hash + (this.character != null ? this.character.hashCode() : 0);
+        return hash;
+    }
 }
