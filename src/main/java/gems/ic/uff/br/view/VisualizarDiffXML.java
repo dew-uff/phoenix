@@ -52,11 +52,17 @@ public class VisualizarDiffXML extends JPanel {
     private Transformer<Node, String> mudarRotulo = new Transformer<Node, String>() {
 
         public String transform(Node arg0) {
-            return arg0.getNodeName();
+            if (arg0.getNodeType() != Node.TEXT_NODE) {
+                String teste = arg0.getNodeName().replace("left_", "");
+                teste = teste.replace("right_", "");
+                return teste;
+
+            } else {
+                return arg0.getNodeValue();
+            }
         }
     };
-    
-     private Transformer<Node, String> criarToolTip = new Transformer<Node, String>() {
+    private Transformer<Node, String> criarToolTip = new Transformer<Node, String>() {
 
         public String transform(Node arg0) {
             if (arg0.hasAttributes()) {
@@ -64,12 +70,13 @@ public class VisualizarDiffXML extends JPanel {
                 String atributosConcatenados = "";
                 for (int i = 0; i < atributos.getLength(); i++) {
                     atributosConcatenados += atributos.item(i).getNodeName() + " = ";
-                    if(atributos.item(i).getNodeValue().isEmpty()){
+                    if (atributos.item(i).getNodeValue().isEmpty()) {
                         atributosConcatenados += "Valor nulo \n\n";
-                    }else{
+                    } else {
                         atributosConcatenados += "" + atributos.item(i).getNodeValue() + "  \n\n";
                     }
                 }
+
                 return atributosConcatenados;
             }
             return "Sem atributos";
@@ -80,21 +87,44 @@ public class VisualizarDiffXML extends JPanel {
         Transformer<Node, Paint> changeColor = new Transformer<Node, Paint>() {
 
             public Paint transform(Node arg0) {
-                if(arg0.hasAttributes()){
-                    NamedNodeMap atributos = arg0.getAttributes();
-                    for (int i = 0; i < atributos.getLength(); i++) {
-                        if(atributos.item(i).getNodeName().equals("left")){
-                            return Color.RED;
-                        }else if(atributos.item(i).getNodeName().equals("right")){
-                            return Color.GREEN;
+                if (arg0.getNodeType() == Node.TEXT_NODE) {
+                    if (arg0.getParentNode().getNodeName().contains("left_")) {
+                        return Color.RED;
+                    } else if (arg0.getParentNode().getNodeName().contains("right_")) {
+                        return Color.lightGray;
+                    }
+                } else {
+                    if (arg0.getNodeName().contains("left_")) {
+                        return Color.RED;
+                    } else if (arg0.getNodeName().contains("right_")) {
+                        return Color.lightGray;
+                    }
+                    NodeList nodeList = arg0.getChildNodes();
+                    for (int i = 0; i < nodeList.getLength(); i++) {
+                        if(nodeList.item(i).getNodeName().contains("left_") ||
+                           nodeList.item(i).getNodeName().contains("right_")){
+                            return Color.YELLOW;
                         }
-                        
                     }
                 }
-                return Color.BLUE;
+                return Color.GREEN;
             }
+//            public Paint transform(Node arg0) {
+//                if(arg0.hasAttributes()){
+//                    NamedNodeMap atributos = arg0.getAttributes();
+//                    for (int i = 0; i < atributos.getLength(); i++) {
+//                        if(atributos.item(i).getNodeName().equals("left")){
+//                            return Color.RED;
+//                        }else if(atributos.item(i).getNodeName().equals("right")){
+//                            return Color.GREEN;
+//                        }
+//                        
+//                    }
+//                }
+//                return Color.BLUE;
+//            }
         };
-        
+
         xml = new XML(caminhoOuTextoXML);
         floresta = new DelegateTree<Node, String>();
         Node raiz = xml.getDocument().getDocumentElement();
@@ -155,17 +185,13 @@ public class VisualizarDiffXML extends JPanel {
         this.add(geral);
 
     }
-    
+
     private void insereFilhos(Node item) {
         NodeList nl = item.getChildNodes();
         for (int i = 0; i < nl.getLength(); i++) {
-            if (nl.item(i).getNodeType() != Node.TEXT_NODE) {
-                floresta.addEdge(edgeFactory.create(), item, nl.item(i));
-                if (nl.item(i).hasChildNodes()) {
-                    insereFilhos(nl.item(i));
-                }
-            } else {
-                //TODO: inserir os nos com #Text
+            floresta.addEdge(edgeFactory.create(), item, nl.item(i));
+            if (nl.item(i).hasChildNodes()) {
+                insereFilhos(nl.item(i));
             }
         }
     }
