@@ -140,11 +140,8 @@ public class TelaInicial extends JFrame {
                 
                 LcsXML lcsXML = new LcsXML(xml, xml2);
                 XML diffXML = lcsXML.getDiffXML();
-                System.out.println(diffXML.toString());
-                percentual.setValue((int) lcsXML.similaridade() * 100);
-//                SimilarNode xmlComparador = new SimilarNode(xml.getDocument().getDocumentElement());
-//                SimilarNode xmlASerComparada = new SimilarNode(xml2.getDocument().getDocumentElement());
-//                percentual.setValue((int) ((xmlComparador.similar(xmlASerComparada)).getSimilarity() * 100));
+                System.out.println(diffXML);
+                percentual.setValue((int) (lcsXML.similaridade() * 100));
             }
         });
 

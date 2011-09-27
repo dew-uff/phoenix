@@ -4,6 +4,7 @@ import com.sun.org.apache.xpath.internal.NodeSet;
 import gems.ic.uff.br.modelo.algorithm.LongestCommonSubsequence;
 import gems.ic.uff.br.modelo.similar.SimilarNode;
 import gems.ic.uff.br.modelo.similar.Similar;
+import org.w3c.dom.Node;
 
 public class LcsXML extends LongestCommonSubsequence<Similar> {
 
@@ -65,5 +66,19 @@ public class LcsXML extends LongestCommonSubsequence<Similar> {
 
     public XML getDiffXML() {
         return diffXML;
+    }
+
+    public float similaridade() {
+        float similarity = 0;
+        
+        if (diffXML.getDocument().getFirstChild().hasAttributes()) {
+            Node similarityNode = diffXML.getDocument().getFirstChild().getAttributes().getNamedItemNS("diff", "similarity");
+            
+            if (similarityNode != null) {
+                similarity = new Float(similarityNode.getNodeValue());
+            }
+        }
+        
+        return similarity;
     }
 }
