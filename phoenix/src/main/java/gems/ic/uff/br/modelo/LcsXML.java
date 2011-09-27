@@ -70,15 +70,17 @@ public class LcsXML extends LongestCommonSubsequence<Similar> {
 
     public float similaridade() {
         float similarity = 0;
-        
-        if (diffXML.getDocument().getFirstChild().hasAttributes()) {
-            Node similarityNode = diffXML.getDocument().getFirstChild().getAttributes().getNamedItemNS("diff", "similarity");
-            
-            if (similarityNode != null) {
-                similarity = new Float(similarityNode.getNodeValue());
+
+        if (diffXML.getDocument().getFirstChild() != null) {
+            if (diffXML.getDocument().getFirstChild().hasAttributes()) {
+                Node similarityNode = diffXML.getDocument().getFirstChild().getAttributes().getNamedItemNS("diff", "similarity");
+
+                if (similarityNode != null) {
+                    similarity = new Float(similarityNode.getNodeValue());
+                }
             }
         }
-        
+
         return similarity;
     }
 }

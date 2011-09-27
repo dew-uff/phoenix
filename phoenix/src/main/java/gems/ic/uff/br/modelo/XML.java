@@ -79,7 +79,6 @@ public class XML {
 
         try {
             Transformer serializer = TransformerFactory.newInstance().newTransformer();
-            //Omitindo a declaração do XML
             serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 
