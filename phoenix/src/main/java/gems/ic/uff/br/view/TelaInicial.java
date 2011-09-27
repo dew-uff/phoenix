@@ -137,10 +137,14 @@ public class TelaInicial extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 xml = new XML(txtAreaComparador.getText());
                 xml2 = new XML(txtAreaASerComparado.getText());
-
-                SimilarNode xmlComparador = new SimilarNode(xml.getDocument().getDocumentElement());
-                SimilarNode xmlASerComparada = new SimilarNode(xml2.getDocument().getDocumentElement());
-                percentual.setValue((int) ((xmlComparador.similar(xmlASerComparada)).getSimilarity() * 100));
+                
+                LcsXML lcsXML = new LcsXML(xml, xml2);
+                XML diffXML = lcsXML.getDiffXML();
+                System.out.println(diffXML.toString());
+                percentual.setValue((int) lcsXML.similaridade() * 100);
+//                SimilarNode xmlComparador = new SimilarNode(xml.getDocument().getDocumentElement());
+//                SimilarNode xmlASerComparada = new SimilarNode(xml2.getDocument().getDocumentElement());
+//                percentual.setValue((int) ((xmlComparador.similar(xmlASerComparada)).getSimilarity() * 100));
             }
         });
 

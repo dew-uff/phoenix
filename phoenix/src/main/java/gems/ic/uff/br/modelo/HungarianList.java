@@ -57,14 +57,16 @@ public class HungarianList extends Hungarian<Similar> {
         for (int i = 0; i < result.length; i++) {
             if (result[i][0] < lengthOfX() && result[i][1] < lengthOfY()) {
                 SimilarNode firstNode = (SimilarNode) x.get(result[i][0]);
-                firstNode.similar((SimilarNode) y.get(result[i][1]));
-
-                diff.addChildren(firstNode.getDiff());
+                Diff otherDiff = firstNode.similar((SimilarNode) y.get(result[i][1])); //TODO: Aqui estamos refazendo o diff.
+                
+                diff.addChildren(otherDiff);
             } else {
                 if (result[i][0] < lengthOfX()) {
-                    diff.addChildren(((SimilarNode) x.get(result[i][0])).getDiff());
+                    //TODO: Adicionar os elementos que não são similares.
+//                    diff.addChildren(((SimilarNode) x.get(result[i][0])).getDiff());
                 } else {
-                    diff.addChildren(((SimilarNode) y.get(result[i][1])).getDiff());
+                    //TODO: Adicionar os elementos que não são similares.
+//                    diff.addChildren(((SimilarNode) y.get(result[i][1])).getDiff());
                 }
             }
         }

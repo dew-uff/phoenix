@@ -1,49 +1,69 @@
 package gems.ic.uff.br.modelo;
 
+import com.sun.org.apache.xpath.internal.NodeSet;
 import gems.ic.uff.br.modelo.algorithm.LongestCommonSubsequence;
 import gems.ic.uff.br.modelo.similar.SimilarNode;
 import gems.ic.uff.br.modelo.similar.Similar;
 
 public class LcsXML extends LongestCommonSubsequence<Similar> {
-    private XML x;
-    private XML y;
+
     private XML diffXML;
+    private NodeSet x;
+    private NodeSet y;
 
     public LcsXML(XML from, XML to) {
-        this.x = from;
-        this.y = to;
+        this.x = SimilarNode.getElementNodes(from.getDocument().getChildNodes());
+        this.y = SimilarNode.getElementNodes(to.getDocument().getChildNodes());
         this.diffXML = calculateDiff();
     }
-    
+
     private XML calculateDiff() {
-        return null;
+        DiffXML.restart();
+        diffXML = DiffXML.getInstance();
+
+        float[][] result = resultWithSimilarity();
+
+        for (int i = 0; i < result.length; i++) {
+            if (result[i][0] < lengthOfX() && result[i][1] < lengthOfY()) {
+                SimilarNode firstNode = valueOfX((int) result[i][0]);
+                Diff otherDiff = firstNode.similar((SimilarNode) valueOfY((int) result[i][1])); //TODO: Aqui estamos refazendo o diff.
+
+                diffXML.addChildren(otherDiff);
+            } else {
+                if (result[i][0] < lengthOfX()) {
+                    //TODO: Adicionar os elementos que não são similares.
+//                    diff.addChildren(((SimilarNode) x.get(result[i][0])).getDiff());
+                } else {
+                    //TODO: Adicionar os elementos que não são similares.
+//                    diff.addChildren(((SimilarNode) y.get(result[i][1])).getDiff());
+                }
+            }
+        }
+
+        return diffXML;
     }
 
     @Override
     protected int lengthOfX() {
-        return x.getDocument().getDocumentElement().getChildNodes().getLength() + 1; //+1 Elemento root
+        return x.getLength();
     }
 
     @Override
     protected int lengthOfY() {
-        return y.getDocument().getDocumentElement().getChildNodes().getLength() + 1; //+1 Elemento Root
+        return y.getLength();
     }
 
     @Override
     protected SimilarNode valueOfX(int index) {
-        if (index == 0) {
-            return new SimilarNode(x.getDocument().getDocumentElement()); //Root
-        } else {
-            return new SimilarNode(x.getDocument().getDocumentElement().getChildNodes().item(index - 1)); //Tem que diminuir de 1 por causa do root (+1)
-        }
+        return new SimilarNode(x.item(index));
     }
 
     @Override
     protected SimilarNode valueOfY(int index) {
-        if (index == 0) {
-            return new SimilarNode(y.getDocument().getDocumentElement()); //Root
-        } else {
-            return new SimilarNode(y.getDocument().getDocumentElement().getChildNodes().item(index - 1)); //Tem que diminuir de 1 por causa do root (+1)
-        }
+        return new SimilarNode(y.item(index));
+    }
+
+    public XML getDiffXML() {
+        return diffXML;
     }
 }
