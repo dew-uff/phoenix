@@ -36,36 +36,18 @@ public class LcsXMLTest {
     public void deveriaTerOTamanhoDeXComoSendo1CasoSoPossuaElementoRoot() {
         xml1 = new XML("<root></root>");
         xml2 = new XML("<root><tag>content</tag></root>");
-
+        
         LcsXML lcs = new LcsXML(xml1, xml2);
         assertEquals(1, lcs.lengthOfX());
     }
 
     @Test
-    public void deveriaTerOTamanhoDeXComoSendoONumeroDeNosDoPrimeiroXMLMaisORoot() {
+    public void deveriaTerOTamanhoDeXComoSendo1CasoPossuaOutrosElementosAlemDoRoot() {
         xml1 = new XML("<root><tag>content</tag></root>");
         xml2 = new XML("<root><tag>content</tag></root>");
 
         LcsXML lcs = new LcsXML(xml1, xml2);
-        assertEquals(2, lcs.lengthOfX());
-    }
-
-    @Test
-    public void deveriaTerOTamanhoDeYComoSendoONumeroDeNosDoSegundoXMLMaisORoot() {
-        xml1 = new XML("<root><tag>content</tag></root>");
-        xml2 = new XML("<root><tag>content</tag><tag2>content2</tag2></root>");
-
-        LcsXML lcs = new LcsXML(xml1, xml2);
-        assertEquals(3, lcs.lengthOfY());
-    }
-
-    @Test
-    public void naoDeveriaContarParaOTamanhoOsNosEncadeados() {
-        xml1 = new XML("<root><tag><nestedTag>content</nestedTag></tag></root>");
-        xml2 = new XML("<root><tag>content</tag></root>");
-
-        LcsXML lcs = new LcsXML(xml1, xml2);
-        assertEquals(2, lcs.lengthOfX());
+        assertEquals(1, lcs.lengthOfX());
     }
 
     @Test
@@ -76,24 +58,6 @@ public class LcsXMLTest {
 
         LcsXML lcs = new LcsXML(xml1, xml2);
         assertEquals("root", lcs.valueOfX(0).toString());
-    }
-
-    @Test
-    public void deveriaRetornarONoDoIndicePassadoPorParametroEmX() {
-        xml1 = new XML("<root><tag>content</tag><tag2>content2</tag2></root>");
-        xml2 = new XML("<root><tag>content</tag></root>");
-
-        LcsXML lcs = new LcsXML(xml1, xml2);
-        assertEquals("tag", lcs.valueOfX(1).toString());
-    }
-
-    @Test
-    public void deveriaRetornarONoDoIndicePassadoPorParametroEmY() {
-        xml1 = new XML("<root><tag>content</tag></root>");
-        xml2 = new XML("<root><tag>content</tag><tag2>content2</tag2></root>");
-
-        LcsXML lcs = new LcsXML(xml1, xml2);
-        assertEquals("tag2", lcs.valueOfY(2).toString());
     }
 
     @Test
