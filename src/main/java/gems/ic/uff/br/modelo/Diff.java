@@ -39,12 +39,9 @@ public class Diff {
                 if (firstElementValue.equals(secondElementValue)) {
                     this.diffNode.setTextContent(firstElementValue);
                 } else {
-                    Node valueNode = DiffXML.createLeftSideNode("value");
-                    valueNode.setTextContent(firstElementValue);
-                    this.diffNode.appendChild(valueNode);
-
-                    valueNode = DiffXML.createRightSideNode("value");
-                    valueNode.setTextContent(secondElementValue);
+                    Element valueNode = (Element) DiffXML.createNode("value");
+                    valueNode.setAttributeNS("diff", "left", firstElementValue);
+                    valueNode.setAttributeNS("diff", "right", secondElementValue);
                     this.diffNode.appendChild(valueNode);
                 }
             } else {
@@ -86,12 +83,12 @@ public class Diff {
         return similarity;
     }
 
+    public Node getDiffNode() {
+        return diffNode;
+    }
+
     public void setSimilarity(float similarity) {
         this.similarity = similarity > 1 ? 1 : similarity;
         addSimilarityAttribute();
-    }
-
-    public Node getDiffNode() {
-        return diffNode;
     }
 }
