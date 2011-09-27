@@ -22,19 +22,18 @@ public class SimilarNode extends Similar<SimilarNode> {
     public static float ELEMENT_NAME_WEIGTH = 0.25f;
     public static float ELEMENT_CHILDREN_WEIGTH = 0.25f;
     //    public static float ELEMENT_TYPE = 0.6;
-    private Diff diff;
 
 
     public SimilarNode(Node node) {
         this.node = node;
-        this.diff = new Diff(node);
     }
 
     @Override
     public Diff similar(SimilarNode y) {
         Node otherNode = y.getNode();
+        
+        Diff diff = new Diff(node, otherNode);
         float similarity = 0;
-        this.diff = new Diff(node);
 
         if (node == null || otherNode == null) {
         } else {
@@ -43,13 +42,13 @@ public class SimilarNode extends Similar<SimilarNode> {
             //Se não houver similaridade no nome, então não são o mesmo elemento,
             //portanto, não é necessário continuar a calcular a similaridade.
             if (similarity != 0) {
-                similarity += elementsValueSimilarity(otherNode);
-                similarity += elementsAttributesSimilarity(otherNode);
-                similarity += elementsChildrenSimilarity(otherNode);
+                similarity += elementsValueSimilarity(otherNode, diff);
+                similarity += elementsAttributesSimilarity(otherNode, diff);
+                similarity += elementsChildrenSimilarity(otherNode, diff);
             }
         }
 
-        diff.setSimilarity(similarity > 1 ? 1 : similarity);
+        diff.setSimilarity(similarity);
 
         return diff;
     }
@@ -64,7 +63,7 @@ public class SimilarNode extends Similar<SimilarNode> {
         return similarity;
     }
 
-    protected float elementsValueSimilarity(Node otherNode) throws DOMException {
+    protected float elementsValueSimilarity(Node otherNode, Diff diff) throws DOMException {
         float similarity = 0;
 
         if (node.hasChildNodes() || otherNode.hasChildNodes()) {
@@ -97,7 +96,7 @@ public class SimilarNode extends Similar<SimilarNode> {
         return similarity;
     }
 
-    protected float elementsAttributesSimilarity(Node otherNode) {
+    protected float elementsAttributesSimilarity(Node otherNode, Diff diff) {
         float similarity = 0;
 
         if (!node.hasAttributes() && !otherNode.hasAttributes()) {
@@ -130,7 +129,7 @@ public class SimilarNode extends Similar<SimilarNode> {
         return similarity;
     }
 
-    protected float elementsChildrenSimilarity(Node otherNode) {
+    protected float elementsChildrenSimilarity(Node otherNode, Diff diff) {
         NodeList childNodes = node.getChildNodes();
         NodeList otherChildNodes = otherNode.getChildNodes();
         float similarity = 0;
@@ -148,7 +147,7 @@ public class SimilarNode extends Similar<SimilarNode> {
                 HungarianList hungarianList = new HungarianList(elementNodes, otherElementNodes);
 
                 similarity = hungarianList.similaridade() * ELEMENT_CHILDREN_WEIGTH;
-                hungarianList.addResultParent(this.diff);
+                hungarianList.addResultParent(diff);
             }
         }
 
@@ -162,7 +161,7 @@ public class SimilarNode extends Similar<SimilarNode> {
      * @return
      * @see Node
      */
-    protected NodeSet getElementNodes(NodeList nodeList) {
+    public static NodeSet getElementNodes(NodeList nodeList) {
         NodeSet elementNodes = new NodeSet();
 
         for (int i = 0; i < nodeList.getLength(); i++) {
@@ -172,7 +171,7 @@ public class SimilarNode extends Similar<SimilarNode> {
                 elementNodes.addNode(item);
             }
         }
-
+        
         return elementNodes;
     }
 
@@ -210,10 +209,6 @@ public class SimilarNode extends Similar<SimilarNode> {
 
     public Node getNode() {
         return node;
-    }
-
-    public Diff getDiff() {
-        return diff;
     }
 
     @Override

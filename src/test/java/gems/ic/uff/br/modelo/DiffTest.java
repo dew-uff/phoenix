@@ -27,7 +27,7 @@ public class DiffTest {
     public void deveriaTerOMesmoNomeDoPrimeiroElemento() {
         SimilarNode similarNode = createSimilarNode("<nome/>");
 
-        assertEquals("nome", new Diff(similarNode.getNode()).getNode().getNodeName());
+        assertEquals("nome", new Diff(similarNode.getNode()).getDiffNode().getNodeName());
     }
 
     @Test
@@ -36,7 +36,7 @@ public class DiffTest {
         SimilarNode similarNode2 = createSimilarNode("<element></element>");
         Diff diff = similarNode.similar(similarNode2);
 
-        assertEquals(1, diff.getNode().getChildNodes().getLength());
+        assertEquals(1, diff.getDiffNode().getChildNodes().getLength());
     }
 
     @Test
@@ -45,7 +45,7 @@ public class DiffTest {
         SimilarNode similarNode2 = createSimilarNode("<element></element>");
 
         Diff diff = similarNode.similar(similarNode2);
-        assertEquals("Value", diff.getNode().getFirstChild().getNodeValue());
+        assertEquals("Value", diff.getDiffNode().getFirstChild().getNodeValue());
     }
 
     @Test
@@ -53,7 +53,7 @@ public class DiffTest {
         SimilarNode similarNode = createSimilarNode("<element>Value</element>");
         Diff diff = similarNode.similar(similarNode);
 
-        assertEquals("Value", diff.getNode().getFirstChild().getNodeValue());
+        assertEquals("Value", diff.getDiffNode().getFirstChild().getNodeValue());
     }
 
     @Test
@@ -62,7 +62,7 @@ public class DiffTest {
         SimilarNode similarNode2 = createSimilarNode("<element>Value</element>");
         Diff diff = similarNode.similar(similarNode2);
 
-        assertEquals("Value", diff.getNode().getFirstChild().getNodeValue());
+        assertEquals("Value", diff.getDiffNode().getFirstChild().getNodeValue());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class DiffTest {
         SimilarNode similarNode2 = createSimilarNode("<element>AnotherValue</element>");
         Diff diff = similarNode.similar(similarNode2);
 
-        assertEquals(2, diff.getNode().getChildNodes().getLength());
+        assertEquals(2, diff.getDiffNode().getChildNodes().getLength());
     }
 
     @Test
@@ -80,8 +80,8 @@ public class DiffTest {
         SimilarNode similarNode2 = createSimilarNode("<element>AnotherValue</element>");
         Diff diff = similarNode.similar(similarNode2);
 
-        assertEquals("Value", diff.getNode().getChildNodes().item(0).getFirstChild().getNodeValue());
-        assertEquals("AnotherValue", diff.getNode().getChildNodes().item(1).getFirstChild().getNodeValue());
+        assertEquals("Value", diff.getDiffNode().getChildNodes().item(0).getFirstChild().getNodeValue());
+        assertEquals("AnotherValue", diff.getDiffNode().getChildNodes().item(1).getFirstChild().getNodeValue());
 
     }
 
@@ -90,7 +90,7 @@ public class DiffTest {
         SimilarNode similarNode = createSimilarNode("<element attribute='one'></element>");
         Diff diff = similarNode.similar(similarNode);
 
-        NamedNodeMap attributes = diff.getNode().getAttributes();
+        NamedNodeMap attributes = diff.getDiffNode().getAttributes();
         assertNotNull(attributes.getNamedItemNS("diff", "similarity").getNodeValue());
     }
 

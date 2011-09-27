@@ -7,22 +7,31 @@ import javax.xml.parsers.ParserConfigurationException;
 
 //TODO: Quando a classe LcsXML for refatorada, integrar estas duas classes.
 public class DiffXML {
-    private static XML diff;
+
+    private static XML diffXML;
     //TODO: Colocar num enum.
     private static final String LEFT_SIDE = "left";
     private static final String RIGHT_SIDE = "right";
     private static final String BOTH_SIDE = "";
 
     public static XML getInstance() {
-        if (diff == null) {
+        if (diffXML == null) {
             try {
-                diff = new XML(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
+                diffXML = new XML(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
             } catch (ParserConfigurationException e) {
                 e.printStackTrace();
             }
         }
 
-        return diff;
+        return diffXML;
+    }
+
+    public static void restart() {
+        try {
+            diffXML = new XML(DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument());
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        }
     }
 
     private static Node createNode(String nodeName, String namespace) {

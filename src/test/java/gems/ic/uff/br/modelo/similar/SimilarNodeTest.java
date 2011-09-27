@@ -1,5 +1,6 @@
 package gems.ic.uff.br.modelo.similar;
 
+import gems.ic.uff.br.modelo.Diff;
 import org.xml.sax.InputSource;
 
 import java.io.StringReader;
@@ -54,7 +55,8 @@ public class SimilarNodeTest {
     @Test
     public void igualdadeEntreConteudoDasTags() {
         SimilarNode equalNode = createSimilarNode("<tag>Texto</tag>");
-        float elementsValueSimilarity = equalNode.elementsValueSimilarity(equalNode.getNode());
+        Diff diff = new Diff(equalNode.getNode());
+        float elementsValueSimilarity = equalNode.elementsValueSimilarity(equalNode.getNode(), diff);
 
         assertEquals(SimilarNode.ELEMENT_VALUE_WEIGTH, elementsValueSimilarity, 0);
     }
@@ -63,7 +65,8 @@ public class SimilarNodeTest {
     public void similaridadeEntreConteudoDasTags() {
         SimilarNode node = createSimilarNode("<tag>Text1</tag>");
         SimilarNode similarNode = createSimilarNode("<tag>Text2</tag>");
-        float elementsValueSimilarity = node.elementsValueSimilarity(similarNode.getNode());
+        Diff diff = new Diff(node.getNode());
+        float elementsValueSimilarity = node.elementsValueSimilarity(similarNode.getNode(), diff);
 
         assertEquals((4.0/5.0) * SimilarNode.ELEMENT_VALUE_WEIGTH, elementsValueSimilarity, 0.01);
     }
@@ -73,7 +76,8 @@ public class SimilarNodeTest {
         SimilarNode node = createSimilarNode("<tag>Texto</tag>");
         SimilarNode unequalNode = createSimilarNode("<tag></tag>");
 
-        assertEquals(0, node.elementsValueSimilarity(unequalNode.getNode()), 0);
+        Diff diff = new Diff(node.getNode());
+        assertEquals(0, node.elementsValueSimilarity(unequalNode.getNode(), diff), 0);
     }
 
     @Test
@@ -81,7 +85,8 @@ public class SimilarNodeTest {
         SimilarNode node = createSimilarNode("<tag></tag>");
         SimilarNode unequalNode = createSimilarNode("<tag>Texto</tag>");
 
-        assertEquals(0, node.elementsValueSimilarity(unequalNode.getNode()), 0);
+        Diff diff = new Diff(node.getNode());
+        assertEquals(0, node.elementsValueSimilarity(unequalNode.getNode(), diff), 0);
     }
     
     
@@ -89,7 +94,8 @@ public class SimilarNodeTest {
     public void igualdadeEntreAtributos() {
         SimilarNode equalNode = createSimilarNode("<igual atributo='sim'></igual>");
 
-        assertEquals(SimilarNode.ATTRIBUTE_WEIGTH, equalNode.elementsAttributesSimilarity(equalNode.getNode()), 0);
+        Diff diff = new Diff(equalNode.getNode());
+        assertEquals(SimilarNode.ATTRIBUTE_WEIGTH, equalNode.elementsAttributesSimilarity(equalNode.getNode(), diff), 0);
     }
 
     @Test
@@ -97,7 +103,8 @@ public class SimilarNodeTest {
         SimilarNode node = createSimilarNode("<igual atributo='sim'></igual>");
         SimilarNode unequalNode = createSimilarNode("<igual></igual>");
 
-        assertEquals(0, node.elementsAttributesSimilarity(unequalNode.getNode()), 0);
+        Diff diff = new Diff(node.getNode());
+        assertEquals(0, node.elementsAttributesSimilarity(unequalNode.getNode(), diff), 0);
     }
 
     @Test
@@ -105,7 +112,8 @@ public class SimilarNodeTest {
         SimilarNode node = createSimilarNode("<igual></igual>");
         SimilarNode unequalNode = createSimilarNode("<igual atributo='sim'></igual>");
 
-        assertEquals(0, node.elementsAttributesSimilarity(unequalNode.getNode()), 0);
+        Diff diff = new Diff(node.getNode());
+        assertEquals(0, node.elementsAttributesSimilarity(unequalNode.getNode(), diff), 0);
     }
 
     @Test
@@ -113,7 +121,8 @@ public class SimilarNodeTest {
         SimilarNode node = createSimilarNode("<igual atributo='nao'></igual>");
         SimilarNode unequalNode = createSimilarNode("<igual atributo='sim'></igual>");
 
-        assertEquals(0, node.elementsAttributesSimilarity(unequalNode.getNode()), 0);
+        Diff diff = new Diff(node.getNode());
+        assertEquals(0, node.elementsAttributesSimilarity(unequalNode.getNode(), diff), 0);
     }
 
     @Test
@@ -121,7 +130,8 @@ public class SimilarNodeTest {
         SimilarNode node = createSimilarNode("<igual atributo='nao'></igual>");
         SimilarNode similarNode = createSimilarNode("<igual atributo='nao' outro='sim'></igual>");
 
-        assertEquals(SimilarNode.ATTRIBUTE_WEIGTH / 2, node.elementsAttributesSimilarity(similarNode.getNode()), 0);
+        Diff diff = new Diff(node.getNode());
+        assertEquals(SimilarNode.ATTRIBUTE_WEIGTH / 2, node.elementsAttributesSimilarity(similarNode.getNode(), diff), 0);
     }
 
     @Test
@@ -129,7 +139,8 @@ public class SimilarNodeTest {
         SimilarNode node = createSimilarNode("<father><son></son></father>");
         SimilarNode equalNode = createSimilarNode("<father><son></son></father>");
 
-        assertEquals(SimilarNode.ELEMENT_CHILDREN_WEIGTH, node.elementsChildrenSimilarity(equalNode.getNode()), 0);
+        Diff diff = new Diff(node.getNode());
+        assertEquals(SimilarNode.ELEMENT_CHILDREN_WEIGTH, node.elementsChildrenSimilarity(equalNode.getNode(), diff), 0);
     }
 
     @Test
@@ -137,7 +148,8 @@ public class SimilarNodeTest {
         SimilarNode node = createSimilarNode("<father><son></son></father>");
         SimilarNode unequalNode = createSimilarNode("<father><son2></son2></father>");
 
-        assertEquals(0, node.elementsChildrenSimilarity(unequalNode.getNode()), 0);
+        Diff diff = new Diff(node.getNode());
+        assertEquals(0, node.elementsChildrenSimilarity(unequalNode.getNode(), diff), 0);
     }
 
     @Test
@@ -145,7 +157,8 @@ public class SimilarNodeTest {
         SimilarNode node = createSimilarNode("<father><son></son><a/><b/><c/><d/><e/></father>");
         SimilarNode similarNode = createSimilarNode("<father><son></son><a/><b/><c/><d/><e/></father>");
 
-        assertEquals(SimilarNode.ELEMENT_CHILDREN_WEIGTH, node.elementsChildrenSimilarity(similarNode.getNode()), 0.01);
+        Diff diff = new Diff(node.getNode());
+        assertEquals(SimilarNode.ELEMENT_CHILDREN_WEIGTH, node.elementsChildrenSimilarity(similarNode.getNode(), diff), 0.01);
     }
     
     @Test
@@ -153,7 +166,8 @@ public class SimilarNodeTest {
         SimilarNode node = createSimilarNode("<father><son></son><a/><b/><c/><d/><e/></father>");
         SimilarNode similarNode = createSimilarNode("<father><son></son><c/><a/><b/><e/><d/></father>");
 
-        assertEquals(SimilarNode.ELEMENT_CHILDREN_WEIGTH, node.elementsChildrenSimilarity(similarNode.getNode()), 0.01);
+        Diff diff = new Diff(node.getNode());
+        assertEquals(SimilarNode.ELEMENT_CHILDREN_WEIGTH, node.elementsChildrenSimilarity(similarNode.getNode(), diff), 0.01);
     }
 
     @Test
@@ -161,6 +175,7 @@ public class SimilarNodeTest {
         SimilarNode node = createSimilarNode("<father atributo='valor'>Texto</father>");
         SimilarNode unequalNode = createSimilarNode("<father>Texto<son></son></father>");
 
-        assertEquals(0, node.elementsChildrenSimilarity(unequalNode.getNode()), 0);
+        Diff diff = new Diff(node.getNode());
+        assertEquals(0, node.elementsChildrenSimilarity(unequalNode.getNode(), diff), 0);
     }
 }

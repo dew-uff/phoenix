@@ -1,6 +1,8 @@
 package gems.ic.uff.br.modelo.algorithm;
 
+import gems.ic.uff.br.modelo.Diff;
 import gems.ic.uff.br.modelo.similar.Similar;
+import java.util.List;
 
 public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm {
 
@@ -81,7 +83,7 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
         for (int i = 0; i < result.length; i++) {
             similarity += originalMatrix[result[i][0]][result[i][1]];
         }
-        
+
         return similarity / result.length;
     }
 
@@ -94,7 +96,7 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
             matrix[i][1] = result[i][1];
             matrix[i][2] = originalMatrix[result[i][0]][result[i][1]];
         }
-        
+
         return matrix;
     }
 }
