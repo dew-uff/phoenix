@@ -23,7 +23,6 @@ public class SimilarNode extends Similar<SimilarNode> {
     public static float ELEMENT_CHILDREN_WEIGTH = 0.25f;
     //    public static float ELEMENT_TYPE = 0.6;
 
-
     public SimilarNode(Node node) {
         this.node = node;
     }

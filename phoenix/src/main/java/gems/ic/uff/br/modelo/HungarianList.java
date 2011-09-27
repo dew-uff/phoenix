@@ -31,7 +31,6 @@ public class HungarianList extends Hungarian<Similar> {
         }
     }
 
-
     @Override
     protected int lengthOfX() {
         return x.size();
@@ -58,7 +57,7 @@ public class HungarianList extends Hungarian<Similar> {
             if (result[i][0] < lengthOfX() && result[i][1] < lengthOfY()) {
                 SimilarNode firstNode = (SimilarNode) x.get(result[i][0]);
                 Diff otherDiff = firstNode.similar((SimilarNode) y.get(result[i][1])); //TODO: Aqui estamos refazendo o diff.
-                
+
                 diff.addChildren(otherDiff);
             } else {
                 if (result[i][0] < lengthOfX()) {
