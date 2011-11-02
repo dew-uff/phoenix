@@ -3,12 +3,12 @@ package gems.ic.uff.br.modelo;
 import java.io.*;
 import javax.xml.parsers.*;
 import javax.xml.xpath.*;
-import org.xml.sax.*;
 import org.w3c.dom.*;
 //import org.w3c.dom.traversal.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
+import org.xml.sax.InputSource;
 
 public class XML {
 
@@ -75,12 +75,22 @@ public class XML {
 
     @Override
     public String toString() {
+        Element root = document.getDocumentElement();
+        
+        //Adicionando os namespaces.
+        if (root != null) {
+            root.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:diff", "ic.uff.br/xmldiff");
+            root.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:left", "ic.uff.br/xmldiff");
+            root.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:right", "ic.uff.br/xmldiff");
+        }
+
         StringWriter writer = new StringWriter();
 
         try {
             Transformer serializer = TransformerFactory.newInstance().newTransformer();
             serializer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             serializer.setOutputProperty(OutputKeys.INDENT, "yes");
+            serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
             serializer.transform(new DOMSource(document), new StreamResult(writer));
         } catch (TransformerException ex) {

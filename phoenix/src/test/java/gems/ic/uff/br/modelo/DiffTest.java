@@ -66,22 +66,22 @@ public class DiffTest {
     }
 
     @Test
-    public void deveriaTerDoisFilhoCasoOsDoisElementosTenhamValoresDistintos() {
+    public void deveriaTerUmFilhoCasoOsDoisElementosTenhamValoresDistintos() {
         SimilarNode similarNode = createSimilarNode("<element>Value</element>");
         SimilarNode similarNode2 = createSimilarNode("<element>AnotherValue</element>");
         Diff diff = similarNode.similar(similarNode2);
 
-        assertEquals(2, diff.getDiffNode().getChildNodes().getLength());
+        assertEquals(1, diff.getDiffNode().getChildNodes().getLength());
     }
 
     @Test
-    public void deveriaTerDoisFilhosComOsValoresDeCadaElementoCasoOsDoisElementosTenhamValoresDistintos() {
+    public void deveriaTerUmFilhoComOsValoresDeCadaElementoCasoOsDoisElementosTenhamValoresDistintos() {
         SimilarNode similarNode = createSimilarNode("<element>Value</element>");
         SimilarNode similarNode2 = createSimilarNode("<element>AnotherValue</element>");
         Diff diff = similarNode.similar(similarNode2);
 
-        assertEquals("Value", diff.getDiffNode().getChildNodes().item(0).getFirstChild().getNodeValue());
-        assertEquals("AnotherValue", diff.getDiffNode().getChildNodes().item(1).getFirstChild().getNodeValue());
+        assertEquals("Value", diff.getDiffNode().getChildNodes().item(0).getAttributes().item(0).getNodeValue());
+        assertEquals("AnotherValue", diff.getDiffNode().getChildNodes().item(0).getAttributes().item(1).getNodeValue());
 
     }
 
@@ -91,7 +91,7 @@ public class DiffTest {
         Diff diff = similarNode.similar(similarNode);
 
         NamedNodeMap attributes = diff.getDiffNode().getAttributes();
-        assertNotNull(attributes.getNamedItemNS("diff", "similarity").getNodeValue());
+        assertNotNull(attributes.getNamedItem("diff:similarity").getNodeValue());
     }
 
     @Test

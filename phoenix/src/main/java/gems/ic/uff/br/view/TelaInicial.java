@@ -22,6 +22,7 @@ import gems.ic.uff.br.modelo.similar.SimilarNode;
 import gems.ic.uff.br.util.GBC;
 import java.awt.Color;
 import javax.swing.border.BevelBorder;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -139,8 +140,7 @@ public class TelaInicial extends JFrame {
                 xml2 = new XML(txtAreaASerComparado.getText());
                 
                 LcsXML lcsXML = new LcsXML(xml, xml2);
-                XML diffXML = lcsXML.getDiffXML();
-                System.out.println(diffXML);
+                System.out.println(lcsXML.getDiffXML());
                 percentual.setValue((int) (lcsXML.similaridade() * 100));
             }
         });
