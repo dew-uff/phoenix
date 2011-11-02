@@ -5,6 +5,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class Diff {
+    
+    public static final String NAMESPACE = "ic.uff.br/xmldiff";
+    public static final String DIFF_PREFIX = "diff:";
+    public static final String LEFT_PREFIX = "left:";
+    public static final String RIGHT_PREFIX = "right:";
 
     private float similarity;
     private Node diffNode;
@@ -40,8 +45,8 @@ public class Diff {
                     this.diffNode.setTextContent(firstElementValue);
                 } else {
                     Element valueNode = (Element) DiffXML.createNode("value");
-                    valueNode.setAttributeNS("diff", "left", firstElementValue);
-                    valueNode.setAttributeNS("diff", "right", secondElementValue);
+                    valueNode.setAttributeNS(NAMESPACE, DIFF_PREFIX + "left", firstElementValue);
+                    valueNode.setAttributeNS(NAMESPACE, DIFF_PREFIX + "right", secondElementValue);
                     this.diffNode.appendChild(valueNode);
                 }
             } else {
@@ -57,22 +62,22 @@ public class Diff {
     public void addAttribute(String attributeName, String firstElementAttributeValue, String secondElementAttributeValue) {
         if (firstElementAttributeValue.isEmpty() || secondElementAttributeValue.isEmpty()) {
             if (firstElementAttributeValue.isEmpty()) {
-                ((Element) this.diffNode).setAttributeNS("left", attributeName, firstElementAttributeValue);
+                ((Element) this.diffNode).setAttributeNS(NAMESPACE, LEFT_PREFIX + attributeName, firstElementAttributeValue);
             } else {
-                ((Element) this.diffNode).setAttributeNS("right", attributeName, secondElementAttributeValue);
+                ((Element) this.diffNode).setAttributeNS(NAMESPACE, RIGHT_PREFIX + attributeName, secondElementAttributeValue);
             }
         } else {
             if (firstElementAttributeValue.equals(secondElementAttributeValue)) {
                 ((Element) this.diffNode).setAttribute(attributeName, firstElementAttributeValue);
             } else {
-                ((Element) this.diffNode).setAttributeNS("left", attributeName, firstElementAttributeValue);
-                ((Element) this.diffNode).setAttributeNS("right", attributeName, secondElementAttributeValue);
+                ((Element) this.diffNode).setAttributeNS(NAMESPACE, LEFT_PREFIX + attributeName, firstElementAttributeValue);
+                ((Element) this.diffNode).setAttributeNS(NAMESPACE, RIGHT_PREFIX + attributeName, secondElementAttributeValue);
             }
         }
     }
 
     private void addSimilarityAttribute() {
-        ((Element) this.diffNode).setAttributeNS("diff", "similarity", Float.toString(similarity));
+        ((Element) this.diffNode).setAttributeNS(NAMESPACE, DIFF_PREFIX + "similarity", Float.toString(similarity));
     }
 
     public void addChildren(Diff anotherDiff) {
