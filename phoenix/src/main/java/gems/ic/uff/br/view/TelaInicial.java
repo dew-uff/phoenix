@@ -18,11 +18,12 @@ import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import gems.ic.uff.br.modelo.LcsXML;
 import gems.ic.uff.br.modelo.XML;
-import gems.ic.uff.br.modelo.similar.SimilarNode;
 import gems.ic.uff.br.util.GBC;
 import java.awt.Color;
+import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridLayout;
 import javax.swing.border.BevelBorder;
-import org.w3c.dom.Node;
 
 /**
  *
@@ -38,7 +39,7 @@ public class TelaInicial extends JFrame {
     private JPanel pnlComparacao;
     private JButton btnComparacao;
     private PnlPonderacoes pnlPonderacoes;
-    private final int TAMANHO_HORIZONTAL_AREA = 30;
+    private final int TAMANHO_HORIZONTAL_AREA = 20;
     private final int TAMANHO_VERTICAL_AREA = 20;
     private JProgressBar percentual;
     private XML xml;
@@ -52,10 +53,9 @@ public class TelaInicial extends JFrame {
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
-
         inicializarAreaDeTextos();
         inicializarAreaDeComparacao();
-        inicializarVariaveis();
+        visualizarPercentualSimilaridade();
 //        inicializarAreaPesos();
 
         this.pack();
@@ -79,7 +79,7 @@ public class TelaInicial extends JFrame {
 
     private void inicializarAreaPesos() {
         pnlComparacao = new PnlPonderacoes();
-        this.add(pnlComparacao,BorderLayout.WEST);
+        this.add(pnlComparacao, BorderLayout.WEST);
     }
 
     /**
@@ -88,16 +88,24 @@ public class TelaInicial extends JFrame {
     private void inicializarAreaDeTextoDoArquivoComparador() {
         //TextArea
         txtAreaComparador = new JTextArea(TAMANHO_HORIZONTAL_AREA, TAMANHO_VERTICAL_AREA);
-        txtAreaComparador.setText(xml.toString());
+//        txtAreaComparador.setText(xml.toString());
 
-        pnlPrincipal.add(new JLabel("Texto Comparador"), gbc.adicionarComponente(0, 0, 1, 1));
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridheight = 1;
+        gbc.gridwidth = 1;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        pnlPrincipal.add(new JLabel("Texto Comparador"), gbc);
 
         //Barra de Scroll
         JScrollPane scroll = new JScrollPane(txtAreaComparador);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        pnlPrincipal.add(scroll, gbc.adicionarComponente(0, 1, 1, 1));
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        pnlPrincipal.add(scroll, gbc);
     }
 
     /**
@@ -108,14 +116,21 @@ public class TelaInicial extends JFrame {
         txtAreaASerComparado = new JTextArea(TAMANHO_HORIZONTAL_AREA, TAMANHO_VERTICAL_AREA);
         txtAreaASerComparado.setText(xml2.toString());
 
-        pnlPrincipal.add(new JLabel("Texto A Ser Comparado"), gbc.adicionarComponente(1, 0, 1, 1));
-
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        Insets insetsConparado = new Insets(0, 10, 5, 0);
+        gbc.insets = insetsConparado;
+        pnlPrincipal.add(new JLabel("Texto A Ser Comparado"), gbc);
         //Barra de Scroll
         JScrollPane scroll = new JScrollPane(txtAreaASerComparado);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
-        pnlPrincipal.add(scroll, gbc.adicionarComponenteComIsents(1, 1, 0, 0, new Insets(0, 15, 45, 0)));
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.gridheight = 3;
+        gbc.gridwidth = 3;
+        
+        pnlPrincipal.add(scroll, gbc);
     }
 
     /**
@@ -138,7 +153,7 @@ public class TelaInicial extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 xml = new XML(txtAreaComparador.getText());
                 xml2 = new XML(txtAreaASerComparado.getText());
-                
+
                 LcsXML lcsXML = new LcsXML(xml, xml2);
                 System.out.println(lcsXML.getDiffXML());
                 percentual.setValue((int) (lcsXML.similaridade() * 100));
@@ -181,7 +196,9 @@ public class TelaInicial extends JFrame {
             }
         });
         pnlComparacao.add(btnVisualizarGraficos);
-        pnlPrincipal.add(pnlComparacao, gbc.adicionarComponenteComIsents(0, 2, 1, 10, new Insets(10, 10, 0, 0)));
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        pnlPrincipal.add(pnlComparacao, gbc);
 //        pnlPrincipal.add(this)
     }
 
@@ -198,15 +215,18 @@ public class TelaInicial extends JFrame {
         percentual.setBorder(borda);
     }
 
-    private void inicializarVariaveis() {
+    private void visualizarPercentualSimilaridade() {
         gbc.fill = GBC.BOTH;
 
         //TODO remover o panelSul e adicionar os seus componentes ao painel de comparação.
-        JPanel panelSul = new JPanel(new GridBagLayout());
-        panelSul.add(percentual, gbc.adicionarComponenteComIsents(0, 0, 1, 1, new Insets(0, 0, 20, 0)));
-        JButton btnLog = new JButton("Visualizar log");
-        panelSul.add(btnLog, gbc.adicionarComponenteComIsents(1, 0, 1, 1, new Insets(0, 10, 20, 0)));
-        this.add(panelSul, BorderLayout.SOUTH);
+//        JPanel panelSul = new JPanel(new GridBagLayout());
+//        JPanel pnlEsquerdo = new JPanel(new GridLayout(3, 1));
+//        pnlEsquerdo.add(new JButton("Comparar"));
+//        pnlEsquerdo.add(new JButton("Visualizar"));
+//        pnlEsquerdo.add(new JButton("Log"));
+//
+//        panelSul.add(percentual, gbc.adicionarComponenteComIsents(0, 0, 1, 1, new Insets(0, 0, 20, 0)));
+//        this.add(pnlEsquerdo, BorderLayout.WEST);
     }
 
     public static void main(String[] args) {
