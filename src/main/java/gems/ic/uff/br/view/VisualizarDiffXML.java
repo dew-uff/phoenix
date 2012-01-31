@@ -53,10 +53,12 @@ public class VisualizarDiffXML extends JPanel {
 
         public String transform(Node arg0) {
             if (arg0.getNodeType() != Node.TEXT_NODE) {
-                String teste = arg0.getNodeName().replace("left_", "");
-                teste = teste.replace("right_", "");
-                return teste;
-
+                if (arg0.getNodeName().contains("diff:left")
+                        || arg0.getNodeName().contains("diff:right")) {
+                    return arg0.getNodeValue();
+                } else {
+                    return arg0.getNodeName();
+                }
             } else {
                 return arg0.getNodeValue();
             }
@@ -87,45 +89,27 @@ public class VisualizarDiffXML extends JPanel {
         Transformer<Node, Paint> changeColor = new Transformer<Node, Paint>() {
 
             public Paint transform(Node arg0) {
-                if (arg0.getNodeType() == Node.TEXT_NODE) {
-                    if (arg0.getParentNode().getNodeName().contains("left_")) {
-                        return Color.RED;
-                    } else if (arg0.getParentNode().getNodeName().contains("right_")) {
-                        return Color.lightGray;
-                    }
-                } else {
-                    if (arg0.getNodeName().contains("left_")) {
-                        return Color.RED;
-                    } else if (arg0.getNodeName().contains("right_")) {
-                        return Color.lightGray;
-                    }
-                    NodeList nodeList = arg0.getChildNodes();
-                    for (int i = 0; i < nodeList.getLength(); i++) {
-                        if(nodeList.item(i).getNodeName().contains("left_") ||
-                           nodeList.item(i).getNodeName().contains("right_")){
-                            return Color.YELLOW;
-                        }
+                if(arg0.hasAttributes()){
+                    Node nodeSimilaridade = arg0.getAttributes().getNamedItem("diff:similarity");
+                    if (nodeSimilaridade != null
+                            && nodeSimilaridade.getNodeValue().equals("1.0")) {
+                        return Color.GRAY;
                     }
                 }
-                return Color.GREEN;
+                if (arg0.getNodeName().contains("diff:left")) {
+                    return Color.ORANGE;
+                } else if (arg0.getNodeName().contains("diff:right")) {
+                    return Color.WHITE;
+                }
+                if (arg0.getNodeType() == Node.TEXT_NODE) {
+                    return Color.GRAY;
+                }
+                return Color.RED;
             }
-//            public Paint transform(Node arg0) {
-//                if(arg0.hasAttributes()){
-//                    NamedNodeMap atributos = arg0.getAttributes();
-//                    for (int i = 0; i < atributos.getLength(); i++) {
-//                        if(atributos.item(i).getNodeName().equals("left")){
-//                            return Color.RED;
-//                        }else if(atributos.item(i).getNodeName().equals("right")){
-//                            return Color.GREEN;
-//                        }
-//                        
-//                    }
-//                }
-//                return Color.BLUE;
-//            }
         };
 
         xml = new XML(caminhoOuTextoXML);
+        xml.removeWhiteSpaces(xml.getDocument());
         floresta = new DelegateTree<Node, String>();
         Node raiz = xml.getDocument().getDocumentElement();
         floresta.addVertex(raiz);
@@ -139,7 +123,6 @@ public class VisualizarDiffXML extends JPanel {
         vv.getRenderContext().setVertexLabelTransformer(mudarRotulo);
         vv.getRenderContext().setVertexFillPaintTransformer(changeColor);
         vv.setBackground(Color.decode("0xffffbb"));
-
 
 
         vv.getRenderer().setVertexLabelRenderer(vlasr);
@@ -189,7 +172,18 @@ public class VisualizarDiffXML extends JPanel {
     private void insereFilhos(Node item) {
         NodeList nl = item.getChildNodes();
         for (int i = 0; i < nl.getLength(); i++) {
-            floresta.addEdge(edgeFactory.create(), item, nl.item(i));
+            if (nl.item(i).getNodeName().contains("diff:value")) {
+                Node noEsquerdo = nl.item(i).getAttributes().getNamedItem("diff:left");
+                Node noDireito = nl.item(i).getAttributes().getNamedItem("diff:right");
+                if (noEsquerdo != null) {
+                    floresta.addEdge(edgeFactory.create(), item, noEsquerdo);
+                }
+                if (noDireito != null) {
+                    floresta.addEdge(edgeFactory.create(), item, noDireito);
+                }
+            } else {
+                floresta.addEdge(edgeFactory.create(), item, nl.item(i));
+            }
             if (nl.item(i).hasChildNodes()) {
                 insereFilhos(nl.item(i));
             }

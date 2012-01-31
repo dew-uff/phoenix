@@ -48,8 +48,8 @@ public class TelaInicial extends JFrame {
 
     public TelaInicial() {
         try {
-            xml = new XML(filePath);
-            xml2 = new XML("<root><inventory>Teste</inventory></root>");
+            xml = new XML("<usuario><nome>João Silva</nome><cidade>São José de Ribamar</cidade><estado>Maranhão</estado></usuario>");
+            xml2 = new XML("<usuario><nome>Maria da Silva</nome><cidade>São Luiz</cidade><estado>Maranhão</estado><pais>Brasil</pais></usuario>");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -129,7 +129,7 @@ public class TelaInicial extends JFrame {
         gbc.gridy = 1;
         gbc.gridheight = 3;
         gbc.gridwidth = 3;
-        
+
         pnlPrincipal.add(scroll, gbc);
     }
 
@@ -155,8 +155,29 @@ public class TelaInicial extends JFrame {
                 xml2 = new XML(txtAreaASerComparado.getText());
 
                 LcsXML lcsXML = new LcsXML(xml, xml2);
-                System.out.println(lcsXML.getDiffXML());
-                percentual.setValue((int) (lcsXML.similaridade() * 100));
+//                System.out.println(lcsXML.getDiffXML());
+//                percentual.setValue((int) (lcsXML.similaridade() * 100));
+                System.out.println("********************");
+                System.out.println("********************");
+                System.out.println("RESULTADOOOO TOTALLLLL => " + lcsXML.similaridade());
+                System.out.println("********************");
+                System.out.println("********************");
+
+                JFrame telaDiff = new JFrame("Diff Resultante");
+                
+//                lcsXML.getDiffXML().removeWhiteSpaces(lcsXML.getDiffXML().getDocument());
+                String testeDiffResultante = lcsXML.getDiffXML().toString();
+                System.out.println(" ***  IMPRIME XML RESULTANTE ***");
+                System.out.println("" + testeDiffResultante);
+                System.out.println(" *** FIM *** ");
+                VisualizarDiffXML diffGrafico = new VisualizarDiffXML(lcsXML.getDiffXML().toString());
+                diffGrafico.setBorder(new BevelBorder(BevelBorder.LOWERED));
+                JPanel pnlGraficoDiff = new JPanel(new GridBagLayout());
+                pnlGraficoDiff.add(diffGrafico, gbc.adicionarComponente(0, 0, 1, 1));
+                telaDiff.getContentPane().add(pnlGraficoDiff);
+                telaDiff.setLocationRelativeTo(null);
+                telaDiff.setVisible(true);
+                telaDiff.pack();
             }
         });
 
@@ -167,8 +188,8 @@ public class TelaInicial extends JFrame {
 
             public void actionPerformed(ActionEvent e) {
                 JFrame visualizar = new JFrame("Grafico");
-                VisualizarXML v = new VisualizarXML(txtAreaComparador.getText(), Color.RED);
-                VisualizarXML v2 = new VisualizarXML(txtAreaComparador.getText(), Color.lightGray);
+                VisualizarXML v = new VisualizarXML(txtAreaComparador.getText(), Color.ORANGE);
+                VisualizarXML v2 = new VisualizarXML(txtAreaComparador.getText(), Color.WHITE);
                 v.setBorder(new BevelBorder(BevelBorder.LOWERED));
                 v2.setBorder(new BevelBorder(BevelBorder.LOWERED));
                 JPanel pnlGraficos = new JPanel(new GridBagLayout());
