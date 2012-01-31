@@ -57,6 +57,9 @@ public class VisualizarXML extends JPanel {
     private Transformer<Node, String> mudarRotulo = new Transformer<Node, String>() {
 
         public String transform(Node arg0) {
+            if (arg0.getNodeType() == Node.TEXT_NODE) {
+                return arg0.getNodeValue();
+            }
             return arg0.getNodeName();
         }
     };
@@ -68,9 +71,9 @@ public class VisualizarXML extends JPanel {
                 String atributosConcatenados = "";
                 for (int i = 0; i < atributos.getLength(); i++) {
                     atributosConcatenados += atributos.item(i).getNodeName() + " = ";
-                    if(atributos.item(i).getNodeValue().isEmpty()){
+                    if (atributos.item(i).getNodeValue().isEmpty()) {
                         atributosConcatenados += "Valor nulo \n\n";
-                    }else{
+                    } else {
                         atributosConcatenados += "" + atributos.item(i).getNodeValue() + "  \n\n";
                     }
                 }
@@ -89,6 +92,7 @@ public class VisualizarXML extends JPanel {
             }
         };
         xml = new XML(caminhoOuTextoXML);
+        xml.removeWhiteSpaces(xml.getDocument());
         floresta = new DelegateTree<Node, String>();
         Node raiz = xml.getDocument().getDocumentElement();
         floresta.addVertex(raiz);
@@ -151,13 +155,9 @@ public class VisualizarXML extends JPanel {
     private void insereFilhos(Node item) {
         NodeList nl = item.getChildNodes();
         for (int i = 0; i < nl.getLength(); i++) {
-            if (nl.item(i).getNodeType() != Node.TEXT_NODE) {
-                floresta.addEdge(edgeFactory.create(), item, nl.item(i));
-                if (nl.item(i).hasChildNodes()) {
-                    insereFilhos(nl.item(i));
-                }
-            } else {
-                //TODO: inserir os nos com #Text
+            floresta.addEdge(edgeFactory.create(), item, nl.item(i));
+            if (nl.item(i).hasChildNodes()) {
+                insereFilhos(nl.item(i));
             }
         }
     }

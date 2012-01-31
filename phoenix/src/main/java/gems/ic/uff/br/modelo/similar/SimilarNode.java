@@ -34,6 +34,7 @@ public class SimilarNode extends Similar<SimilarNode> {
         Diff diff = new Diff(node, otherNode);
         float similarity = 0;
 
+        //nao sei pra que serve essa condiç
         if (node == null || otherNode == null) {
         } else {
             similarity += elementsNameSimilarity(otherNode);
@@ -129,16 +130,15 @@ public class SimilarNode extends Similar<SimilarNode> {
     }
 
     protected float elementsChildrenSimilarity(Node otherNode, Diff diff) {
-        NodeList childNodes = node.getChildNodes();
-        NodeList otherChildNodes = otherNode.getChildNodes();
+
         float similarity = 0;
-
-        if (childNodes == null && otherChildNodes == null) {
+        if (!node.hasChildNodes() && !otherNode.hasChildNodes()) {
             similarity = ELEMENT_CHILDREN_WEIGTH;
-
-        } else if (childNodes != null && otherChildNodes != null) {
-            NodeSet elementNodes = getElementNodes(childNodes);
-            NodeSet otherElementNodes = getElementNodes(otherChildNodes);
+        } else {
+//            NodeList childNodes = node.getChildNodes();
+//            NodeList otherChildNodes = otherNode.getChildNodes();
+            NodeSet elementNodes = getElementNodes(node.getChildNodes());
+            NodeSet otherElementNodes = getElementNodes(otherNode.getChildNodes());
 
             if ((elementNodes.size() == 0 && otherElementNodes.size() == 0)) {
                 similarity = ELEMENT_CHILDREN_WEIGTH;
