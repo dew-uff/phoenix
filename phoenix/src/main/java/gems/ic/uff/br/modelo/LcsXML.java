@@ -11,7 +11,7 @@ public class LcsXML extends LongestCommonSubsequence<Similar> {
     private XML diffXML;
     private NodeSet x;
     private NodeSet y;
-
+    
     public LcsXML(XML from, XML to) {
         this.x = SimilarNode.getElementNodes(from.getDocument().getChildNodes());
         this.y = SimilarNode.getElementNodes(to.getDocument().getChildNodes());
@@ -22,25 +22,15 @@ public class LcsXML extends LongestCommonSubsequence<Similar> {
         DiffXML.restart();
         diffXML = DiffXML.getInstance();
 
-        float[][] result = resultWithSimilarity();
-
-        for (int i = 0; i < result.length; i++) {
-            if (result[i][0] < lengthOfX() && result[i][1] < lengthOfY()) {
-                SimilarNode firstNode = valueOfX((int) result[i][0]);
-                Diff otherDiff = firstNode.similar((SimilarNode) valueOfY((int) result[i][1])); //TODO: Aqui estamos refazendo o diff.
-
-                diffXML.addChildren(otherDiff);
-            } else {
-                if (result[i][0] < lengthOfX()) {
-                    //TODO: Adicionar os elementos que não são similares.
-//                    diff.addChildren(((SimilarNode) x.get(result[i][0])).getDiff());
-                } else {
-                    //TODO: Adicionar os elementos que não são similares.
-//                    diff.addChildren(((SimilarNode) y.get(result[i][1])).getDiff());
-                }
-            }
-        }
-
+        //pega o elemento raiz do documento esquerdo 
+        SimilarNode leftRoot = (SimilarNode) valueOfX(0);
+        //pega o elemento raiz do documento direita
+        SimilarNode rightRoot = (SimilarNode) valueOfY(0);
+        
+        //compara a similaridade entre os documentos
+        Diff otherDiff = leftRoot.similar(rightRoot);
+        diffXML.addChildren(otherDiff);
+        
         return diffXML;
     }
 

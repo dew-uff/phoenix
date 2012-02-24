@@ -16,77 +16,76 @@ import org.w3c.dom.NodeList;
  */
 public class SimilarNode extends Similar<SimilarNode> {
 
-    private Node node;
+    private Node leftNode;
     public static float ATTRIBUTE_WEIGTH = 0.25f;
     public static float ELEMENT_VALUE_WEIGTH = 0.25f;
     public static float ELEMENT_NAME_WEIGTH = 0.25f;
     public static float ELEMENT_CHILDREN_WEIGTH = 0.25f;
-    //    public static float ELEMENT_TYPE = 0.6;
 
     public SimilarNode(Node node) {
-        this.node = node;
+        this.leftNode = node;
     }
 
     @Override
     public Diff similar(SimilarNode y) {
-        Node otherNode = y.getNode();
-        
-        Diff diff = new Diff(node, otherNode);
+        Node rightNode = y.getNode();
+
+        Diff diff = new Diff(leftNode, rightNode);
         float similarity = 0;
 
         //nao sei pra que serve essa condiç
-        if (node == null || otherNode == null) {
+        if (leftNode == null || rightNode == null) {
+            //no momento, o sistema nao esta protegendo isso
         } else {
-            similarity += elementsNameSimilarity(otherNode);
+            similarity += elementsNameSimilarity(rightNode);
 
             //Se não houver similaridade no nome, então não são o mesmo elemento,
             //portanto, não é necessário continuar a calcular a similaridade.
             if (similarity != 0) {
-                similarity += elementsValueSimilarity(otherNode, diff);
-                similarity += elementsAttributesSimilarity(otherNode, diff);
-                similarity += elementsChildrenSimilarity(otherNode, diff);
+                similarity += elementsValueSimilarity(rightNode, diff);
+                similarity += elementsAttributesSimilarity(rightNode, diff);
+                similarity += elementsChildrenSimilarity(rightNode, diff);
+
             }
         }
-
         diff.setSimilarity(similarity);
-
         return diff;
     }
 
-    protected float elementsNameSimilarity(Node otherNode) {
+    protected float elementsNameSimilarity(Node rightNode) {
         float similarity = 0;
 
-        if (node.getNodeName().equals(otherNode.getNodeName())) {
+        if (leftNode.getNodeName().equals(rightNode.getNodeName())) {
             similarity = ELEMENT_NAME_WEIGTH;
         }
 
         return similarity;
     }
 
-    protected float elementsValueSimilarity(Node otherNode, Diff diff) throws DOMException {
+    protected float elementsValueSimilarity(Node rightNode, Diff diff) throws DOMException {
         float similarity = 0;
 
-        if (node.hasChildNodes() || otherNode.hasChildNodes()) {
-            String nodeValue = null;
-            String otherNodeValue = null;
+        if (leftNode.hasChildNodes() || rightNode.hasChildNodes()) {
+            String leftNodeValue = null;
+            String rightNodeValue = null;
 
-            if (node.hasChildNodes()) {
+            if (leftNode.hasChildNodes()) {
                 //O valor do elemento é um de seus filhos.
-                nodeValue = node.getFirstChild().getNodeValue();
+                leftNodeValue = leftNode.getFirstChild().getNodeValue();
             }
 
-            if (otherNode.hasChildNodes()) {
+            if (rightNode.hasChildNodes()) {
                 //O valor do elemento é um de seus filhos.
-                otherNodeValue = otherNode.getFirstChild().getNodeValue();
+                rightNodeValue = rightNode.getFirstChild().getNodeValue();
             }
 
-            if (nodeValue == null && otherNodeValue == null) {
+            if (leftNodeValue == null && rightNodeValue == null) {
                 similarity = ELEMENT_VALUE_WEIGTH;
             } else {
-                diff.setValue(nodeValue, otherNodeValue);
+                diff.setValue(leftNodeValue, rightNodeValue);
 
-                if (nodeValue != null && otherNodeValue != null) {
-                    similarity += new LcsString(nodeValue, otherNodeValue).similaridade() * ELEMENT_VALUE_WEIGTH;
+                if (leftNodeValue != null && rightNodeValue != null) {
+                    similarity += new LcsString(leftNodeValue, rightNodeValue).similaridade() * ELEMENT_VALUE_WEIGTH;
                 }
             }
         } else {
@@ -96,60 +95,59 @@ public class SimilarNode extends Similar<SimilarNode> {
         return similarity;
     }
 
-    protected float elementsAttributesSimilarity(Node otherNode, Diff diff) {
+    protected float elementsAttributesSimilarity(Node rightNode, Diff diff) {
         float similarity = 0;
 
-        if (!node.hasAttributes() && !otherNode.hasAttributes()) {
+        if (!leftNode.hasAttributes() && !rightNode.hasAttributes()) {
             similarity = ATTRIBUTE_WEIGTH;
         } else {
-            if (node.hasAttributes() && otherNode.hasAttributes()) {
-                NamedNodeMap attributesFromNode = node.getAttributes();
-                NamedNodeMap attributesFromOtherNode = otherNode.getAttributes();
+            if (leftNode.hasAttributes() && rightNode.hasAttributes()) {
+                NamedNodeMap attributesFromLeftNode = leftNode.getAttributes();
+                NamedNodeMap attributesFromRightNode = rightNode.getAttributes();
 
-                Map<String, List<SimilarString>> attributesMap = getAttributesFromNamedNodeMaps(attributesFromNode, attributesFromOtherNode);
+                Map<String, List<SimilarString>> attributesMap = getAttributesFromNamedNodeMaps(attributesFromLeftNode, attributesFromRightNode);
                 Iterator mapIterator = attributesMap.entrySet().iterator();
 
                 while (mapIterator.hasNext()) {
                     Map.Entry<String, List<SimilarString>> entry = (Map.Entry) mapIterator.next();
 
                     String attributeName = entry.getKey();
-                    SimilarString firstElementAttributeValue = entry.getValue().get(0);
-                    SimilarString secondElementAttributeValue = entry.getValue().get(1);
+                    SimilarString leftElementAttributeValue = entry.getValue().get(0);
+                    SimilarString rightElementAttributeValue = entry.getValue().get(1);
 
-                    diff.addAttribute(attributeName, firstElementAttributeValue.toString(), secondElementAttributeValue.toString());
-                    similarity += new LcsString(firstElementAttributeValue, secondElementAttributeValue).similaridade();
+                    diff.addAttribute(attributeName, leftElementAttributeValue.toString(), rightElementAttributeValue.toString());
+                    similarity += new LcsString(leftElementAttributeValue, rightElementAttributeValue).similaridade();
                 }
 
                 similarity = similarity / attributesMap.keySet().size() * ATTRIBUTE_WEIGTH;
             } else {
-
             }
         }
 
         return similarity;
     }
 
-    protected float elementsChildrenSimilarity(Node otherNode, Diff diff) {
+    protected float elementsChildrenSimilarity(Node rightNode, Diff diff) {
 
         float similarity = 0;
-        if (!node.hasChildNodes() && !otherNode.hasChildNodes()) {
+
+        if (!leftNode.hasChildNodes() && !rightNode.hasChildNodes()) {
             similarity = ELEMENT_CHILDREN_WEIGTH;
         } else {
-//            NodeList childNodes = node.getChildNodes();
-//            NodeList otherChildNodes = otherNode.getChildNodes();
-            NodeSet elementNodes = getElementNodes(node.getChildNodes());
-            NodeSet otherElementNodes = getElementNodes(otherNode.getChildNodes());
+            NodeSet leftSubElements = getElementNodes(leftNode.getChildNodes());
+            NodeSet rightSubElements = getElementNodes(rightNode.getChildNodes());
 
-            if ((elementNodes.size() == 0 && otherElementNodes.size() == 0)) {
+            if ((leftSubElements.size() == 0 && rightSubElements.size() == 0)) {
                 similarity = ELEMENT_CHILDREN_WEIGTH;
-            } else if ((elementNodes.size() != 0 && otherElementNodes.size() != 0)) {
-                HungarianList hungarianList = new HungarianList(elementNodes, otherElementNodes);
-
+            } else if ((leftSubElements.size() != 0 && rightSubElements.size() != 0)) {
+                HungarianList hungarianList = new HungarianList(leftSubElements, rightSubElements);
+                diff = hungarianList.calcularSimilaridadeDosSubElementos(diff);
                 similarity = hungarianList.similaridade() * ELEMENT_CHILDREN_WEIGTH;
-                hungarianList.addResultParent(diff);
+
             }
         }
 
+        diff.setSimilarity(similarity);
         return similarity;
     }
 
@@ -170,7 +168,7 @@ public class SimilarNode extends Similar<SimilarNode> {
                 elementNodes.addNode(item);
             }
         }
-        
+
         return elementNodes;
     }
 
@@ -207,12 +205,11 @@ public class SimilarNode extends Similar<SimilarNode> {
     }
 
     public Node getNode() {
-        return node;
+        return leftNode;
     }
 
     @Override
     public String toString() {
-        return node.getNodeName();
+        return leftNode.getNodeName();
     }
-
 }

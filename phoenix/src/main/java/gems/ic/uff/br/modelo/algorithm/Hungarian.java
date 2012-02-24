@@ -2,17 +2,18 @@ package gems.ic.uff.br.modelo.algorithm;
 
 import gems.ic.uff.br.modelo.Diff;
 import gems.ic.uff.br.modelo.similar.Similar;
-import java.util.List;
 
 public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm {
 
-    private float[][] originalMatrix;
+    protected float[][] originalMatrix;
     protected int[][] result;
+    protected Diff[][] calculoSimilaridadeDosElementosCorrentes;
 
     private void calculateHungarian() {
         if (result == null) {
             originalMatrix = createSimilarityMatrix();
-
+            //Matriz normalizada com todos os valores encontrados para encontrar o conjunto de elementos
+            // com maior similaridade.
             float[][] matrixNormalizada = normalizarMatrix(copiarMatrix(originalMatrix));
 
             HungarianAlgorithm algorithm = new HungarianAlgorithm();
@@ -25,8 +26,9 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
         float[][] matrix;
 
         matrix = new float[length][length];
-
+        calculoSimilaridadeDosElementosCorrentes = new Diff[length][length];
         for (int i = 0; i < matrix.length; i++) {
+            Diff diffCorrente = null;
             for (int j = 0; j < matrix[i].length; j++) {
                 if (i >= lengthOfX() || j >= lengthOfY()) {
                     matrix[i][j] = 0;
@@ -34,12 +36,13 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
                     Similar valueX = valueOfX(i);
                     Similar valueY = valueOfY(j);
 
-                    float similarity = valueX.similar(valueY).getSimilarity();
+                    diffCorrente = valueX.similar(valueY);
+                    float similarity = diffCorrente.getSimilarity();
                     matrix[i][j] = (similarity > similarThreshold) ? similarity : 0;
+                    calculoSimilaridadeDosElementosCorrentes[i][j] = diffCorrente;
                 }
             }
         }
-
         return matrix;
     }
 
@@ -87,6 +90,7 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
         return similarity / result.length;
     }
 
+    //METODO OBSOLOTE. NAO IREI APAGAR AGORA POIS EXISTEM TESTES QUE AINDA O USAM
     public float[][] resultWithSimilarity() {
         calculateHungarian();
         float[][] matrix = new float[result.length][3];

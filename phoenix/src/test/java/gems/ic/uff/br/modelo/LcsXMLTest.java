@@ -36,7 +36,7 @@ public class LcsXMLTest {
     public void deveriaTerOTamanhoDeXComoSendo1CasoSoPossuaElementoRoot() {
         xml1 = new XML("<root></root>");
         xml2 = new XML("<root><tag>content</tag></root>");
-        
+
         LcsXML lcs = new LcsXML(xml1, xml2);
         assertEquals(1, lcs.lengthOfX());
     }
@@ -87,6 +87,14 @@ public class LcsXMLTest {
         assertEquals(1, lcs.similaridade(), 0);
     }
 
+    @Test
+    public void testeCompleto4() {
+        xml1 = new XML("<root><tag></tag><tag2></tag2></root>");
+        xml2 = new XML("<root><tag><tag2></tag2></tag></root>");
+
+        LcsXML lcs = new LcsXML(xml1, xml2);
+        assertEquals(1, lcs.similaridade(), 0);
+    }
 //    @Test
 //    public void testeCompleto4() {
 //        xml1 = new XML("<root><tag>content</tag></root>");
@@ -96,7 +104,6 @@ public class LcsXMLTest {
 //        double experado = (1 - (1 - SimilarNode.ELEMENT_NAME_WEIGTH)) / 2;
 //        assertEquals(experado, lcs.similaridade(), 0);
 //    }
-
 //    @Test
 //    public void testeCompleto5() {
 //        xmlInterno1 = new XML("<root><tag attribute='yes'>content</tag></root>");
