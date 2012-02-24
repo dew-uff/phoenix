@@ -159,7 +159,7 @@ public class TelaInicial extends JFrame {
 //                percentual.setValue((int) (lcsXML.similaridade() * 100));
                 System.out.println("********************");
                 System.out.println("********************");
-                System.out.println("RESULTADOOOO TOTALLLLL => " + lcsXML.similaridade());
+//                System.out.println("RESULTADOOOO TOTALLLLL => " + lcsXML.similaridade());
                 System.out.println("********************");
                 System.out.println("********************");
 
@@ -188,8 +188,8 @@ public class TelaInicial extends JFrame {
 
             public void actionPerformed(ActionEvent e) {
                 JFrame visualizar = new JFrame("Grafico");
-                VisualizarXML v = new VisualizarXML(txtAreaComparador.getText(), Color.ORANGE);
-                VisualizarXML v2 = new VisualizarXML(txtAreaComparador.getText(), Color.WHITE);
+                VisualizarXML v = new VisualizarXML(txtAreaComparador.getText(), Color.RED);
+                VisualizarXML v2 = new VisualizarXML(txtAreaASerComparado.getText(), Color.GREEN);
                 v.setBorder(new BevelBorder(BevelBorder.LOWERED));
                 v2.setBorder(new BevelBorder(BevelBorder.LOWERED));
                 JPanel pnlGraficos = new JPanel(new GridBagLayout());
@@ -205,15 +205,15 @@ public class TelaInicial extends JFrame {
                 visualizar.setVisible(true);
                 visualizar.pack();
 
-                JFrame telaDiff = new JFrame("Diff Resultante");
-                VisualizarDiffXML diffGrafico = new VisualizarDiffXML(DIFF_XML_TESTE);
-                diffGrafico.setBorder(new BevelBorder(BevelBorder.LOWERED));
-                JPanel pnlGraficoDiff = new JPanel(new GridBagLayout());
-                pnlGraficoDiff.add(diffGrafico, gbc.adicionarComponente(0, 0, 1, 1));
-                telaDiff.getContentPane().add(pnlGraficoDiff);
-                telaDiff.setLocationRelativeTo(null);
-                telaDiff.setVisible(true);
-                telaDiff.pack();
+//                JFrame telaDiff = new JFrame("Diff Resultante");
+//                VisualizarDiffXML diffGrafico = new VisualizarDiffXML(DIFF_XML_TESTE);
+//                diffGrafico.setBorder(new BevelBorder(BevelBorder.LOWERED));
+//                JPanel pnlGraficoDiff = new JPanel(new GridBagLayout());
+//                pnlGraficoDiff.add(diffGrafico, gbc.adicionarComponente(0, 0, 1, 1));
+//                telaDiff.getContentPane().add(pnlGraficoDiff);
+//                telaDiff.setLocationRelativeTo(null);
+//                telaDiff.setVisible(true);
+//                telaDiff.pack();
             }
         });
         pnlComparacao.add(btnVisualizarGraficos);

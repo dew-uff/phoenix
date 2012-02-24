@@ -89,36 +89,54 @@ public class VisualizarDiffXML extends JPanel {
         Transformer<Node, Paint> changeColor = new Transformer<Node, Paint>() {
 
             public Paint transform(Node arg0) {
-                if(arg0.hasAttributes()){
+                if (arg0.hasAttributes()) {
                     Node nodeSimilaridade = arg0.getAttributes().getNamedItem("diff:similarity");
-                    if (nodeSimilaridade != null
-                            && nodeSimilaridade.getNodeValue().equals("1.0")) {
-                        return Color.GRAY;
+                    if (nodeSimilaridade != null) {
+                        if (nodeSimilaridade.getNodeValue().equals("1.0")) {
+                            return Color.GRAY;
+                        } else if (nodeSimilaridade.getNodeValue().equals("0.0")) {
+                            Node nodeSide = arg0.getAttributes().getNamedItem("diff:side");
+                            if (nodeSide != null && nodeSide.getNodeValue().equals("left")) {
+                                return Color.RED;
+                            } else {
+                                return Color.GREEN;
+                            }
+                        } else {
+                            int escalaTrucada = Math.round(255 * Float.parseFloat(nodeSimilaridade.getNodeValue()));
+                            return new Color(escalaTrucada,escalaTrucada,escalaTrucada); // similaridade diferente de 0 e 1;
+//                            return new Color((255 * Float.parseFloat(nodeSimilaridade.getNodeValue())),
+//                                    (255 * Float.parseFloat(nodeSimilaridade.getNodeValue())),
+//                                    (255 * Float.parseFloat(nodeSimilaridade.getNodeValue()))); // similaridade diferente de 0 e 1;
+                        }
                     }
                 }
                 if (arg0.getNodeName().contains("diff:left")) {
-                    return Color.ORANGE;
+                    return Color.RED;
                 } else if (arg0.getNodeName().contains("diff:right")) {
-                    return Color.WHITE;
+                    return Color.GREEN;
                 }
+
                 if (arg0.getNodeType() == Node.TEXT_NODE) {
                     return Color.GRAY;
                 }
-                return Color.RED;
+                return Color.BLACK; // verificar 
             }
         };
 
         xml = new XML(caminhoOuTextoXML);
+
         xml.removeWhiteSpaces(xml.getDocument());
         floresta = new DelegateTree<Node, String>();
         Node raiz = xml.getDocument().getDocumentElement();
+
         floresta.addVertex(raiz);
+
         insereFilhos(raiz);
         treeLayout = new TreeLayout<Node, String>(floresta);
 //        treeLayout = new RadialTreeLayout<Node, String>(floresta);
-
         vv = new VisualizationViewer<Node, String>(treeLayout, new Dimension(400, 400));
         VertexLabelAsShapeRenderer<Node, String> vlasr = new VertexLabelAsShapeRenderer<Node, String>(vv.getRenderContext());
+
         vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
         vv.getRenderContext().setVertexLabelTransformer(mudarRotulo);
         vv.getRenderContext().setVertexFillPaintTransformer(changeColor);
@@ -127,22 +145,22 @@ public class VisualizarDiffXML extends JPanel {
 
         vv.getRenderer().setVertexLabelRenderer(vlasr);
         vv.setVertexToolTipTransformer(criarToolTip);
-
         GraphZoomScrollPane panel = new GraphZoomScrollPane(vv);
-
         final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
+
         graphMouse.setMode(Mode.PICKING);
+
         vv.setGraphMouse(graphMouse);
-
         final ScalingControl scaler = new CrossoverScalingControl();
-
         JButton zoomIn = new JButton("+");
-        zoomIn.addActionListener(new ActionListener() {
 
-            public void actionPerformed(ActionEvent e) {
-                scaler.scale(vv, 1.1f, vv.getCenter());
-            }
-        });
+        zoomIn.addActionListener(
+                new ActionListener() {
+
+                    public void actionPerformed(ActionEvent e) {
+                        scaler.scale(vv, 1.1f, vv.getCenter());
+                    }
+                });
         JButton zoomOut = new JButton("-");
         zoomOut.addActionListener(new ActionListener() {
 
