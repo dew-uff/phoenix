@@ -62,6 +62,7 @@ public class XML {
                 emptyTextNode.getParentNode().removeChild(emptyTextNode);
             }
         } catch (Exception ignoredException) {
+            System.out.println(""+ ignoredException.getMessage());
         }
     }
 
