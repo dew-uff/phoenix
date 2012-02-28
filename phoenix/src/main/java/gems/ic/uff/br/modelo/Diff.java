@@ -12,7 +12,6 @@ public class Diff {
     public static final String DIFF_SIDE = "diff:side";
     public static final String LEFT_PREFIX = "left:";
     public static final String RIGHT_PREFIX = "right:";
-    
     private float similarity;
     private Node diffNode;
     private SimilarNode leftNode;
@@ -43,13 +42,18 @@ public class Diff {
     //TODO:CRIAR SEMPRE OS ELEMENTOS, MESMO QUE UM TENHA STRING E O OUTRO NAO.
     public void setValue(String leftElementValue, String rightElementValue) {
         if (leftElementValue != null || rightElementValue != null) {
-            if (leftElementValue != null && rightElementValue != null) { 
+            if (leftElementValue != null && rightElementValue != null) {
                 if (leftElementValue.equals(rightElementValue)) {
                     this.diffNode.setTextContent(leftElementValue);
                 } else {
                     Element valueNode = (Element) DiffXML.createNode("value");
-                    valueNode.setAttributeNS(NAMESPACE, DIFF_PREFIX + "left", leftElementValue != null ? leftElementValue : "null");
-                    valueNode.setAttributeNS(NAMESPACE, DIFF_PREFIX + "right", rightElementValue != null ? rightElementValue : "null");
+                    valueNode.setAttributeNS(NAMESPACE, DIFF_PREFIX + "left",
+                            (leftElementValue != null
+                            && !leftElementValue.contains("\n")) ? leftElementValue : "null");
+                    
+                    valueNode.setAttributeNS(NAMESPACE, DIFF_PREFIX + "right",
+                            (rightElementValue != null
+                            && !rightElementValue.contains("\n")) ? rightElementValue : "null");
                     this.diffNode.appendChild(valueNode);
                 }
             } else {
