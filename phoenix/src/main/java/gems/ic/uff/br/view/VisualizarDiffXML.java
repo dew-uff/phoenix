@@ -53,8 +53,7 @@ public class VisualizarDiffXML extends JPanel {
 
         public String transform(Node arg0) {
             if (arg0.getNodeType() != Node.TEXT_NODE) {
-                if (arg0.getNodeName().contains("diff:left")
-                        || arg0.getNodeName().contains("diff:right")) {
+                if (arg0.getNodeName().contains("diff:left") || arg0.getNodeName().contains("diff:right")) {
                     return arg0.getNodeValue();
                 } else {
                     return arg0.getNodeName();
@@ -93,7 +92,7 @@ public class VisualizarDiffXML extends JPanel {
                     Node nodeSimilaridade = arg0.getAttributes().getNamedItem("diff:similarity");
                     if (nodeSimilaridade != null) {
                         if (nodeSimilaridade.getNodeValue().equals("1.0")) {
-                            return Color.GRAY;
+                            return Color.WHITE;
                         } else if (nodeSimilaridade.getNodeValue().equals("0.0")) {
                             Node nodeSide = arg0.getAttributes().getNamedItem("diff:side");
                             if (nodeSide != null && nodeSide.getNodeValue().equals("left")) {
@@ -103,7 +102,7 @@ public class VisualizarDiffXML extends JPanel {
                             }
                         } else {
                             int escalaTrucada = Math.round(255 * Float.parseFloat(nodeSimilaridade.getNodeValue()));
-                            return new Color(escalaTrucada,escalaTrucada,escalaTrucada); // similaridade diferente de 0 e 1;
+                            return new Color(escalaTrucada, escalaTrucada, escalaTrucada); // similaridade diferente de 0 e 1;
 //                            return new Color((255 * Float.parseFloat(nodeSimilaridade.getNodeValue())),
 //                                    (255 * Float.parseFloat(nodeSimilaridade.getNodeValue())),
 //                                    (255 * Float.parseFloat(nodeSimilaridade.getNodeValue()))); // similaridade diferente de 0 e 1;
@@ -115,9 +114,8 @@ public class VisualizarDiffXML extends JPanel {
                 } else if (arg0.getNodeName().contains("diff:right")) {
                     return Color.GREEN;
                 }
-
                 if (arg0.getNodeType() == Node.TEXT_NODE) {
-                    return Color.GRAY;
+                    return Color.WHITE;
                 }
                 return Color.BLACK; // verificar 
             }
