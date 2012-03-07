@@ -15,11 +15,14 @@ public class GBC extends GridBagConstraints {
 
     public GridBagConstraints adicionarComponente(int coluna, int linha,
             int colunasOcupadas, int linhasOcupadas) {
+        
         this.fill = GridBagConstraints.NONE;
         this.gridx = coluna;
         this.gridy = linha;
         this.gridheight = linhasOcupadas;
         this.gridwidth = colunasOcupadas;
+//        this.weightx = 1;
+//        this.weighty = 1;
         return this;
     }
 

@@ -6,6 +6,8 @@ import gems.ic.uff.br.modelo.similar.SimilarNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -18,6 +20,7 @@ public class HungarianList extends Hungarian<Similar> {
         this.x = from;
         this.y = to;
     }
+
     public HungarianList(NodeList left, NodeList right) {
         result = null;
         originalMatrix = null;
@@ -62,11 +65,11 @@ public class HungarianList extends Hungarian<Similar> {
 
     //    TODO: @Override
     public void addResultParent(Diff pai) {
-        
-//        visualizarMatrixSimilaridade();
+
+        visualizarMatrixSimilaridade();
         incluirElementosComMaiorSimilaridade(pai);
-        incluirElementosEsquerdosComSimilaridadeZero(pai);
-        incluirElementosLadoDireitoComSimilaridadeZero(pai);
+        incluirElementosEsquerdos(pai);
+        incluirElementosLadoDireito(pai);
     }
 
     /**
@@ -88,17 +91,14 @@ public class HungarianList extends Hungarian<Similar> {
              * o algoritmo húngaro escolhe qualquer elemento. Isto pode gerar uma
              * inconsistencia nos dados.
              */
-            if (maiorSimilaridadeCorrente != 0.0) {
-//                SimilarNode elementoEsquerdo = (SimilarNode) x.get(indiceElementoEsquerdo);
+            if (maiorSimilaridadeCorrente > 0.5f) {
                 Diff maiorSimilaridade = calculoSimilaridadeDosElementosCorrentes[indiceElementoEsquerdo][indiceElementoDireito];
-//                maiorSimilaridade.setSimilarity(maiorSimilaridadeCorrente);
-                pai.addChildren(maiorSimilaridade); //nao é feito a referencia ao
-                //documento diffXML da classe LcsXML
+                pai.addChildren(maiorSimilaridade);
             }
         }
     }
 
-    private void incluirElementosLadoDireitoComSimilaridadeZero(Diff pai) {
+    private void incluirElementosLadoDireito(Diff pai) {
         /**
          * Monta o documento com todos os elementos do lado direito que não
          * aparece no lado esquerdo do outro documento.
@@ -107,7 +107,8 @@ public class HungarianList extends Hungarian<Similar> {
             boolean encontrouSimilaridade = false;
             int linha = 0; //varre a coluna com todos os elementos do documento direito
             while (linha < lengthOfX() && !encontrouSimilaridade) {
-                encontrouSimilaridade = originalMatrix[linha++][i] > 0;
+                encontrouSimilaridade = originalMatrix[linha][i] > 0;
+                linha++;
             }
             if (!encontrouSimilaridade) {
                 SimilarNode similarNode = (SimilarNode) y.get(i);
@@ -118,16 +119,16 @@ public class HungarianList extends Hungarian<Similar> {
                  * que não tem similaridade alguma com os elementos a direita
                  * do documento
                  */
-                Diff elementoDireito = new Diff(nodeDireito);
-                
-                elementoDireito.addSideAttribute("right");
-                elementoDireito.setSimilarity(0);
-                pai.addChildren(elementoDireito);
+                Diff diffLadoDireito = new Diff(nodeDireito);
+                diffLadoDireito = varreSubelementos(diffLadoDireito, nodeDireito);
+                diffLadoDireito.addSideAttribute("right");
+                diffLadoDireito.setSimilarity(0);
+                pai.addChildren(diffLadoDireito);
             }
         }
     }
 
-    private void incluirElementosEsquerdosComSimilaridadeZero(Diff pai) {
+    private void incluirElementosEsquerdos(Diff pai) {
         //varre toda a matrix para encontrar todos os elementos que são difetentes,
         //ou seja, todos elementos que possui zero de similaridade e nao aparecem no outro documento.
         for (int i = 0; i < lengthOfX(); i++) {
@@ -145,7 +146,7 @@ public class HungarianList extends Hungarian<Similar> {
                  */
                 Diff elementoEsquerdo = calculoSimilaridadeDosElementosCorrentes[i][0];
                 elementoEsquerdo.addSideAttribute("left");
-//                elementoEsquerdo.setSimilarity(0);
+                elementoEsquerdo.setSimilarity(0);
                 pai.addChildren(elementoEsquerdo);
             }
         }
@@ -208,14 +209,61 @@ public class HungarianList extends Hungarian<Similar> {
                 diff.addChildren(elementoEsquerdo);
             }
         }
-        incluirElementosLadoDireitoComSimilaridadeZero(diff);
+        incluirElementosLadoDireito(diff);
         return diff;
     }
 
     public Diff test(Diff diff, Diff diffResultante) {
         diffResultante.addSideAttribute("left");
         diff.addChildren(diffResultante);
-        incluirElementosLadoDireitoComSimilaridadeZero(diff);
+        incluirElementosLadoDireito(diff);
+        return diff;
+    }
+
+    //ESTE MÉTODO ESTA DUPLICADO. TEM UM AQUI DENTRO DESTA CLASSE E OUTRO NA CLASSE SIMILARNODE.
+    //REFATORIR ISSO PARA UMA UNICA CLASSE.
+    /**
+     * 
+     * @param diff
+     * @param sideNode
+     * @return 
+     */
+    private Diff varreSubelementos(Diff diff, Node sideNode) {
+        Diff x = diff;
+        Diff novoDiff = null;
+        if (sideNode.hasChildNodes()) {
+            NodeList subElementos = sideNode.getChildNodes();
+            for (int i = 0; i < subElementos.getLength(); i++) {
+                Node filho = subElementos.item(i);
+                if (filho.getNodeType() == Node.TEXT_NODE) {
+                    String sideElementValue = filho.getNodeValue();
+                    Element valueNode = (Element) DiffXML.createNode("value");
+                    valueNode.setAttributeNS(Diff.NAMESPACE, Diff.DIFF_PREFIX + "right",
+                            (sideElementValue != null && !sideElementValue.contains("\n")) ? sideElementValue : "espaço em branco");
+                    x.getDiffNode().appendChild(valueNode);
+                } else if (filho.getNodeType() == Node.ELEMENT_NODE) {
+                    novoDiff = new Diff(filho);
+                    novoDiff.setSimilarity(0);
+                    novoDiff.addSideAttribute("right");
+                    novoDiff = inserirAtributosNosElementos(novoDiff, filho);
+
+                    if (filho.hasChildNodes()) {
+                        novoDiff = varreSubelementos(novoDiff, filho);
+                    }
+                    x.addChildren(novoDiff);
+                }
+            }
+        }
+        return x;
+    }
+
+    private Diff inserirAtributosNosElementos(Diff diff, Node elemento) {
+        NamedNodeMap attributes = elemento.getAttributes();
+        if (elemento.hasAttributes()) {
+            for (int i = 0; i < attributes.getLength(); i++) {
+                diff.addAtribute(attributes.item(i));
+            }
+        }
         return diff;
     }
 }
