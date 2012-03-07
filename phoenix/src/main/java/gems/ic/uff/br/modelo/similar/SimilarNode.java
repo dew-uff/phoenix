@@ -248,7 +248,7 @@ public class SimilarNode extends Similar<SimilarNode> {
                 } else if (filho.getNodeType() == Node.ELEMENT_NODE) {
                     novoDiff = new Diff(filho);
                     novoDiff.setSimilarity(0);
-                    novoDiff.addSideAttribute("left");
+                    novoDiff.addSideAttribute(side);
                     novoDiff = inserirAtributosNosElementos(novoDiff, filho);
 
                     if (filho.hasChildNodes()) {
