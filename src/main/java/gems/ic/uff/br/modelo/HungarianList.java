@@ -66,7 +66,7 @@ public class HungarianList extends Hungarian<Similar> {
     //    TODO: @Override
     public void addResultParent(Diff pai) {
 
-        visualizarMatrixSimilaridade();
+//        visualizarMatrixSimilaridade();
         incluirElementosComMaiorSimilaridade(pai);
         incluirElementosEsquerdos(pai);
         incluirElementosLadoDireito(pai);
