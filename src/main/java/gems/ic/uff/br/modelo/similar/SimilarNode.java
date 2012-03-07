@@ -6,6 +6,7 @@ import gems.ic.uff.br.modelo.*;
 import java.util.*;
 
 import org.w3c.dom.DOMException;
+import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -46,6 +47,8 @@ public class SimilarNode extends Similar<SimilarNode> {
                 similarity += elementsAttributesSimilarity(rightNode, diff);
                 similarity += elementsChildrenSimilarity(rightNode, diff);
 
+            } else {
+                diff = varreTodosSubelementosParaMostrar(diff, leftNode,"left");
             }
         }
         diff.setSimilarity(similarity);
@@ -116,7 +119,14 @@ public class SimilarNode extends Similar<SimilarNode> {
                     SimilarString rightElementAttributeValue = entry.getValue().get(1);
 
                     diff.addAttribute(attributeName, leftElementAttributeValue.toString(), rightElementAttributeValue.toString());
-                    similarity += new LcsString(leftElementAttributeValue, rightElementAttributeValue).similaridade();
+                    //Alguns atributos vem com seu conteudo vazio. Logo, esta
+                    //condição é necessária senão pode ocorrer erro de divisao(NaN).
+                    if (leftElementAttributeValue.getString().isEmpty() &&
+                            rightElementAttributeValue.getString().isEmpty()) {
+                        similarity += 1.0f;
+                    } else {
+                        similarity += new LcsString(leftElementAttributeValue, rightElementAttributeValue).similaridade();
+                    }
                 }
 
                 similarity = similarity / attributesMap.keySet().size() * ATTRIBUTE_WEIGTH;
@@ -143,6 +153,15 @@ public class SimilarNode extends Similar<SimilarNode> {
                 HungarianList hungarianList = new HungarianList(leftSubElements, rightSubElements);
                 diff = hungarianList.calcularSimilaridadeDosSubElementos(diff);
                 similarity = hungarianList.similaridade() * ELEMENT_CHILDREN_WEIGTH;
+
+            } else {
+                if (leftSubElements.size() != 0) {
+                    diff = varreTodosSubelementosParaMostrar(diff, leftNode, "left");
+
+                } else {
+                    diff = varreTodosSubelementosParaMostrar(diff, rightNode, "right");
+
+                }
 
             }
         }
@@ -211,5 +230,44 @@ public class SimilarNode extends Similar<SimilarNode> {
     @Override
     public String toString() {
         return leftNode.getNodeName();
+    }
+
+    private Diff varreTodosSubelementosParaMostrar(Diff diff, Node leftNode, String side) {
+        Diff x = diff;
+        Diff novoDiff = null;
+        if (leftNode.hasChildNodes()) {
+            NodeList subElementos = leftNode.getChildNodes();
+            for (int i = 0; i < subElementos.getLength(); i++) {
+                Node filho = subElementos.item(i);
+                if (filho.getNodeType() == Node.TEXT_NODE) {
+                    String sideElementValue = filho.getNodeValue();
+                    Element valueNode = (Element) DiffXML.createNode("value");
+                    valueNode.setAttributeNS(Diff.NAMESPACE, Diff.DIFF_PREFIX + side,
+                            (sideElementValue != null && !sideElementValue.contains("\n")) ? sideElementValue : "espaço em branco");
+                    x.getDiffNode().appendChild(valueNode);
+                } else if (filho.getNodeType() == Node.ELEMENT_NODE) {
+                    novoDiff = new Diff(filho);
+                    novoDiff.setSimilarity(0);
+                    novoDiff.addSideAttribute("left");
+                    novoDiff = inserirAtributosNosElementos(novoDiff, filho);
+
+                    if (filho.hasChildNodes()) {
+                        novoDiff = varreTodosSubelementosParaMostrar(novoDiff, filho, side);
+                    }
+                    x.addChildren(novoDiff);
+                }
+            }
+        }
+        return x;
+    }
+
+    private Diff inserirAtributosNosElementos(Diff diff, Node elemento) {
+        NamedNodeMap attributes = elemento.getAttributes();
+        if (elemento.hasAttributes()) {
+            for (int i = 0; i < attributes.getLength(); i++) {
+                diff.addAtribute(attributes.item(i));
+            }
+        }
+        return diff;
     }
 }

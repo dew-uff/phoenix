@@ -4,9 +4,7 @@
  */
 package gems.ic.uff.br.view;
 
-import edu.uci.ics.jung.algorithms.layout.RadialTreeLayout;
 import edu.uci.ics.jung.algorithms.layout.TreeLayout;
-import edu.uci.ics.jung.graph.DelegateForest;
 import edu.uci.ics.jung.graph.DelegateTree;
 import edu.uci.ics.jung.graph.Forest;
 import edu.uci.ics.jung.visualization.GraphZoomScrollPane;
@@ -19,17 +17,14 @@ import edu.uci.ics.jung.visualization.decorators.EdgeShape;
 import edu.uci.ics.jung.visualization.renderers.VertexLabelAsShapeRenderer;
 import gems.ic.uff.br.modelo.XML;
 import gems.ic.uff.br.util.GBC;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import org.apache.commons.collections15.Factory;
 import org.apache.commons.collections15.Transformer;
@@ -44,6 +39,7 @@ import org.w3c.dom.NodeList;
 public class VisualizarXML extends JPanel {
 
     private Forest<Node, String> floresta;
+    private JPanel pnlCentral;
     private VisualizationViewer<Node, String> vv;
     private TreeLayout<Node, String> treeLayout;
     private XML xml;
@@ -96,11 +92,10 @@ public class VisualizarXML extends JPanel {
         floresta = new DelegateTree<Node, String>();
         Node raiz = xml.getDocument().getDocumentElement();
         floresta.addVertex(raiz);
-        insereFilhos(raiz);
-        treeLayout = new TreeLayout<Node, String>(floresta);
+        this.insereSubElementos(raiz);
+        treeLayout = new TreeLayout<Node, String>(floresta, 50);
 //        treeLayout = new RadialTreeLayout<Node, String>(floresta);
-
-        vv = new VisualizationViewer<Node, String>(treeLayout, new Dimension(400, 400));
+        vv = new VisualizationViewer<Node, String>(treeLayout, new Dimension(600, 600));
         VertexLabelAsShapeRenderer<Node, String> vlasr = new VertexLabelAsShapeRenderer<Node, String>(vv.getRenderContext());
         vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
         vv.getRenderContext().setVertexLabelTransformer(mudarRotulo);
@@ -152,12 +147,12 @@ public class VisualizarXML extends JPanel {
         this.add(geral);
     }
 
-    private void insereFilhos(Node item) {
+    private void insereSubElementos(Node item) {
         NodeList nl = item.getChildNodes();
         for (int i = 0; i < nl.getLength(); i++) {
             floresta.addEdge(edgeFactory.create(), item, nl.item(i));
             if (nl.item(i).hasChildNodes()) {
-                insereFilhos(nl.item(i));
+                insereSubElementos(nl.item(i));
             }
         }
     }

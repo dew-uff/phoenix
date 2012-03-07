@@ -88,16 +88,15 @@ public class TelaInicial extends JFrame {
     private void inicializarAreaDeTextoDoArquivoComparador() {
         //TextArea
         txtAreaComparador = new JTextArea(TAMANHO_HORIZONTAL_AREA, TAMANHO_VERTICAL_AREA);
-//        txtAreaComparador.setText(xml.toString());
 
         gbc.fill = GridBagConstraints.BOTH;
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.gridheight = 1;
         gbc.gridwidth = 1;
-        gbc.weightx = 0;
-        gbc.weighty = 0;
-        pnlPrincipal.add(new JLabel("Texto Comparador"), gbc);
+        gbc.weightx = 1;
+        gbc.weighty = 1;
+        pnlPrincipal.add(new JLabel("Texto Comparador", JLabel.CENTER), gbc);
 
         //Barra de Scroll
         JScrollPane scroll = new JScrollPane(txtAreaComparador);
@@ -120,7 +119,7 @@ public class TelaInicial extends JFrame {
         gbc.gridy = 0;
         Insets insetsConparado = new Insets(0, 10, 5, 0);
         gbc.insets = insetsConparado;
-        pnlPrincipal.add(new JLabel("Texto A Ser Comparado"), gbc);
+        pnlPrincipal.add(new JLabel("Texto A Ser Comparado", JLabel.CENTER), gbc);
         //Barra de Scroll
         JScrollPane scroll = new JScrollPane(txtAreaASerComparado);
         scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -164,7 +163,7 @@ public class TelaInicial extends JFrame {
                 System.out.println("********************");
 
                 JFrame telaDiff = new JFrame("Diff Resultante");
-                
+
 //                lcsXML.getDiffXML().removeWhiteSpaces(lcsXML.getDiffXML().getDocument());
                 String testeDiffResultante = lcsXML.getDiffXML().toString();
                 System.out.println(" ***  IMPRIME XML RESULTANTE ***");

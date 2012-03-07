@@ -72,9 +72,9 @@ public class VisualizarDiffXML extends JPanel {
                 for (int i = 0; i < atributos.getLength(); i++) {
                     atributosConcatenados += atributos.item(i).getNodeName() + " = ";
                     if (atributos.item(i).getNodeValue().isEmpty()) {
-                        atributosConcatenados += "Valor nulo \n\n";
+                        atributosConcatenados += "Valor nulo \n";
                     } else {
-                        atributosConcatenados += "" + atributos.item(i).getNodeValue() + "  \n\n";
+                        atributosConcatenados += "" + atributos.item(i).getNodeValue() + "\n";
                     }
                 }
 
@@ -123,7 +123,7 @@ public class VisualizarDiffXML extends JPanel {
 
         xml = new XML(caminhoOuTextoXML);
 
-        xml.removeWhiteSpaces(xml.getDocument());
+        xml.removeWhiteSpaces(xml.getDocument()); //nao esta funcionando
         floresta = new DelegateTree<Node, String>();
         Node raiz = xml.getDocument().getDocumentElement();
 
@@ -132,7 +132,7 @@ public class VisualizarDiffXML extends JPanel {
         insereFilhos(raiz);
         treeLayout = new TreeLayout<Node, String>(floresta);
 //        treeLayout = new RadialTreeLayout<Node, String>(floresta);
-        vv = new VisualizationViewer<Node, String>(treeLayout, new Dimension(400, 400));
+        vv = new VisualizationViewer<Node, String>(treeLayout, new Dimension(800, 600));
         VertexLabelAsShapeRenderer<Node, String> vlasr = new VertexLabelAsShapeRenderer<Node, String>(vv.getRenderContext());
 
         vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());

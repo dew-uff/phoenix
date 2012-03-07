@@ -11,6 +11,8 @@ import javax.xml.transform.stream.*;
 import org.xml.sax.InputSource;
 
 public class XML {
+    
+    public static final String ENDERECO_NAMESPACE = "http://www.w3.org/2000/xmlns/";
 
     private final Document document;
     private final XPathFactory factory;
@@ -42,7 +44,7 @@ public class XML {
 
             removeWhiteSpaces(doc); //TODO: Testar! Utilizando o nosso comparador?
         } catch (Exception ignoredException) {
-            System.out.println(ignoredException.getMessage());
+//            System.out.println(ignoredException.getMessage());
         }
 
         return doc;
@@ -80,9 +82,9 @@ public class XML {
         
         //Adicionando os namespaces.
         if (root != null) {
-            root.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:diff", "ic.uff.br/xmldiff");
-            root.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:left", "ic.uff.br/xmldiff");
-            root.setAttributeNS("http://www.w3.org/2000/xmlns/", "xmlns:right", "ic.uff.br/xmldiff");
+            root.setAttributeNS(ENDERECO_NAMESPACE, "xmlns:diff", "ic.uff.br/xmldiff");
+            root.setAttributeNS(ENDERECO_NAMESPACE, "xmlns:left", "ic.uff.br/xmldiff");
+            root.setAttributeNS(ENDERECO_NAMESPACE, "xmlns:right", "ic.uff.br/xmldiff");
         }
 
         StringWriter writer = new StringWriter();

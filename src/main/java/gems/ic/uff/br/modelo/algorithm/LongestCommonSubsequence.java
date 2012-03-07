@@ -85,7 +85,11 @@ public abstract class LongestCommonSubsequence<VALUE extends Similar> extends Ab
 
     public float similaridade() {
         calculateLcs();
+        
+        Float resultado = getLcsLength() / ((lengthOfX() + lengthOfY()) / 2f);
+        
+        return Float.isNaN(resultado) ? 0 : resultado;
 
-        return getLcsLength() / ((lengthOfX() + lengthOfY()) / 2f);
+//        return getLcsLength() / ((lengthOfX() + lengthOfY()) / 2f);
     }
 }
