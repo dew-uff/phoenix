@@ -235,12 +235,15 @@ public class HungarianList extends Hungarian<Similar> {
             NodeList subElementos = sideNode.getChildNodes();
             for (int i = 0; i < subElementos.getLength(); i++) {
                 Node filho = subElementos.item(i);
-                if (filho.getNodeType() == Node.TEXT_NODE) {
-                    String sideElementValue = filho.getNodeValue();
+                String sideElementValue = filho.getNodeValue();
+                if (filho.getNodeType() == Node.TEXT_NODE
+                        && sideElementValue != null
+                        && isElementValue(sideElementValue)) {
+
                     Element valueNode = (Element) DiffXML.createNode("value");
-                    valueNode.setAttributeNS(Diff.NAMESPACE, Diff.DIFF_PREFIX + "right",
-                            (sideElementValue != null && !sideElementValue.contains("\n")) ? sideElementValue : "espaço em branco");
+                    valueNode.setAttributeNS(Diff.NAMESPACE, Diff.DIFF_PREFIX + "right", sideElementValue);
                     x.getDiffNode().appendChild(valueNode);
+
                 } else if (filho.getNodeType() == Node.ELEMENT_NODE) {
                     novoDiff = new Diff(filho);
                     novoDiff.setSimilarity(0);
@@ -255,6 +258,12 @@ public class HungarianList extends Hungarian<Similar> {
             }
         }
         return x;
+    }
+
+    private boolean isElementValue(String valor) {
+        return (valor.contains("\n")
+                || valor.contains("      ")
+                || valor.contains("&#10")) ? false : true;
     }
 
     private Diff inserirAtributosNosElementos(Diff diff, Node elemento) {
