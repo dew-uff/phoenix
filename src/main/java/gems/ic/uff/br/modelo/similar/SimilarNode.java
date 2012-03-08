@@ -48,7 +48,7 @@ public class SimilarNode extends Similar<SimilarNode> {
                 similarity += elementsChildrenSimilarity(rightNode, diff);
 
             } else {
-                diff = varreTodosSubelementosParaMostrar(diff, leftNode,"left");
+                diff = varreTodosSubelementosParaMostrar(diff, leftNode, "left");
             }
         }
         diff.setSimilarity(similarity);
@@ -121,8 +121,8 @@ public class SimilarNode extends Similar<SimilarNode> {
                     diff.addAttribute(attributeName, leftElementAttributeValue.toString(), rightElementAttributeValue.toString());
                     //Alguns atributos vem com seu conteudo vazio. Logo, esta
                     //condição é necessária senão pode ocorrer erro de divisao(NaN).
-                    if (leftElementAttributeValue.getString().isEmpty() &&
-                            rightElementAttributeValue.getString().isEmpty()) {
+                    if (leftElementAttributeValue.getString().isEmpty()
+                            && rightElementAttributeValue.getString().isEmpty()) {
                         similarity += 1.0f;
                     } else {
                         similarity += new LcsString(leftElementAttributeValue, rightElementAttributeValue).similaridade();
@@ -232,6 +232,10 @@ public class SimilarNode extends Similar<SimilarNode> {
         return leftNode.getNodeName();
     }
 
+    private boolean isElementValue(String valor) {
+        return (valor.contains("\n") && valor.contains("        ")) ? false : true;
+    }
+
     private Diff varreTodosSubelementosParaMostrar(Diff diff, Node leftNode, String side) {
         Diff x = diff;
         Diff novoDiff = null;
@@ -239,11 +243,13 @@ public class SimilarNode extends Similar<SimilarNode> {
             NodeList subElementos = leftNode.getChildNodes();
             for (int i = 0; i < subElementos.getLength(); i++) {
                 Node filho = subElementos.item(i);
-                if (filho.getNodeType() == Node.TEXT_NODE) {
-                    String sideElementValue = filho.getNodeValue();
+                String sideElementValue = filho.getNodeValue();
+                if (filho.getNodeType() == Node.TEXT_NODE
+                        && sideElementValue != null
+                        && isElementValue(sideElementValue)) {
+
                     Element valueNode = (Element) DiffXML.createNode("value");
-                    valueNode.setAttributeNS(Diff.NAMESPACE, Diff.DIFF_PREFIX + side,
-                            (sideElementValue != null && !sideElementValue.contains("\n")) ? sideElementValue : "espaço em branco");
+                    valueNode.setAttributeNS(Diff.NAMESPACE, Diff.DIFF_PREFIX + side, sideElementValue);
                     x.getDiffNode().appendChild(valueNode);
                 } else if (filho.getNodeType() == Node.ELEMENT_NODE) {
                     novoDiff = new Diff(filho);
