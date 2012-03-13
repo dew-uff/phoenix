@@ -15,6 +15,8 @@ public class HungarianList extends Hungarian<Similar> {
 
     private List<Similar> x;
     private List<Similar> y;
+    private List<Integer> indicesElementosEsquerdo = new ArrayList<Integer>();
+    private List<Integer> indicesElementosDireito = new ArrayList<Integer>();
 
     public HungarianList(List<Similar> from, List<Similar> to) {
         this.x = from;
@@ -66,7 +68,7 @@ public class HungarianList extends Hungarian<Similar> {
     //    TODO: @Override
     public void addResultParent(Diff pai) {
 
-//        visualizarMatrixSimilaridade();
+        visualizarMatrixSimilaridade();
         incluirElementosComMaiorSimilaridade(pai);
         incluirElementosEsquerdos(pai);
         incluirElementosLadoDireito(pai);
@@ -74,8 +76,9 @@ public class HungarianList extends Hungarian<Similar> {
 
     /**
      * retorna o conjunto de elementos com maior similaridade
+     *
      * @param pai
-     *   
+     *
      */
     private void incluirElementosComMaiorSimilaridade(Diff pai) {
         for (int i = 0; i < result.length; i++) {
@@ -85,69 +88,67 @@ public class HungarianList extends Hungarian<Similar> {
             float maiorSimilaridadeCorrente = originalMatrix[indiceElementoEsquerdo][indiceElementoDireito];
 
             /**
-             * esta condição é necessária para que só aparece na tela os elementos
-             * que tenha uma similaridade maior que zero. Se, por exemplo, tiver
-             * um documento com a quantidade de elemento maior que o outro, entao
-             * o algoritmo húngaro escolhe qualquer elemento. Isto pode gerar uma
-             * inconsistencia nos dados.
+             * esta condição é necessária para que só aparece na tela os
+             * elementos que tenha uma similaridade maior que zero. Se, por
+             * exemplo, tiver um documento com a quantidade de elemento maior
+             * que o outro, entao o algoritmo húngaro escolhe qualquer elemento.
+             * Isto pode gerar uma inconsistencia nos dados.
              */
-            if (maiorSimilaridadeCorrente > 0.5f) {
+            if (maiorSimilaridadeCorrente > 0) {
                 Diff maiorSimilaridade = calculoSimilaridadeDosElementosCorrentes[indiceElementoEsquerdo][indiceElementoDireito];
+                indicesElementosEsquerdo.add(indiceElementoEsquerdo);
+                indicesElementosDireito.add(indiceElementoDireito);
                 pai.addChildren(maiorSimilaridade);
             }
         }
     }
 
+    /**
+     * Monta o documento com todos os elementos do lado direito que não aparece
+     * no lado esquerdo do outro documento.
+     */
     private void incluirElementosLadoDireito(Diff pai) {
         /**
-         * Monta o documento com todos os elementos do lado direito que não
-         * aparece no lado esquerdo do outro documento.
+         * criando um objeto Diff para que possa informar ao usuario todos os
+         * elementos do documento a esquerda da comparação que não tem
+         * similaridade alguma com os elementos a direita do documento
          */
-        for (int i = 0; i < lengthOfY(); i++) {
-            boolean encontrouSimilaridade = false;
-            int linha = 0; //varre a coluna com todos os elementos do documento direito
-            while (linha < lengthOfX() && !encontrouSimilaridade) {
-                encontrouSimilaridade = originalMatrix[linha][i] > 0;
-                linha++;
-            }
-            if (!encontrouSimilaridade) {
-                SimilarNode similarNode = (SimilarNode) y.get(i);
-                Node nodeDireito = similarNode.getNode();
-                /**
-                 * criando um objeto Diff para que possa informar ao usuario
-                 * todos os elementos do documento a esquerda da comparação
-                 * que não tem similaridade alguma com os elementos a direita
-                 * do documento
-                 */
-                Diff diffLadoDireito = new Diff(nodeDireito);
-                diffLadoDireito = varreSubelementos(diffLadoDireito, nodeDireito);
-                diffLadoDireito.addSideAttribute("right");
-                diffLadoDireito.setSimilarity(0);
-                pai.addChildren(diffLadoDireito);
+        if (lengthOfY() - lengthOfX() > 0) {
+
+            for (int i = 0; i < lengthOfY(); i++) {
+                if (!indicesElementosDireito.contains(i)) {
+
+                    SimilarNode similarNode = (SimilarNode) y.get(i);
+                    Node nodeDireito = similarNode.getNode();
+                    Diff diffLadoDireito = new Diff(nodeDireito);
+                    diffLadoDireito = varreSubelementos(diffLadoDireito, nodeDireito, "right");
+                    diffLadoDireito.addSideAttribute("right");
+                    diffLadoDireito.setSimilarity(0);
+                    pai.addChildren(diffLadoDireito);
+                }
             }
         }
     }
 
+    /**
+     * criando um objeto Diff para que possa informar ao usuario todos os
+     * elementos do documento a esquerda da comparação que não tem similaridade
+     * alguma com os elementos a direita do documento
+     */
     private void incluirElementosEsquerdos(Diff pai) {
-        //varre toda a matrix para encontrar todos os elementos que são difetentes,
-        //ou seja, todos elementos que possui zero de similaridade e nao aparecem no outro documento.
-        for (int i = 0; i < lengthOfX(); i++) {
-            boolean encontrouSimilaridade = false;
-            int coluna = 0; //varre a coluna com todos os elementos do documento direito
-            while (coluna < lengthOfY() && !encontrouSimilaridade) {
-                encontrouSimilaridade = originalMatrix[i][coluna++] > 0;
-            }
-            if (!encontrouSimilaridade) {
-                /**
-                 * criando um objeto Diff para que possa informar ao usuario
-                 * todos os elementos do documento a esquerda da comparação
-                 * que não tem similaridade alguma com os elementos a direita
-                 * do documento
-                 */
-                Diff elementoEsquerdo = calculoSimilaridadeDosElementosCorrentes[i][0];
-                elementoEsquerdo.addSideAttribute("left");
-                elementoEsquerdo.setSimilarity(0);
-                pai.addChildren(elementoEsquerdo);
+        if (lengthOfX() - lengthOfY() > 0) {
+
+            for (int i = 0; i < lengthOfX(); i++) {
+                if (!indicesElementosDireito.contains(i)) {
+
+                    SimilarNode similarNode = (SimilarNode) x.get(i);
+                    Node nodeEsquerdo = similarNode.getNode();
+                    Diff diffLadoEsquerdo = new Diff(nodeEsquerdo);
+                    diffLadoEsquerdo = varreSubelementos(diffLadoEsquerdo, nodeEsquerdo, "left");
+                    diffLadoEsquerdo.addSideAttribute("left");
+                    diffLadoEsquerdo.setSimilarity(0);
+                    pai.addChildren(diffLadoEsquerdo);
+                }
             }
         }
     }
@@ -159,76 +160,18 @@ public class HungarianList extends Hungarian<Similar> {
             }
             System.out.println("");
         }
-    }
-
-    public Diff listaDeFilhos(Diff diff) {
-        visualizarMatrixSimilaridade();
-
-        //retorna o conjunto de elementos com maior similaridade
-        for (int i = 0; i < result.length; i++) {
-            int indiceElementoEsquerdo = result[i][0];
-            int indiceElementoDireito = result[i][1];
-
-            float maiorSimilaridadeCorrente = originalMatrix[indiceElementoEsquerdo][indiceElementoDireito];
-
-            /**
-             * esta condição é necessária para que só aparece na tela os elementos
-             * que tenha uma similaridade maior que zero. Se, por exemplo, tiver
-             * um documento com a quantidade de elemento maior que o outro, entao
-             * o algoritmo húngaro escolhe qualquer elemento. Isto pode gerar uma
-             * inconsistencia nos dados.
-             */
-            if (maiorSimilaridadeCorrente != 0.0) {
-                SimilarNode elementoEsquerdo = (SimilarNode) x.get(indiceElementoEsquerdo);
-                Diff maiorSimilaridade = new Diff(elementoEsquerdo.getNode());
-                maiorSimilaridade.setSimilarity(maiorSimilaridadeCorrente);
-                diff.addChildren(maiorSimilaridade); //nao é feito a referencia ao
-                //documento diffXML da classe LcsXML
-            }
-        }
-        //varre toda a matrix para encontrar todos os elementos que são difetentes,
-        //ou seja, todos elementos que possui zero de similaridade.
-        for (int i = 0; i < lengthOfX(); i++) {
-            boolean encontrouSimilaridade = false;
-            int coluna = 0; //varre a coluna com todos os elementos do documento direito
-            while (coluna < lengthOfY() && !encontrouSimilaridade) {
-                encontrouSimilaridade = originalMatrix[i][coluna++] > 0;
-            }
-            if (!encontrouSimilaridade) {
-                SimilarNode similarNode = (SimilarNode) x.get(i);
-                Node nodeEsquerdo = similarNode.getNode();
-                /**
-                 * criando um objeto Diff para que possa informar ao usuario
-                 * todos os elementos do documento a esquerda da comparação
-                 * que não tem similaridade alguma com os elementos a direita
-                 * do documento
-                 */
-                Diff elementoEsquerdo = new Diff(nodeEsquerdo);
-                elementoEsquerdo.addSideAttribute("left");
-                elementoEsquerdo.setSimilarity(0);
-                diff.addChildren(elementoEsquerdo);
-            }
-        }
-        incluirElementosLadoDireito(diff);
-        return diff;
-    }
-
-    public Diff test(Diff diff, Diff diffResultante) {
-        diffResultante.addSideAttribute("left");
-        diff.addChildren(diffResultante);
-        incluirElementosLadoDireito(diff);
-        return diff;
+        System.out.println("*** fim ***");
     }
 
     //ESTE MÉTODO ESTA DUPLICADO. TEM UM AQUI DENTRO DESTA CLASSE E OUTRO NA CLASSE SIMILARNODE.
     //REFATORIR ISSO PARA UMA UNICA CLASSE.
     /**
-     * 
+     *
      * @param diff
      * @param sideNode
-     * @return 
+     * @return
      */
-    private Diff varreSubelementos(Diff diff, Node sideNode) {
+    private Diff varreSubelementos(Diff diff, Node sideNode, String side) {
         Diff x = diff;
         Diff novoDiff = null;
         if (sideNode.hasChildNodes()) {
@@ -241,17 +184,17 @@ public class HungarianList extends Hungarian<Similar> {
                         && isElementValue(sideElementValue)) {
 
                     Element valueNode = (Element) DiffXML.createNode("value");
-                    valueNode.setAttributeNS(Diff.NAMESPACE, Diff.DIFF_PREFIX + "right", sideElementValue);
+                    valueNode.setAttributeNS(Diff.NAMESPACE, Diff.DIFF_PREFIX + side, sideElementValue);
                     x.getDiffNode().appendChild(valueNode);
 
                 } else if (filho.getNodeType() == Node.ELEMENT_NODE) {
                     novoDiff = new Diff(filho);
                     novoDiff.setSimilarity(0);
-                    novoDiff.addSideAttribute("right");
+                    novoDiff.addSideAttribute(side);
                     novoDiff = inserirAtributosNosElementos(novoDiff, filho);
 
                     if (filho.hasChildNodes()) {
-                        novoDiff = varreSubelementos(novoDiff, filho);
+                        novoDiff = varreSubelementos(novoDiff, filho, side);
                     }
                     x.addChildren(novoDiff);
                 }
@@ -260,6 +203,13 @@ public class HungarianList extends Hungarian<Similar> {
         return x;
     }
 
+    /**
+     * Método que reduz a quantidade de espaços desnecessários a comparaçao caso
+     * os XMLs não estejam atrelados a um esquema.
+     *
+     * @param valor
+     * @return
+     */
     private boolean isElementValue(String valor) {
         return (valor.contains("\n")
                 || valor.contains("      ")
