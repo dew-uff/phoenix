@@ -113,7 +113,7 @@ public class HungarianList extends Hungarian<Similar> {
          * elementos do documento a esquerda da comparação que não tem
          * similaridade alguma com os elementos a direita do documento
          */
-        if (lengthOfY() - lengthOfX() > 0) {
+        if (lengthOfY() - lengthOfX() >= 0) {
 
             for (int i = 0; i < lengthOfY(); i++) {
                 if (!indicesElementosDireito.contains(i)) {
@@ -136,7 +136,7 @@ public class HungarianList extends Hungarian<Similar> {
      * alguma com os elementos a direita do documento
      */
     private void incluirElementosEsquerdos(Diff pai) {
-        if (lengthOfX() - lengthOfY() > 0) {
+        if (lengthOfX() - lengthOfY() >= 0) {
 
             for (int i = 0; i < lengthOfX(); i++) {
                 if (!indicesElementosDireito.contains(i)) {
