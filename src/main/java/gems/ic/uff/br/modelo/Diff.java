@@ -41,9 +41,9 @@ public class Diff {
     }
 
     private boolean isElementValue(String valor) {
-        return (valor.contains("\n") || 
-                valor.contains("      ") ||
-                valor.contains("&#10")) ? false : true;
+        return (valor.contains("\n")
+                || valor.contains("      ")
+                || valor.contains("&#10")) ? false : true;
     }
 
     public void setValue(String leftElementValue, String rightElementValue) {
@@ -81,19 +81,18 @@ public class Diff {
     /**
      * Este método é usado para indicar os valores dos atributos, tanto esquerdo
      * quanto direito, do elemento comparado.
-     * 
-     * @param attributeName
-     * Nome do atributo
-     * @param leftElementAttributeValue
-     * Valor do atributo correspondente ao lado esquerdo do documento
-     * @param rightElementAttributeValue 
-     * Valor do atributo correspondente ao lado direito do documento
+     *
+     * @param attributeName Nome do atributo
+     * @param leftElementAttributeValue Valor do atributo correspondente ao lado
+     * esquerdo do documento
+     * @param rightElementAttributeValue Valor do atributo correspondente ao
+     * lado direito do documento
      */
     public void addAttribute(String attributeName, String leftElementAttributeValue, String rightElementAttributeValue) {
         //condição necessária para verificar se os elementos roots dos documentos possui namedspace ou não.
         //Se possuir, deve ser criado cada namespace encontrado no diff resultante.
         // No futuro, criar esta verificação a parte para que não possa ser perguntado a todos os seus filhos.
-        if (attributeName.contains("xmlns:")) {
+        if (attributeName.contains("xmlns") ) {
             if (leftElementAttributeValue.equals(rightElementAttributeValue)) {
                 ((Element) this.diffNode).setAttributeNS(XML.ENDERECO_NAMESPACE, attributeName, leftElementAttributeValue);
             } else {
@@ -104,6 +103,8 @@ public class Diff {
                     ((Element) this.diffNode).setAttributeNS(XML.ENDERECO_NAMESPACE, attributeName, rightElementAttributeValue);
                 }
             }
+        } else {
+
             // *** fim ***    
             if (leftElementAttributeValue.isEmpty() || rightElementAttributeValue.isEmpty()) {
                 if (leftElementAttributeValue.isEmpty()) {
@@ -134,8 +135,8 @@ public class Diff {
      * Método criado para inserir todos os atributos em um elemento. A diferença
      * deste método com os demais é que este só será usado para indicar os
      * atributos que pertence a um determinado elemento sendo que este é...
-     * 
-     * @param atributo 
+     *
+     * @param atributo
      */
     public void addAtribute(Node atributo) {
         ((Element) this.diffNode).setAttributeNS(NAMESPACE, atributo.getNodeName(), atributo.getNodeValue());
