@@ -39,7 +39,6 @@ import org.w3c.dom.NodeList;
 public class VisualizarXML extends JPanel {
 
     private Forest<Node, String> floresta;
-    private JPanel pnlCentral;
     private VisualizationViewer<Node, String> vv;
     private TreeLayout<Node, String> treeLayout;
     private XML xml;
@@ -95,7 +94,7 @@ public class VisualizarXML extends JPanel {
         this.insereSubElementos(raiz);
         treeLayout = new TreeLayout<Node, String>(floresta, 50);
 //        treeLayout = new RadialTreeLayout<Node, String>(floresta);
-        vv = new VisualizationViewer<Node, String>(treeLayout, new Dimension(600, 600));
+        vv = new VisualizationViewer<Node, String>(treeLayout, new Dimension(600, 500));
         VertexLabelAsShapeRenderer<Node, String> vlasr = new VertexLabelAsShapeRenderer<Node, String>(vv.getRenderContext());
         vv.getRenderContext().setEdgeShapeTransformer(new EdgeShape.Line());
         vv.getRenderContext().setVertexLabelTransformer(mudarRotulo);

@@ -46,6 +46,13 @@ public class Diff {
                 || valor.contains("&#10")) ? false : true;
     }
 
+    
+    /**
+     * Cria os elementos para informar ao usuário o conteudo do lado esquerdo
+     * e  direito
+     * @param leftElementValue Conteudo do lado esquerdo
+     * @param rightElementValue Conteudo do lado direito
+     */
     public void setValue(String leftElementValue, String rightElementValue) {
         if (leftElementValue != null || rightElementValue != null) {
             if (leftElementValue != null && rightElementValue != null) {
@@ -89,9 +96,13 @@ public class Diff {
      * lado direito do documento
      */
     public void addAttribute(String attributeName, String leftElementAttributeValue, String rightElementAttributeValue) {
-        //condição necessária para verificar se os elementos roots dos documentos possui namedspace ou não.
-        //Se possuir, deve ser criado cada namespace encontrado no diff resultante.
-        // No futuro, criar esta verificação a parte para que não possa ser perguntado a todos os seus filhos.
+        
+        /** Esta primeira condição é necessária para verificar se os elementos 
+         * roots dos documentos possui namedspace ou não.Se possuir, deve ser 
+         * criado uma nova namespace e adicionado ao diff resultante. No futuro, criar
+         * esta verificação a parte para que não possa ser perguntado a todos 
+         * os seus filhos.
+         */
         if (attributeName.contains("xmlns") ) {
             if (leftElementAttributeValue.equals(rightElementAttributeValue)) {
                 ((Element) this.diffNode).setAttributeNS(XML.ENDERECO_NAMESPACE, attributeName, leftElementAttributeValue);

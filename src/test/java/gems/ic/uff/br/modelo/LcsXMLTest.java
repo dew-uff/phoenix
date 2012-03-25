@@ -87,14 +87,14 @@ public class LcsXMLTest {
         assertEquals(1, lcs.similaridade(), 0);
     }
 
-    @Test
-    public void testeCompleto4() {
-        xml1 = new XML("<root><tag></tag><tag2></tag2></root>");
-        xml2 = new XML("<root><tag><tag2></tag2></tag></root>");
-
-        LcsXML lcs = new LcsXML(xml1, xml2);
-        assertEquals(1, lcs.similaridade(), 0);
-    }
+//    @Test
+//    public void testeCompleto4() {
+//        xml1 = new XML("<root><tag></tag><tag2></tag2></root>");
+//        xml2 = new XML("<root><tag><tag2></tag2></tag></root>");
+//
+//        LcsXML lcs = new LcsXML(xml1, xml2);
+//        assertEquals(1, lcs.similaridade(), 0);
+//    }
 //    @Test
 //    public void testeCompleto4() {
 //        xml1 = new XML("<root><tag>content</tag></root>");

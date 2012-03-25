@@ -17,7 +17,10 @@ import org.w3c.dom.NodeList;
  */
 public class SimilarNode extends Similar<SimilarNode> {
 
+    //elemento do lado esquerdo do documento
     private Node leftNode;
+    
+    //peso dos métodos de comparação
     public static float ATTRIBUTE_WEIGTH = 0.25f;
     public static float ELEMENT_VALUE_WEIGTH = 0.25f;
     public static float ELEMENT_NAME_WEIGTH = 0.25f;
@@ -34,20 +37,25 @@ public class SimilarNode extends Similar<SimilarNode> {
         Diff diff = new Diff(leftNode, rightNode);
         float similarity = 0;
 
-        //nao sei pra que serve essa condiç
+        
         if (leftNode == null || rightNode == null) {
-            //no momento, o sistema nao esta protegendo isso
+            
         } else {
             similarity += elementsNameSimilarity(rightNode);
 
-            //Se não houver similaridade no nome, então não são o mesmo elemento,
-            //portanto, não é necessário continuar a calcular a similaridade.
+            //Se não houver similaridade no nome, então não são o mesmo elemento.
+            //Portanto, não é necessário continuar a calcular a similaridade.
             if (similarity != 0) {
                 similarity += elementsValueSimilarity(rightNode, diff);
                 similarity += elementsAttributesSimilarity(rightNode, diff);
                 similarity += elementsChildrenSimilarity(rightNode, diff);
 
             } else {
+                /**
+                 * Se chegou nesta condição, então o elemento da esquerda é diferente
+                 * do elemento da direita. Logo, esta informação deve ser exposta
+                 * para usuário. Este método trata esta requisição.
+                 */
                 diff = varreTodosSubelementosParaMostrar(diff, leftNode, "left");
             }
         }
@@ -55,6 +63,13 @@ public class SimilarNode extends Similar<SimilarNode> {
         return diff;
     }
 
+    /**
+     * Codição usada para verificar se os nomes dos elementos são iguais. Essa
+     * condição é necessaria para que os outros métodos de similaridade possam
+     * ser testado
+     * @param rightNode nome do elemento do lado direito do documento
+     * @return retorna o percentual de similaridade encontrado
+     */
     protected float elementsNameSimilarity(Node rightNode) {
         float similarity = 0;
 
@@ -65,6 +80,14 @@ public class SimilarNode extends Similar<SimilarNode> {
         return similarity;
     }
 
+    /**
+     * Compara a similaridade do conteúdo dos elementos. A comparação é feita
+     * usando o algoritmo LCS.
+     * @param rightNode conteudo do lado direito
+     * @param diff diff corrente 
+     * @return total de similaridade encontrado entre os conteúdos
+     * @throws DOMException 
+     */
     protected float elementsValueSimilarity(Node rightNode, Diff diff) throws DOMException {
         float similarity = 0;
 
@@ -98,6 +121,17 @@ public class SimilarNode extends Similar<SimilarNode> {
         return similarity;
     }
 
+    /**
+     * Comparação de similaridade dos atributos do elemento corrente. A comparação
+     * é feita agrupando todos os atributos pertencentes aos elementos, tanto da
+     * esquerda quanto da direita, e colocado em uma classe Map, onde a chave é
+     * o nome do elemento e o valor é uma lista do tipo SimilarString. Dentro 
+     * dessa lista, a posição 0 indica o conteudo do lado esquerdo do documento
+     * comparado, e a posição 1 indica o conteudo do lado direito.
+     * @param rightNode Elemento do lado direito do documento
+     * @param diff Diff corrente até o momento
+     * @return Retorna a similaridade total encontrada entre os atributos.
+     */
     protected float elementsAttributesSimilarity(Node rightNode, Diff diff) {
         float similarity = 0;
 
@@ -137,6 +171,14 @@ public class SimilarNode extends Similar<SimilarNode> {
         return similarity;
     }
 
+    /**
+     * Método de comparação dos subelementos. Este método agrupa todos os elementos
+     * do lado esquerdo do documento, depois agrupa todos os elementos do lado
+     * direito do documento e faz uma comparação entre eles.
+     * @param rightNode Elemento do lado direito do documento
+     * @param diff Diff corrente até o momento
+     * @return 
+     */
     protected float elementsChildrenSimilarity(Node rightNode, Diff diff) {
 
         float similarity = 0;
@@ -191,12 +233,22 @@ public class SimilarNode extends Similar<SimilarNode> {
         return elementNodes;
     }
 
-    protected Map<String, List<SimilarString>> getAttributesFromNamedNodeMaps(NamedNodeMap nodeMap, NamedNodeMap otherNodeMap) {
+    
+    /**
+     *  Método que extrai todos os atributos pertencentes a ambos os lados do 
+     * documento.
+     * @param ladoEsquerdo - atributos que estão no lado esquerdo do documento
+     * @param ladoDireito - atributos que estão no lado direito do documento
+     * @return
+     *  Retorna uma biblioteca com todos os atributos de ambos os lados dos documentos
+     * com seus respectivos conteúdos.
+     */
+    protected Map<String, List<SimilarString>> getAttributesFromNamedNodeMaps(NamedNodeMap ladoEsquerdo, NamedNodeMap ladoDireito) {
 
         Map<String, List<SimilarString>> attributesMap = new TreeMap<String, List<SimilarString>>();
 
-        for (int i = 0; i < nodeMap.getLength(); i++) {
-            Node item = nodeMap.item(i);
+        for (int i = 0; i < ladoEsquerdo.getLength(); i++) {
+            Node item = ladoEsquerdo.item(i);
 
             List<SimilarString> similarList = new ArrayList<SimilarString>(2);
             similarList.add(new SimilarString(item.getNodeValue()));
@@ -204,8 +256,8 @@ public class SimilarNode extends Similar<SimilarNode> {
 
             attributesMap.put(item.getNodeName(), similarList);
         }
-        for (int i = 0; i < otherNodeMap.getLength(); i++) {
-            Node item = otherNodeMap.item(i);
+        for (int i = 0; i < ladoDireito.getLength(); i++) {
+            Node item = ladoDireito.item(i);
 
             List<SimilarString> similarList = attributesMap.get(item.getNodeName());
             if (similarList != null) {
@@ -236,11 +288,21 @@ public class SimilarNode extends Similar<SimilarNode> {
         return (valor.contains("\n") && valor.contains("        ")) ? false : true;
     }
 
-    private Diff varreTodosSubelementosParaMostrar(Diff diff, Node leftNode, String side) {
+    /**
+     *  Cria um objeto do tipo Diff com todos os elementos e subelmentos que não
+     * aparece no outro lado do documento.
+     * @param diff - diff corrente até o momento
+     * @param nodeCorrente - elemento que deve ser criado
+     * @param nodeSide - informa de qual lado do documento o nodeCorrente pertence
+     * @return 
+     *  Retorna um novo objeto Diff com todos os subelementos que pertence aquele
+     * elemento.
+     */
+    private Diff varreTodosSubelementosParaMostrar(Diff diff, Node nodeCorrente, String nodeSide) {
         Diff x = diff;
         Diff novoDiff = null;
-        if (leftNode.hasChildNodes()) {
-            NodeList subElementos = leftNode.getChildNodes();
+        if (nodeCorrente.hasChildNodes()) {
+            NodeList subElementos = nodeCorrente.getChildNodes();
             for (int i = 0; i < subElementos.getLength(); i++) {
                 Node filho = subElementos.item(i);
                 String sideElementValue = filho.getNodeValue();
@@ -249,16 +311,16 @@ public class SimilarNode extends Similar<SimilarNode> {
                         && isElementValue(sideElementValue)) {
 
                     Element valueNode = (Element) DiffXML.createNode("value");
-                    valueNode.setAttributeNS(Diff.NAMESPACE, Diff.DIFF_PREFIX + side, sideElementValue);
+                    valueNode.setAttributeNS(Diff.NAMESPACE, Diff.DIFF_PREFIX + nodeSide, sideElementValue);
                     x.getDiffNode().appendChild(valueNode);
                 } else if (filho.getNodeType() == Node.ELEMENT_NODE) {
                     novoDiff = new Diff(filho);
                     novoDiff.setSimilarity(0);
-                    novoDiff.addSideAttribute(side);
+                    novoDiff.addSideAttribute(nodeSide);
                     novoDiff = inserirAtributosNosElementos(novoDiff, filho);
 
                     if (filho.hasChildNodes()) {
-                        novoDiff = varreTodosSubelementosParaMostrar(novoDiff, filho, side);
+                        novoDiff = varreTodosSubelementosParaMostrar(novoDiff, filho, nodeSide);
                     }
                     x.addChildren(novoDiff);
                 }

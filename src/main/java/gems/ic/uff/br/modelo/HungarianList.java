@@ -15,6 +15,13 @@ public class HungarianList extends Hungarian<Similar> {
 
     private List<Similar> x;
     private List<Similar> y;
+    
+    /**
+     * Atributos criados para manter o histórico de todos os elementos que tiveram
+     * um casamento ideal do método húngaro. Serão importantes para consultar
+     * todos os elementos que não forem selecionados pelo húngaro e devem ser
+     * visualizados pelo usuário.
+     */
     private List<Integer> indicesElementosEsquerdo = new ArrayList<Integer>();
     private List<Integer> indicesElementosDireito = new ArrayList<Integer>();
 
@@ -59,18 +66,22 @@ public class HungarianList extends Hungarian<Similar> {
     }
 
     public Diff calcularSimilaridadeDosSubElementos(Diff diff) {
-
-        float similaridadeTotal = similaridade();
+        
+        similaridade();
         addResultParent(diff);
         return diff;
     }
 
-    //    TODO: @Override
+    /**
+     * Método responsável para criar os resultado da comparação de todos os
+     * subelementos do elemento comparado
+     * @param pai 
+     */
     public void addResultParent(Diff pai) {
 
-        visualizarMatrixSimilaridade();
+//        visualizarMatrixSimilaridade();
         incluirElementosComMaiorSimilaridade(pai);
-        incluirElementosEsquerdos(pai);
+        incluirElementosLadoEsquerdos(pai);
         incluirElementosLadoDireito(pai);
     }
 
@@ -95,10 +106,36 @@ public class HungarianList extends Hungarian<Similar> {
              * Isto pode gerar uma inconsistencia nos dados.
              */
             if (maiorSimilaridadeCorrente > 0) {
-                Diff maiorSimilaridade = calculoSimilaridadeDosElementosCorrentes[indiceElementoEsquerdo][indiceElementoDireito];
+                Diff maiorSimilaridade = calculaSimilaridadeDosElementosCorrentes[indiceElementoEsquerdo][indiceElementoDireito];
                 indicesElementosEsquerdo.add(indiceElementoEsquerdo);
                 indicesElementosDireito.add(indiceElementoDireito);
                 pai.addChildren(maiorSimilaridade);
+            }
+        }
+    }
+    
+    
+    /**
+     * criando um objeto Diff para que possa informar ao usuario todos os
+     * elementos do documento a esquerda da comparação que não tem similaridade
+     * alguma com os elementos a direita do documento
+     */
+    private void incluirElementosLadoEsquerdos(Diff pai) {
+       
+        
+        if (lengthOfX() - lengthOfY() >= 0) {
+
+            for (int i = 0; i < lengthOfX(); i++) {
+                if (!indicesElementosDireito.contains(i)) {
+
+                    SimilarNode similarNode = (SimilarNode) x.get(i);
+                    Node nodeEsquerdo = similarNode.getNode();
+                    Diff diffLadoEsquerdo = new Diff(nodeEsquerdo);
+                    diffLadoEsquerdo = varreSubelementos(diffLadoEsquerdo, nodeEsquerdo, "left");
+                    diffLadoEsquerdo.addSideAttribute("left");
+                    diffLadoEsquerdo.setSimilarity(0);
+                    pai.addChildren(diffLadoEsquerdo);
+                }
             }
         }
     }
@@ -131,28 +168,10 @@ public class HungarianList extends Hungarian<Similar> {
     }
 
     /**
-     * criando um objeto Diff para que possa informar ao usuario todos os
-     * elementos do documento a esquerda da comparação que não tem similaridade
-     * alguma com os elementos a direita do documento
+     * Método criado para visualizar o percentual de todos os elementos comparados.
+     * Este método poderá ser apagado no futuro. É apenas um guia para ajudar no
+     * desenvolvimento.
      */
-    private void incluirElementosEsquerdos(Diff pai) {
-        if (lengthOfX() - lengthOfY() >= 0) {
-
-            for (int i = 0; i < lengthOfX(); i++) {
-                if (!indicesElementosDireito.contains(i)) {
-
-                    SimilarNode similarNode = (SimilarNode) x.get(i);
-                    Node nodeEsquerdo = similarNode.getNode();
-                    Diff diffLadoEsquerdo = new Diff(nodeEsquerdo);
-                    diffLadoEsquerdo = varreSubelementos(diffLadoEsquerdo, nodeEsquerdo, "left");
-                    diffLadoEsquerdo.addSideAttribute("left");
-                    diffLadoEsquerdo.setSimilarity(0);
-                    pai.addChildren(diffLadoEsquerdo);
-                }
-            }
-        }
-    }
-
     private void visualizarMatrixSimilaridade() {
         for (int i = 0; i < originalMatrix.length; i++) {
             for (int j = 0; j < originalMatrix.length; j++) {
@@ -163,14 +182,16 @@ public class HungarianList extends Hungarian<Similar> {
         System.out.println("*** fim ***");
     }
 
-    //ESTE MÉTODO ESTA DUPLICADO. TEM UM AQUI DENTRO DESTA CLASSE E OUTRO NA CLASSE SIMILARNODE.
-    //REFATORIR ISSO PARA UMA UNICA CLASSE.
     /**
-     *
-     * @param diff
-     * @param sideNode
-     * @return
+     * Método usado para criar os elementos e subelementos que não foram considerados
+     * similares a um dos lados do documento. 
+     * @param diff  Diff contanto o elemento principal
+     * @param sideNode Informa de que lado do documento o elemento percente."left" ou "right"
+     * @return Retorna o objeto Diff com a construção de toda a cadeia de 
+     * subelementos para que o usuário possa visualiza-los todos de uma cor. 
      */
+    //ESTE MÉTODO ESTA DUPLICADO. TEM UM AQUI DENTRO DESTA CLASSE E OUTRO NA CLASSE SIMILARNODE.
+    //NO TUTURO, REFATORAR ISSO PARA UMA UNICA CLASSE.
     private Diff varreSubelementos(Diff diff, Node sideNode, String side) {
         Diff x = diff;
         Diff novoDiff = null;
@@ -204,10 +225,11 @@ public class HungarianList extends Hungarian<Similar> {
     }
 
     /**
-     * Método que reduz a quantidade de espaços desnecessários a comparaçao caso
-     * os XMLs não estejam atrelados a um esquema.
+     * Método que reduz a quantidade de espaços desnecessários a comparaçao, 
+     * caso os XMLs não estejam atrelados a um esquema. Isso acontece quando os
+     * XMLs comparados possui muitos dos seus conteúdos com quebra de linha.
      *
-     * @param valor
+     * @param valor 
      * @return
      */
     private boolean isElementValue(String valor) {

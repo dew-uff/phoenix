@@ -21,8 +21,8 @@ public class GBC extends GridBagConstraints {
         this.gridy = linha;
         this.gridheight = linhasOcupadas;
         this.gridwidth = colunasOcupadas;
-//        this.weightx = 1;
-//        this.weighty = 1;
+        this.weightx = 1;
+        this.weighty = 1;
         return this;
     }
 

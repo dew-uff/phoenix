@@ -64,7 +64,7 @@ public class XML {
                 emptyTextNode.getParentNode().removeChild(emptyTextNode);
             }
         } catch (Exception ignoredException) {
-            System.out.println(""+ ignoredException.getMessage());
+//            System.out.println(""+ ignoredException.getMessage());
         }
     }
 
@@ -97,7 +97,7 @@ public class XML {
 
             serializer.transform(new DOMSource(document), new StreamResult(writer));
         } catch (TransformerException ex) {
-            System.out.println(ex.getMessage());
+//            System.out.println(ex.getMessage());
         }
 
         return writer.toString();

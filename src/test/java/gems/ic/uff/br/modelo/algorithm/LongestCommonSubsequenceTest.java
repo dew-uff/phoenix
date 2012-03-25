@@ -1,21 +1,11 @@
 package gems.ic.uff.br.modelo.algorithm;
 
 import gems.ic.uff.br.modelo.LcsString;
-import gems.ic.uff.br.modelo.HungarianList;
 import org.junit.Before;
 
-import java.util.List;
-
-import gems.ic.uff.br.modelo.similar.Similar;
 import gems.ic.uff.br.modelo.similar.SimilarCharacter;
-import gems.ic.uff.br.modelo.similar.SimilarNode;
-
-import java.io.StringReader;
-import java.util.ArrayList;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.junit.Test;
-import org.xml.sax.InputSource;
 
 import static org.junit.Assert.*;
 
