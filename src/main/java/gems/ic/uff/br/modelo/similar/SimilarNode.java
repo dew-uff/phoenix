@@ -1,15 +1,12 @@
 package gems.ic.uff.br.modelo.similar;
 
 import com.sun.org.apache.xpath.internal.NodeSet;
-import gems.ic.uff.br.modelo.*;
-
+import gems.ic.uff.br.modelo.Diff;
+import gems.ic.uff.br.modelo.DiffXML;
+import gems.ic.uff.br.modelo.HungarianList;
+import gems.ic.uff.br.modelo.LcsString;
 import java.util.*;
-
-import org.w3c.dom.DOMException;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 
 /**
  * Classe que encapsula a classe Node do DOM, adicionando um comportamento

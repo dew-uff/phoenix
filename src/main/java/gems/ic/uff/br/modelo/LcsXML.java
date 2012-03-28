@@ -2,8 +2,8 @@ package gems.ic.uff.br.modelo;
 
 import com.sun.org.apache.xpath.internal.NodeSet;
 import gems.ic.uff.br.modelo.algorithm.LongestCommonSubsequence;
-import gems.ic.uff.br.modelo.similar.SimilarNode;
 import gems.ic.uff.br.modelo.similar.Similar;
+import gems.ic.uff.br.modelo.similar.SimilarNode;
 import org.w3c.dom.Node;
 
 public class LcsXML extends LongestCommonSubsequence<Similar> {
