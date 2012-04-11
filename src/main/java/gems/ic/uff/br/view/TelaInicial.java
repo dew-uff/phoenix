@@ -186,8 +186,8 @@ public class TelaInicial extends JFrame {
                 v2.setBorder(new BevelBorder(BevelBorder.LOWERED));
                 JPanel pnlGraficos = new JPanel(new GridBagLayout());
                 gbc = new GBC();
-                JLabel txtTexto1 = new JLabel("Texto 1");
-                JLabel txtTexto2 = new JLabel("Texto 2");
+                JLabel txtTexto1 = new JLabel("Documento 1");
+                JLabel txtTexto2 = new JLabel("Documento 2");
                 gbc.weightx=1;
                 gbc.weighty=1;
                 pnlGraficos.add(txtTexto1, gbc.adicionarComponente(0, 0, 1, 1));
