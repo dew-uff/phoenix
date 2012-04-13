@@ -126,7 +126,7 @@ public class HungarianList extends Hungarian<Similar> {
         if (lengthOfX() - lengthOfY() >= 0) {
 
             for (int i = 0; i < lengthOfX(); i++) {
-                if (!indicesElementosDireito.contains(i)) {
+                if (!indicesElementosEsquerdo.contains(i)) {
 
                     SimilarNode similarNode = (SimilarNode) x.get(i);
                     Node nodeEsquerdo = similarNode.getNode();
