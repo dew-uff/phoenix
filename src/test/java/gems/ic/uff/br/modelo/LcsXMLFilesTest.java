@@ -18,27 +18,28 @@ public class LcsXMLFilesTest {
  
     @Test
     public void testingFiles() throws FileNotFoundException, IOException {
-//        
-//        LcsXMLFiles lcs = new LcsXMLFiles("/home/gmenezes/teste");
-//        
-//        lcs.similarityDirectory();
-//        
-//        float[][] similarityMatrix = lcs.getSimilarityMatrix();
-//
-//        for (float[] fs : similarityMatrix) {
-//            for (float f : fs) {
-//                        System.out.print(f+" ");
-//            }
-//            
-//            System.out.println("");
-//        }
-//        
-//        
-//        File[] files = lcs.getFiles();
-//        for (File file : files) {
-//            System.out.println(file.getAbsolutePath()+" ");
-//        }
-//        
+        
+        LcsXMLFiles lcs = new LcsXMLFiles("resources/test");
+        
+//        System.out.println((new File(".")).getAbsolutePath());
+        lcs.similarityDirectory();
+        
+        float[][] similarityMatrix = lcs.getSimilarityMatrix();
+
+        for (float[] fs : similarityMatrix) {
+            for (float f : fs) {
+                        System.out.print(f+" ");
+            }
+            
+            System.out.println("");
+        }
+        
+        
+        File[] files = lcs.getFiles();
+        for (File file : files) {
+            System.out.println(file.getAbsolutePath()+" ");
+        }
+        
     }
     
 }
