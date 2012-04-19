@@ -5,6 +5,8 @@
 package gems.ic.uff.br.modelo;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -26,9 +28,6 @@ public class LcsXMLFiles {
         this.xml1 = xml1;
     }
 
-    
-    
-    
     private String FileToString(String path) throws FileNotFoundException, IOException {
 
         FileInputStream fis = new FileInputStream(path);
@@ -56,6 +55,27 @@ public class LcsXMLFiles {
         return lcs.similaridade();
     }
 
+    private File[] selectingXML(File[] fileList) {
+
+        List<File> aux = new ArrayList<File>();
+
+        
+        for (File file : fileList) {
+            if (file.getAbsolutePath().endsWith(".xml")) {
+                aux.add(file);
+            }
+        }
+
+        File[] result = new File[aux.size()];
+        
+        int i = 0;
+        
+        for (File file : aux) {
+            result[i++] = file;
+        }
+        return result;
+    }
+
     public float similarityFile(String path1, String path2) throws FileNotFoundException, IOException {
 
         XML from = new XML(path1);
@@ -69,7 +89,7 @@ public class LcsXMLFiles {
     //method that returns the similarity of files in a directory
     public void similarityDirectory() throws FileNotFoundException, IOException {
 
-        
+
 
         File directory = new File(xml1);
 
@@ -79,7 +99,8 @@ public class LcsXMLFiles {
 
 //        String[] list = directory.list();
 
-        files = directory.listFiles();
+ 
+        files = selectingXML(directory.listFiles());
 
         similarityMatrix = new float[files.length][files.length];
 
@@ -91,10 +112,10 @@ public class LcsXMLFiles {
             }
         }
 
-        
+
     }
 
-        public File[] getFiles() {
+    public File[] getFiles() {
         return files;
     }
 
@@ -125,7 +146,4 @@ public class LcsXMLFiles {
     public void setXml2(String xml2) {
         this.xml2 = xml2;
     }
-
-   
-
 }

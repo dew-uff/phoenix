@@ -52,8 +52,6 @@ public class SimilarityDiff extends javax.swing.JFrame {
             }
         });
 
-        jpGraph.setBorder(javax.swing.BorderFactory.createTitledBorder("Graph"));
-
         javax.swing.GroupLayout jpGraphLayout = new javax.swing.GroupLayout(jpGraph);
         jpGraph.setLayout(jpGraphLayout);
         jpGraphLayout.setHorizontalGroup(
@@ -62,7 +60,7 @@ public class SimilarityDiff extends javax.swing.JFrame {
         );
         jpGraphLayout.setVerticalGroup(
             jpGraphLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGap(0, 437, Short.MAX_VALUE)
         );
 
         jlSimilarity.setText("jLabel1");
@@ -94,17 +92,17 @@ public class SimilarityDiff extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(429, Short.MAX_VALUE)
+                .addComponent(jsSimilarity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(17, 17, 17))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(437, 437, 437)
+                .addComponent(jlSimilarity)
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
                 .addComponent(jpGraph, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jsSimilarity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(17, 17, 17))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(37, 37, 37)
-                        .addComponent(jlSimilarity)
-                        .addContainerGap())))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
