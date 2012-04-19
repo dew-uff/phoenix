@@ -49,10 +49,10 @@ public class DrawSimilarityGraph {
         
         // The Layout<V, E> is parameterized by the vertex and edge types
         layout = new CircleLayout(graph);
-        layout.setSize(new Dimension(300, 300)); // sets the initial size of the space
+        layout.setSize(new Dimension(1000, 600)); // sets the initial size of the space
         // The BasicVisualizationServer<V,E> is parameterized by the edge types
         vv = new BasicVisualizationServer<File, String>(layout);
-        vv.setPreferredSize(new Dimension(350, 350)); //Sets the viewing area size
+        vv.setPreferredSize(new Dimension(1050, 650)); //Sets the viewing area size
     }
   
 

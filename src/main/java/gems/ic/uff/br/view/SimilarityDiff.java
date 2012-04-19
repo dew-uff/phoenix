@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 /**
  *
@@ -21,10 +23,14 @@ public class SimilarityDiff extends javax.swing.JFrame {
      * Creates new form SimilarityDiff
      */
     String directoryPath;
+    JFrame diffFrame;
+    JPanel diffPanel;
 
     public SimilarityDiff() {
         initComponents();
         directoryPath = "";
+        diffFrame = null;
+        diffPanel = null;
     }
 
     /**
@@ -129,6 +135,24 @@ public class SimilarityDiff extends javax.swing.JFrame {
 
             jpGraph.add(dsg.getVv());
 
+            if (diffFrame == null) {
+                diffFrame = new JFrame();
+            }
+
+            if (diffPanel == null) {
+                diffPanel = new JPanel();
+            }
+
+//            diffPanel.add(dsg.getVv());
+//            diffPanel.setSize(1000, 600);
+
+//            diffFrame.add(diffPanel);
+            diffFrame.setSize(1000, 600);
+            diffFrame.getContentPane().add(dsg.getVv());
+            diffFrame.pack();
+            diffFrame.setVisible(true);
+            diffFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
         } catch (FileNotFoundException ex) {
             Logger.getLogger(SimilarityDiff.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -152,6 +176,15 @@ public class SimilarityDiff extends javax.swing.JFrame {
 
                 dsg.draw(lcs.getSimilarityMatrix(), lcs.getFiles(), Float.parseFloat((jsSimilarity.getValue() / 100.00) + ""));
 
+//                diffFrame.removeAll();
+//                diffPanel.removeAll();
+//                
+//                diffPanel.add(dsg.getVv());
+//                diffFrame.add(diffPanel);
+                diffFrame.setSize(1000, 600);
+                diffFrame.getContentPane().removeAll();
+                diffFrame.getContentPane().add(dsg.getVv());
+                diffFrame.pack();
 
             } catch (FileNotFoundException ex) {
                 Logger.getLogger(SimilarityDiff.class.getName()).log(Level.SEVERE, null, ex);
