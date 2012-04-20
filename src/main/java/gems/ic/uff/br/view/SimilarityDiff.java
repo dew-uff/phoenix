@@ -25,6 +25,8 @@ public class SimilarityDiff extends javax.swing.JFrame {
     String directoryPath;
     JFrame diffFrame;
     JPanel diffPanel;
+    LcsXMLFiles lcs; 
+    DrawSimilarityGraph dsg;
 
     public SimilarityDiff() {
         initComponents();
@@ -66,7 +68,7 @@ public class SimilarityDiff extends javax.swing.JFrame {
         );
         jpGraphLayout.setVerticalGroup(
             jpGraphLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 437, Short.MAX_VALUE)
+            .addGap(0, 424, Short.MAX_VALUE)
         );
 
         jlSimilarity.setText("jLabel1");
@@ -126,10 +128,10 @@ public class SimilarityDiff extends javax.swing.JFrame {
 
         try {
 
-            LcsXMLFiles lcs = new LcsXMLFiles(directoryPath);
+            lcs = new LcsXMLFiles(directoryPath);
             lcs.similarityDirectory();
 
-            DrawSimilarityGraph dsg = new DrawSimilarityGraph();
+            dsg = new DrawSimilarityGraph();
 
             dsg.draw(lcs.getSimilarityMatrix(), lcs.getFiles(), Float.parseFloat((jsSimilarity.getValue() / 100.00) + ""));
 
@@ -167,30 +169,16 @@ public class SimilarityDiff extends javax.swing.JFrame {
         jlSimilarity.setText(jsSimilarity.getValue() + "");
 
         if (!directoryPath.equals("")) {
-            try {
-
-                LcsXMLFiles lcs = new LcsXMLFiles(directoryPath);
-                lcs.similarityDirectory();
-
-                DrawSimilarityGraph dsg = new DrawSimilarityGraph();
-
+          
+                dsg = new DrawSimilarityGraph();
                 dsg.draw(lcs.getSimilarityMatrix(), lcs.getFiles(), Float.parseFloat((jsSimilarity.getValue() / 100.00) + ""));
 
-//                diffFrame.removeAll();
-//                diffPanel.removeAll();
-//                
-//                diffPanel.add(dsg.getVv());
-//                diffFrame.add(diffPanel);
                 diffFrame.setSize(1000, 600);
                 diffFrame.getContentPane().removeAll();
                 diffFrame.getContentPane().add(dsg.getVv());
                 diffFrame.pack();
 
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(SimilarityDiff.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(SimilarityDiff.class.getName()).log(Level.SEVERE, null, ex);
-            }
+           
         }
     }//GEN-LAST:event_similarityChange
 

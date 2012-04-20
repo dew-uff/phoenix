@@ -23,15 +23,17 @@ public class DrawSimilarityGraph {
     Graph<File, String> graph;
     BasicVisualizationServer<File, String> vv;
     Layout<File, String> layout;
+    int edge = 0;
 
     public DrawSimilarityGraph() {
 
         graph = new SparseGraph<File, String>();
+        edge = 0;
     }
 
     public void draw(float[][] matrix, File[] files, float threshold) {
 
-        int edge = 0, size = files.length;
+        int size = files.length;
 
         for (File file : files) {
             graph.addVertex(file);
