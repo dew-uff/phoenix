@@ -10,9 +10,13 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.BasicVisualizationServer;
+import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
+import edu.uci.ics.jung.visualization.renderers.Renderer;
 import java.awt.Dimension;
 import java.io.File;
 import javax.swing.JFrame;
+import org.apache.commons.collections15.Transformer;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -31,6 +35,13 @@ public class DrawSimilarityGraph {
         edge = 0;
     }
 
+    private Transformer<File, String> changeLabel = new Transformer<File, String>() {
+
+        public String transform(File arg0) {
+            return arg0.getName();
+        }
+    };
+    
     public void draw(float[][] matrix, File[] files, float threshold) {
 
         int size = files.length;
@@ -55,6 +66,9 @@ public class DrawSimilarityGraph {
         // The BasicVisualizationServer<V,E> is parameterized by the edge types
         vv = new BasicVisualizationServer<File, String>(layout);
         vv.setPreferredSize(new Dimension(1050, 650)); //Sets the viewing area size
+        
+        vv.getRenderContext().setVertexLabelTransformer(changeLabel);
+        vv.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
     }
   
 
