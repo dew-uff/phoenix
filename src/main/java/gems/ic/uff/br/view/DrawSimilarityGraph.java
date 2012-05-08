@@ -10,6 +10,9 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.SparseGraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.visualization.BasicVisualizationServer;
+import edu.uci.ics.jung.visualization.VisualizationViewer;
+import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
+import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
 import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 import java.awt.Dimension;
@@ -25,7 +28,8 @@ import org.w3c.dom.Node;
 public class DrawSimilarityGraph {
 
     Graph<File, String> graph;
-    BasicVisualizationServer<File, String> vv;
+//    BasicVisualizationServer<File, String> vv;
+    VisualizationViewer<File, String> vv;
     Layout<File, String> layout;
     int edge = 0;
 
@@ -34,14 +38,13 @@ public class DrawSimilarityGraph {
         graph = new SparseGraph<File, String>();
         edge = 0;
     }
-
     private Transformer<File, String> changeLabel = new Transformer<File, String>() {
 
         public String transform(File arg0) {
             return arg0.getName();
         }
     };
-    
+
     public void draw(float[][] matrix, File[] files, float threshold) {
 
         int size = files.length;
@@ -54,23 +57,35 @@ public class DrawSimilarityGraph {
             for (int j = i + 1; j < size; j++) {
 
                 if (matrix[i][j] >= threshold) {
-                    graph.addEdge((edge++)+"", files[i], files[j], EdgeType.UNDIRECTED);
+                    graph.addEdge((edge++) + "", files[i], files[j], EdgeType.UNDIRECTED);
                 }
 
             }
         }
-        
+
         // The Layout<V, E> is parameterized by the vertex and edge types
         layout = new CircleLayout(graph);
         layout.setSize(new Dimension(1000, 600)); // sets the initial size of the space
         // The BasicVisualizationServer<V,E> is parameterized by the edge types
-        vv = new BasicVisualizationServer<File, String>(layout);
+//        vv = new BasicVisualizationServer<File, String>(layout);
+        vv = new VisualizationViewer<File, String>(layout);
+
+
         vv.setPreferredSize(new Dimension(1050, 650)); //Sets the viewing area size
-        
+
+
+        //Changing vertex label
         vv.getRenderContext().setVertexLabelTransformer(changeLabel);
         vv.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
+
+        //providing mouse iteractivity
+        final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
+        graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
+        vv.setGraphMouse(graphMouse);
+
+
+
     }
-  
 
     //GETTERS and SETTERS
     public Graph<File, String> getGraph() {
@@ -85,9 +100,7 @@ public class DrawSimilarityGraph {
         return vv;
     }
 
-    public void setVv(BasicVisualizationServer<File, String> vv) {
+    public void setVv(VisualizationViewer<File, String> vv) {
         this.vv = vv;
     }
-    
-    
 }
