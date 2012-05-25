@@ -4,9 +4,13 @@
  */
 package gems.ic.uff.br.modelo;
 
+import gems.ic.uff.br.Exception.LcsXMLFilesException;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -22,6 +26,8 @@ public class LcsXMLFiles {
     public LcsXMLFiles(String xml1, String xml2) {
         this.xml1 = xml1;
         this.xml2 = xml2;
+        similarityMatrix = null;
+        files = null;
     }
 
     public LcsXMLFiles(String xml1) {
@@ -86,8 +92,25 @@ public class LcsXMLFiles {
         return lcs.similaridade();
     }
 
+    public List<File> validateDirectory() {
+
+        List<File> wrong = new ArrayList<File>();
+
+        for (int i = 0; i < files.length; ++i) {
+            try {
+                similarityFile(files[i].getAbsolutePath(), files[i].getAbsolutePath());
+            } catch (Exception ex) {
+                wrong.add(files[i]);
+                Logger.getLogger(LcsXMLFiles.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }
+
+        return wrong;
+    }
+
     //method that returns the similarity of files in a directory
-    public void similarityDirectory() throws FileNotFoundException, IOException {
+    public void similarityDirectory() throws FileNotFoundException, IOException, LcsXMLFilesException {
 
 
 
@@ -101,6 +124,17 @@ public class LcsXMLFiles {
 
 
         files = selectingXML(directory.listFiles());
+
+        //begin validating xml files
+        List<File> validateDirectory = validateDirectory();
+
+        if (!validateDirectory.isEmpty()) {
+            LcsXMLFilesException e = new LcsXMLFilesException();
+            e.setFiles(validateDirectory);
+            throw e;
+        }
+        //end validating xml files
+
 
         similarityMatrix = new float[files.length][files.length];
 

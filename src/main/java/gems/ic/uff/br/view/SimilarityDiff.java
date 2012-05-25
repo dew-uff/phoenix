@@ -4,6 +4,7 @@
  */
 package gems.ic.uff.br.view;
 
+import gems.ic.uff.br.Exception.LcsXMLFilesException;
 import gems.ic.uff.br.modelo.LcsXMLFiles;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -129,10 +131,19 @@ public class SimilarityDiff extends javax.swing.JFrame {
         try {
 
             lcs = new LcsXMLFiles(directoryPath);
-            lcs.similarityDirectory();
+            try {
+                lcs.similarityDirectory();
+            } catch (LcsXMLFilesException ex) {
+                JOptionPane.showMessageDialog(null, ex.getMessage());
+                return;
+            }
 
+            
+            
+            
             dsg = new DrawSimilarityGraph();
 
+            
             dsg.draw(lcs.getSimilarityMatrix(), lcs.getFiles(), Float.parseFloat((jsSimilarity.getValue() / 100.00) + ""));
 
             jpGraph.add(dsg.getVv());

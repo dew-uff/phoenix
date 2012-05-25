@@ -60,11 +60,8 @@ public class DrawSimilarityGraph {
             }
         }
 
-        // The Layout<V, E> is parameterized by the vertex and edge types
         layout = new CircleLayout(graph);
         layout.setSize(new Dimension(1000, 600)); // sets the initial size of the space
-        // The BasicVisualizationServer<V,E> is parameterized by the edge types
-//        vv = new BasicVisualizationServer<File, String>(layout);
         vv = new VisualizationViewer<File, String>(layout);
 
 
