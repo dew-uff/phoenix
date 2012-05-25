@@ -58,6 +58,7 @@ public class LcsXML extends LongestCommonSubsequence<Similar> {
         return diffXML;
     }
 
+    @Override
     public float similaridade() {
         float similarity = 0;
 

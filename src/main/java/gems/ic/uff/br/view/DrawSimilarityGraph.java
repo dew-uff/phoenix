@@ -13,13 +13,10 @@ import edu.uci.ics.jung.visualization.BasicVisualizationServer;
 import edu.uci.ics.jung.visualization.VisualizationViewer;
 import edu.uci.ics.jung.visualization.control.DefaultModalGraphMouse;
 import edu.uci.ics.jung.visualization.control.ModalGraphMouse;
-import edu.uci.ics.jung.visualization.decorators.ToStringLabeller;
 import edu.uci.ics.jung.visualization.renderers.Renderer;
 import java.awt.Dimension;
 import java.io.File;
-import javax.swing.JFrame;
 import org.apache.commons.collections15.Transformer;
-import org.w3c.dom.Node;
 
 /**
  *
@@ -82,9 +79,41 @@ public class DrawSimilarityGraph {
         final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
         graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
         vv.setGraphMouse(graphMouse);
+    }
+
+    public void updateGraph(float[][] matrix, File[] files, float threshold) {
+
+        int size = files.length;
+
+        for (int i = 0; i < size; i++) {
+            for (int j = i + 1; j < size; j++) {
+
+                if (matrix[i][j] >= threshold) {
+                    graph.addEdge((edge++) + "", files[i], files[j], EdgeType.UNDIRECTED);
+                }
+
+            }
+        }
+
+        // The Layout<V, E> is parameterized by the vertex and edge types
+        layout = new CircleLayout(graph);
+        layout.setSize(new Dimension(1000, 600)); // sets the initial size of the space
+        // The BasicVisualizationServer<V,E> is parameterized by the edge types
+//        vv = new BasicVisualizationServer<File, String>(layout);
+        vv = new VisualizationViewer<File, String>(layout);
 
 
+        vv.setPreferredSize(new Dimension(1050, 650)); //Sets the viewing area size
 
+
+        //Changing vertex label
+        vv.getRenderContext().setVertexLabelTransformer(changeLabel);
+        vv.getRenderer().getVertexLabelRenderer().setPosition(Renderer.VertexLabel.Position.CNTR);
+
+        //providing mouse iteractivity
+        final DefaultModalGraphMouse graphMouse = new DefaultModalGraphMouse();
+        graphMouse.setMode(ModalGraphMouse.Mode.PICKING);
+        vv.setGraphMouse(graphMouse);
     }
 
     //GETTERS and SETTERS

@@ -25,7 +25,7 @@ public class SimilarityDiff extends javax.swing.JFrame {
     String directoryPath;
     JFrame diffFrame;
     JPanel diffPanel;
-    LcsXMLFiles lcs; 
+    LcsXMLFiles lcs;
     DrawSimilarityGraph dsg;
 
     public SimilarityDiff() {
@@ -145,15 +145,16 @@ public class SimilarityDiff extends javax.swing.JFrame {
                 diffPanel = new JPanel();
             }
 
-//            diffPanel.add(dsg.getVv());
-//            diffPanel.setSize(1000, 600);
-
-//            diffFrame.add(diffPanel);
             diffFrame.setSize(1000, 600);
             diffFrame.getContentPane().add(dsg.getVv());
             diffFrame.pack();
             diffFrame.setVisible(true);
             diffFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+            jpGraph.removeAll();
+            jpGraph.add(dsg.getVv());
+
+
 
         } catch (FileNotFoundException ex) {
             Logger.getLogger(SimilarityDiff.class.getName()).log(Level.SEVERE, null, ex);
@@ -169,16 +170,19 @@ public class SimilarityDiff extends javax.swing.JFrame {
         jlSimilarity.setText(jsSimilarity.getValue() + "");
 
         if (!directoryPath.equals("")) {
-          
-                dsg = new DrawSimilarityGraph();
-                dsg.draw(lcs.getSimilarityMatrix(), lcs.getFiles(), Float.parseFloat((jsSimilarity.getValue() / 100.00) + ""));
 
-                diffFrame.setSize(1000, 600);
-                diffFrame.getContentPane().removeAll();
-                diffFrame.getContentPane().add(dsg.getVv());
-                diffFrame.pack();
+            dsg = new DrawSimilarityGraph();
+            dsg.draw(lcs.getSimilarityMatrix(), lcs.getFiles(), Float.parseFloat((jsSimilarity.getValue() / 100.00) + ""));
 
-           
+            jpGraph.removeAll();
+            jpGraph.add(dsg.getVv());
+
+            diffFrame.setSize(1000, 600);
+            diffFrame.getContentPane().removeAll();
+            diffFrame.getContentPane().add(dsg.getVv());
+            diffFrame.pack();
+
+
         }
     }//GEN-LAST:event_similarityChange
 

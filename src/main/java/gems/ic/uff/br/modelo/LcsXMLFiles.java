@@ -59,7 +59,7 @@ public class LcsXMLFiles {
 
         List<File> aux = new ArrayList<File>();
 
-        
+
         for (File file : fileList) {
             if (file.getAbsolutePath().endsWith(".xml")) {
                 aux.add(file);
@@ -67,9 +67,9 @@ public class LcsXMLFiles {
         }
 
         File[] result = new File[aux.size()];
-        
+
         int i = 0;
-        
+
         for (File file : aux) {
             result[i++] = file;
         }
@@ -99,16 +99,20 @@ public class LcsXMLFiles {
 
 //        String[] list = directory.list();
 
- 
+
         files = selectingXML(directory.listFiles());
 
         similarityMatrix = new float[files.length][files.length];
 
         for (int i = 0; i < files.length; ++i) {
-            for (int j = 0; j < files.length; j++) {
-
+            similarityMatrix[i][i] = 1;
+            for (int j = i + 1; j < files.length; j++) {
+                System.out.println("---------------------------------------------------------------------------");
+                System.out.println(files[i].getAbsolutePath() + "   <-->   " + files[j].getAbsolutePath());
                 similarityMatrix[i][j] = similarityFile(files[i].getAbsolutePath(), files[j].getAbsolutePath());
                 similarityMatrix[j][i] = similarityMatrix[i][j];
+
+
             }
         }
 
