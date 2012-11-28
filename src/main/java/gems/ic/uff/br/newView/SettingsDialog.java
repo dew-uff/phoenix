@@ -68,6 +68,17 @@ public class SettingsDialog {
         buttonsPane.add(cancelButton);
         buttonsPane.add(okButton);
         dialog.getContentPane().add(buttonsPane);
+        
+        updateFields();
+    }
+
+    private void updateFields() {
+        boolean dynEnabled = dynamicAllocationBox.isSelected();
+        boolean nameReqEnabled = nameSimilarityBox.isSelected();
+        nameWeightField.setEnabled(!dynEnabled && !nameReqEnabled);
+        valueWeightField.setEnabled(!dynEnabled);
+        attributeWeightField.setEnabled(!dynEnabled);
+        childrenWeightField.setEnabled(!dynEnabled);
     }
 
     private void constructWidgets() {
@@ -75,17 +86,20 @@ public class SettingsDialog {
         nameSimilarityBox = new JCheckBox(
                 "Name Similarity Required");
         nameSimilarityBox.setSelected(SettingsHelper.getNameSimilarityRequired());
+        nameSimilarityBox.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent arg0) {
+                updateFields();
+            }
+        });
         
         dynamicAllocationBox = new JCheckBox(
                 "Dinamically allocate similarity weight");
         dynamicAllocationBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                boolean enabled = !dynamicAllocationBox.isSelected();
-                nameWeightField.setEnabled(enabled);
-                valueWeightField.setEnabled(enabled);
-                attributeWeightField.setEnabled(enabled);
-                childrenWeightField.setEnabled(enabled);
+                updateFields();
             }
         });
         dynamicAllocationBox.setSelected(

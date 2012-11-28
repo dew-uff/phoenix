@@ -4,6 +4,7 @@ import gems.ic.uff.br.modelo.Diff;
 import gems.ic.uff.br.modelo.DiffXML;
 import gems.ic.uff.br.modelo.HungarianList;
 import gems.ic.uff.br.modelo.LcsString;
+import gems.ic.uff.br.settings.SettingsHelper;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -48,35 +49,27 @@ public class SimilarNode extends Similar<SimilarNode> {
         
         if (leftNode != null && rightNode != null) {
             
-            int consideredSimilarities = 4;
-            
-            // element name is always considered in diff
-            float elementSimilarity = elementsNameSimilarity(rightNode);
-            
-            // consider attribute similarity only if at least one node has 
-            // elements
-            float attributeSimilarity = elementsAttributesSimilarity(rightNode, 
-                    diff);
-            if (attributeSimilarity == SKIP_SIMILARITY) {
-                attributeSimilarity = 0;
-                consideredSimilarities--;
-            }
-            
-            float valueSimilarity = elementsValueSimilarity(rightNode, diff);
-            if (valueSimilarity == SKIP_SIMILARITY) {
-                valueSimilarity = 0;
-                consideredSimilarities--;
-            }
-            
-            float childrenSimilarity = elementsChildrenSimilarity(rightNode, diff);
-            if (childrenSimilarity == SKIP_SIMILARITY) {
-                childrenSimilarity = 0;
-                consideredSimilarities--;
-            }
-            
-            similarity = (elementSimilarity + attributeSimilarity + 
-                    valueSimilarity + childrenSimilarity)/consideredSimilarities;
+            float elementNameSimilarity = 0.0f, 
+                  attributeSimilarity = 0.0f,
+                  valueSimilarity = 0.0f,
+                  childrenSimilarity = 0.0f;
 
+            elementNameSimilarity = elementsNameSimilarity(rightNode);
+            
+            boolean nameSimilarityRequired = SettingsHelper.getNameSimilarityRequired();
+            
+            if ((nameSimilarityRequired && elementNameSimilarity == MAXIMUM_SIMILARITY) || 
+                (!nameSimilarityRequired)) {
+                
+                attributeSimilarity = elementsAttributesSimilarity(rightNode, 
+                        diff);
+                valueSimilarity = elementsValueSimilarity(rightNode, diff);
+                childrenSimilarity = elementsChildrenSimilarity(rightNode, diff);
+
+                similarity = calculateSimilarity(elementNameSimilarity, 
+                        attributeSimilarity, valueSimilarity, 
+                        childrenSimilarity, nameSimilarityRequired);
+            }
         } else {
             /*
              * Se chegou nesta condição, então o elemento da esquerda é diferente
@@ -88,6 +81,69 @@ public class SimilarNode extends Similar<SimilarNode> {
         
         diff.setSimilarity(similarity);
         return diff;
+    }
+
+    private float calculateSimilarity(float elementNameSimilarity, 
+            float attributeSimilarity, float valueSimilarity, 
+            float childrenSimilarity, boolean nameSimilarityRequired) {
+
+        float similarity = 0.0f;
+
+        if (SettingsHelper.getDynamicWeightAllocation()) {
+
+            int consideredSimilarities = 4;
+            
+            // if name is required it is not considered to calculate weight
+            if (nameSimilarityRequired) {
+                elementNameSimilarity = 0;
+                consideredSimilarities--;
+            }
+            
+            // consider attribute similarity only if at least one node has 
+            // elements
+            if (attributeSimilarity == SKIP_SIMILARITY) {
+                attributeSimilarity = 0;
+                consideredSimilarities--;
+            }
+            
+            if (valueSimilarity == SKIP_SIMILARITY) {
+                valueSimilarity = 0;
+                consideredSimilarities--;
+            }
+            
+            if (childrenSimilarity == SKIP_SIMILARITY) {
+                childrenSimilarity = 0;
+                consideredSimilarities--;
+            }
+            
+            // consideredSimilarities is 0 means that element doesn't have
+            // children, doesn't have attributes and doesn't have values, but
+            // are equal (otherwise this should not have been hit).
+            similarity = (consideredSimilarities==0)?1.0f:
+                (elementNameSimilarity + attributeSimilarity + valueSimilarity + 
+                        childrenSimilarity)/consideredSimilarities;
+        }
+        else {
+            
+            if (nameSimilarityRequired) {
+                elementNameSimilarity = 0.0f;
+            }
+            
+            attributeSimilarity = (attributeSimilarity == SKIP_SIMILARITY)?
+                    1.0f:attributeSimilarity;
+            valueSimilarity = (valueSimilarity == SKIP_SIMILARITY)?
+                    1.0f:valueSimilarity;
+            childrenSimilarity = (childrenSimilarity == SKIP_SIMILARITY)?
+                    1.0f:childrenSimilarity;
+ 
+ 
+            
+            similarity = elementNameSimilarity*SettingsHelper.getNameSimilarityWeight() + 
+                   attributeSimilarity*SettingsHelper.getAttributeSimilarityWeight() + 
+                   valueSimilarity*SettingsHelper.getValueSimilarityWeight() + 
+                   childrenSimilarity*SettingsHelper.getChildrenSimilarityWeight();
+        }
+        return similarity;
     }
 
     /**
