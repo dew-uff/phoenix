@@ -1,8 +1,13 @@
 package gems.ic.uff.br.newView;
 
+import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
+import edu.uci.ics.jung.visualization.control.ScalingControl;
+import gems.ic.uff.br.xmlEditorKit.XMLEditorKit;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -22,17 +27,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-
-import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
-import edu.uci.ics.jung.visualization.control.ScalingControl;
-import gems.ic.uff.br.xmlEditorKit.XMLEditorKit;
 
 /*
  * PainelBotoes.java
@@ -44,8 +44,12 @@ import gems.ic.uff.br.xmlEditorKit.XMLEditorKit;
 
 public class ButtonPanel extends JPanel {
     
+    private static final int FRAME_WIDTH = 640;
+    private static final int FRAME_HEIGHT = 480;
+    
     MyButton buttonImport, buttonCompare, buttonZoomIn, buttonZoomOut,buttonHide, 
-             buttonExpand, buttonHelp, buttonSimilarity, buttonEditText, buttonView;
+             buttonExpand, buttonHelp, buttonSimilarity, buttonEditText, buttonView,
+             buttonSettings;
     JFileChooser fc;
     ImageIcon img;
     JLabel labelImg;
@@ -57,10 +61,11 @@ public class ButtonPanel extends JPanel {
     TreePanel treePanel;
     DiffTreePanel diffTreePanel;
     SimilarityPanel similarityPanel;
-    JFrame frameHelp;
     static MyTree tree1;
     static MyTree tree2;
  
+    
+    
     public ButtonPanel(NewInitialScreen initialScreen, MyTree tree, final MyTabbedPane tabbedPane){
         
         buttonImport = new MyButton(getClass().getResource("images/open.png"));
@@ -73,6 +78,7 @@ public class ButtonPanel extends JPanel {
         buttonSimilarity = new MyButton(getClass().getResource("images/similarity.png"));
         buttonEditText = new MyButton(getClass().getResource("images/edit.png"));
         buttonView = new MyButton(getClass().getResource("images/view.png"));
+        buttonSettings = new MyButton(getClass().getResource("images/settings.png"));
         
         buttonImport.setToolTipText("Import XML files");
         buttonCompare.setToolTipText("Compare XML documents");
@@ -84,6 +90,7 @@ public class ButtonPanel extends JPanel {
         buttonSimilarity.setToolTipText("Compare similarity between XMLs");
         buttonEditText.setToolTipText("Edit XML documents.");
         buttonView.setToolTipText("View XML documents.");
+        buttonSettings.setToolTipText("Edit application settings");
        
         buttonZoomIn.setEnabled(false);
         buttonZoomOut.setEnabled(false);
@@ -120,6 +127,7 @@ public class ButtonPanel extends JPanel {
         add(buttonExpand);
         add(buttonHide);
         add(sep2);
+        add(buttonSettings);
         add(buttonHelp);
 
     }
@@ -333,23 +341,34 @@ public class ButtonPanel extends JPanel {
             @Override
 
             public void actionPerformed(ActionEvent e) {
-                Integer frameHelpWidth = 640;
-                Integer frameHelpHeigth = 480;
-                
-                frameHelp = new JFrame("Help");
-                frameHelp.setSize(frameHelpWidth, frameHelpHeigth);
+                JFrame frameHelp = new JFrame("Help");
+                frameHelp.setSize(FRAME_WIDTH, FRAME_HEIGHT);
                 frameHelp.setLocationRelativeTo(null);
                 frameHelp.setLayout(new BorderLayout());
                 frameHelp.setIconImage(new ImageIcon(getClass().getResource("images/help.png")).getImage());
                 frameHelp.setVisible(true);
                 
                 //Create program help with an HTML file
-                JScrollPane helpText = createHelpTextWithHTMLFile(getClass().getResourceAsStream("html/help.html"),frameHelpWidth,frameHelpHeigth);
+                JScrollPane helpText = createHelpTextWithHTMLFile(getClass().getResourceAsStream("html/help.html"),FRAME_WIDTH,FRAME_HEIGHT);
                 frameHelp.add(helpText);
+            }
+        });
+        
+        buttonSettings.addActionListener(new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showSettingsFrame(initialScreen);
             }
         });
     }
     
+    protected void showSettingsFrame(Frame parent) {
+        SettingsDialog settingsFrame = new SettingsDialog(parent);
+        settingsFrame.show();
+        
+    }
+
     /**
      * create an JEditorPane with html help text for the PHOENIX interface
      * @param htmlInputStream path from the HTML file
@@ -392,8 +411,6 @@ public class ButtonPanel extends JPanel {
 
             @Override
             public void stateChanged(ChangeEvent e) {
-                JTabbedPane aux = tabbedPane.getJTabbedPane();
-                aux = (JTabbedPane) e.getSource();
                 if(tabbedPane.getSelectedIndex()==0){
                   buttonZoomIn.setEnabled(false);
                   buttonZoomOut.setEnabled(false);
