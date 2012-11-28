@@ -49,25 +49,24 @@ public class XML {
 
         return doc;
     }
-
+    
     public void removeWhiteSpaces(Document doc) {
-//        doc.getDocumentElement().normalize();
-
-        try {
-            // XPath para procurar por nós com textos vazios
-            XPathExpression xpathExp = factory.newXPath().compile("//text()[normalize-space(.) = '']");
-            NodeList emptyTextNodes = (NodeList) xpathExp.evaluate(doc, XPathConstants.NODESET);
-
-            // Remove cada texto vazio do documento
-            for (int i = 0; i < emptyTextNodes.getLength(); i++) {
-                Node emptyTextNode = emptyTextNodes.item(i);
-                emptyTextNode.getParentNode().removeChild(emptyTextNode);
-            }
-        } catch (Exception ignoredException) {
-//            System.out.println(""+ ignoredException.getMessage());
-        }
+        removeWhitespaceNodes(doc.getDocumentElement());
     }
 
+    public static void removeWhitespaceNodes(Element e) {
+        NodeList children = e.getChildNodes();
+        for (int i = children.getLength() - 1; i >= 0; i--) {
+            Node child = children.item(i);
+            if (child instanceof Text
+                    && ((Text) child).getData().trim().length() == 0) {
+                e.removeChild(child);
+            } else if (child instanceof Element) {
+                removeWhitespaceNodes((Element) child);
+            }
+        }
+    }
+    
     public void addChildren(Diff anotherDiff) {
         document.appendChild(anotherDiff.getDiffNode());
     }
