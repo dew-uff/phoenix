@@ -24,23 +24,23 @@ public class SimilarNodeTest {
         }
     }
 
-    @Test
-    public void similaridadeNoMaximoIgualA1() {
-        float similaridade = 0;
-        similaridade += SimilarNode.ELEMENT_NAME_WEIGTH;
-        similaridade += SimilarNode.ELEMENT_VALUE_WEIGTH;
-        similaridade += SimilarNode.ATTRIBUTE_WEIGTH;
-        similaridade += SimilarNode.ELEMENT_CHILDREN_WEIGTH;
-
-        assertTrue(similaridade == 1);
-    }
+//    @Test
+//    public void similaridadeNoMaximoIgualA1() {
+//        float similaridade = 0;
+//        similaridade += SimilarNode.ELEMENT_NAME_WEIGHT;
+//        similaridade += SimilarNode.ELEMENT_VALUE_WEIGTH;
+//        similaridade += SimilarNode.ATTRIBUTE_WEIGTH;
+//        similaridade += SimilarNode.ELEMENT_CHILDREN_WEIGTH;
+//
+//        assertTrue(similaridade == 1);
+//    }
 
     @Test
     public void igualdadeEntreNomes() {
         SimilarNode equalNode = createSimilarNode("<igual/>");
         float elementsNameSimilarity = equalNode.elementsNameSimilarity(equalNode.getNode());
 
-        assertEquals(SimilarNode.ELEMENT_NAME_WEIGTH, elementsNameSimilarity, 0);
+        assertEquals(SimilarNode.MAXIMUM_SIMILARITY, elementsNameSimilarity, 0);
     }
 
     @Test
@@ -58,7 +58,7 @@ public class SimilarNodeTest {
         Diff diff = new Diff(equalNode.getNode());
         float elementsValueSimilarity = equalNode.elementsValueSimilarity(equalNode.getNode(), diff);
 
-        assertEquals(SimilarNode.ELEMENT_VALUE_WEIGTH, elementsValueSimilarity, 0);
+        assertEquals(SimilarNode.MAXIMUM_SIMILARITY, elementsValueSimilarity, 0);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class SimilarNodeTest {
         Diff diff = new Diff(node.getNode());
         float elementsValueSimilarity = node.elementsValueSimilarity(similarNode.getNode(), diff);
 
-        assertEquals((4.0/5.0) * SimilarNode.ELEMENT_VALUE_WEIGTH, elementsValueSimilarity, 0.01);
+        assertEquals((4.0/5.0), elementsValueSimilarity, 0.01);
     }
 
     @Test
@@ -95,7 +95,7 @@ public class SimilarNodeTest {
         SimilarNode equalNode = createSimilarNode("<igual atributo='sim'></igual>");
 
         Diff diff = new Diff(equalNode.getNode());
-        assertEquals(SimilarNode.ATTRIBUTE_WEIGTH, equalNode.elementsAttributesSimilarity(equalNode.getNode(), diff), 0);
+        assertEquals(SimilarNode.MAXIMUM_SIMILARITY, equalNode.elementsAttributesSimilarity(equalNode.getNode(), diff), 0);
     }
 
     @Test
@@ -131,7 +131,7 @@ public class SimilarNodeTest {
         SimilarNode similarNode = createSimilarNode("<igual atributo='nao' outro='sim'></igual>");
 
         Diff diff = new Diff(node.getNode());
-        assertEquals(SimilarNode.ATTRIBUTE_WEIGTH / 2, node.elementsAttributesSimilarity(similarNode.getNode(), diff), 0);
+        assertEquals(SimilarNode.MAXIMUM_SIMILARITY / 2, node.elementsAttributesSimilarity(similarNode.getNode(), diff), 0);
     }
 
     @Test
@@ -140,7 +140,7 @@ public class SimilarNodeTest {
         SimilarNode equalNode = createSimilarNode("<father><son></son></father>");
 
         Diff diff = new Diff(node.getNode());
-        assertEquals(SimilarNode.ELEMENT_CHILDREN_WEIGTH, node.elementsChildrenSimilarity(equalNode.getNode(), diff), 0);
+        assertEquals(SimilarNode.MAXIMUM_SIMILARITY, node.elementsChildrenSimilarity(equalNode.getNode(), diff), 0);
     }
 
     @Test
@@ -158,7 +158,7 @@ public class SimilarNodeTest {
         SimilarNode similarNode = createSimilarNode("<father><son></son><a/><b/><c/><d/><e/></father>");
 
         Diff diff = new Diff(node.getNode());
-        assertEquals(SimilarNode.ELEMENT_CHILDREN_WEIGTH, node.elementsChildrenSimilarity(similarNode.getNode(), diff), 0.01);
+        assertEquals(SimilarNode.MAXIMUM_SIMILARITY, node.elementsChildrenSimilarity(similarNode.getNode(), diff), 0.01);
     }
     
     @Test
@@ -167,7 +167,7 @@ public class SimilarNodeTest {
         SimilarNode similarNode = createSimilarNode("<father><son></son><c/><a/><b/><e/><d/></father>");
 
         Diff diff = new Diff(node.getNode());
-        assertEquals(SimilarNode.ELEMENT_CHILDREN_WEIGTH, node.elementsChildrenSimilarity(similarNode.getNode(), diff), 0.01);
+        assertEquals(SimilarNode.MAXIMUM_SIMILARITY, node.elementsChildrenSimilarity(similarNode.getNode(), diff), 0.01);
     }
 
     @Test

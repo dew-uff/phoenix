@@ -1,27 +1,46 @@
 package gems.ic.uff.br.modelo.similar;
 
-import com.sun.org.apache.xpath.internal.NodeSet;
 import gems.ic.uff.br.modelo.Diff;
 import gems.ic.uff.br.modelo.DiffXML;
 import gems.ic.uff.br.modelo.HungarianList;
 import gems.ic.uff.br.modelo.LcsString;
-import java.util.*;
-import org.w3c.dom.*;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+import org.w3c.dom.DOMException;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import com.sun.org.apache.xpath.internal.NodeSet;
 
 /**
  * Classe que encapsula a classe Node do DOM, adicionando um comportamento
  * de similaridade a ela.
  */
 public class SimilarNode extends Similar<SimilarNode> {
+    
+    public static float MAXIMUM_SIMILARITY = 1.0f;
+    
+    private static float SKIP_SIMILARITY = -1.0f;
 
     //elemento do lado esquerdo do documento
     private Node leftNode;
     
     //peso dos métodos de comparação
-    public static float ATTRIBUTE_WEIGTH = 0.25f;
-    public static float ELEMENT_VALUE_WEIGTH = 0.25f;
-    public static float ELEMENT_NAME_WEIGTH = 0.25f;
-    public static float ELEMENT_CHILDREN_WEIGTH = 0.25f;
+    //public static float ATTRIBUTE_WEIGTH = 0.25f;
+    //public static float ELEMENT_VALUE_WEIGTH = 0.25f;
+    //private static float ELEMENT_NAME_WEIGHT = 0.25f;
+    
+    //private static float ELEMENT_NAME_SIMILARITY_MINIMUM = MAXIMUM_SIMILARITY;
+
+    //public static float ELEMENT_CHILDREN_WEIGTH = 0.25f;
 
     public SimilarNode(Node node) {
         this.leftNode = node;
@@ -29,49 +48,81 @@ public class SimilarNode extends Similar<SimilarNode> {
 
     @Override
     public Diff similar(SimilarNode y) {
+        
         Node rightNode = y.getNode();
 
         Diff diff = new Diff(leftNode, rightNode);
+        
         float similarity = 0;
 
-        
-        if (leftNode == null || rightNode == null) {
+        if (leftNode != null && rightNode != null) {
             
-        } else {
-            similarity += elementsNameSimilarity(rightNode);
-
-            //Se não houver similaridade no nome, então não são o mesmo elemento.
-            //Portanto, não é necessário continuar a calcular a similaridade.
-            if (similarity != 0) {
-                similarity += elementsValueSimilarity(rightNode, diff);
-                similarity += elementsAttributesSimilarity(rightNode, diff);
-                similarity += elementsChildrenSimilarity(rightNode, diff);
-
-            } else {
-                /**
-                 * Se chegou nesta condição, então o elemento da esquerda é diferente
-                 * do elemento da direita. Logo, esta informação deve ser exposta
-                 * para usuário. Este método trata esta requisição.
-                 */
-                diff = varreTodosSubelementosParaMostrar(diff, leftNode, "left");
+            int consideredSimilarities = 4;
+            
+            // element name is always considered in diff
+            float elementSimilarity = elementsNameSimilarity(rightNode);
+            
+            // just consider the similarity if it is NOT 100% equal
+            //if (elementSimilarity != MAXIMUM_SIMILARITY) {
+                // elementSimilarity *= ELEMENT_NAME_WEIGHT;
+                //similarity += elementSimilarity;
+                //remainingWeight -= ELEMENT_NAME_WEIGHT;
+            //}
+            
+            // consider attribute similarity only if at least one node has 
+            // elements
+            float attributeSimilarity = elementsAttributesSimilarity(rightNode, 
+                    diff);
+            if (attributeSimilarity == SKIP_SIMILARITY) {
+                attributeSimilarity = 0;
+                //float attributeWeight = remainingWeight/(3+consideredSimilarities);
+                //attributeSimilarity *= attributeWeight;
+                //similarity += attributeSimilarity;
+                //remainingWeight -= attributeWeight;
+                consideredSimilarities--;
             }
+            
+            float valueSimilarity = elementsValueSimilarity(rightNode, diff);
+            if (valueSimilarity == SKIP_SIMILARITY) {
+                valueSimilarity = 0;
+                consideredSimilarities--;
+            }
+            //float valueWeight = remainingWeight/(2+consideredSimilarities);
+            //similarity += valueSimilarity*valueWeight;
+            //remainingWeight -= valueWeight;
+            
+            float childrenSimilarity = elementsChildrenSimilarity(rightNode, diff);
+            if (childrenSimilarity == SKIP_SIMILARITY) {
+                childrenSimilarity = 0;
+                consideredSimilarities--;
+            }
+            
+            similarity = (elementSimilarity + attributeSimilarity + 
+                    valueSimilarity + childrenSimilarity)/consideredSimilarities;
+
+        } else {
+            /**
+             * Se chegou nesta condição, então o elemento da esquerda é diferente
+             * do elemento da direita. Logo, esta informação deve ser exposta
+             * para usuário. Este método trata esta requisição.
+             */
+            diff = varreTodosSubelementosParaMostrar(diff, leftNode, "left");
         }
+        
         diff.setSimilarity(similarity);
         return diff;
     }
 
     /**
-     * Codição usada para verificar se os nomes dos elementos são iguais. Essa
-     * condição é necessaria para que os outros métodos de similaridade possam
-     * ser testado
+     * Função para calcular quanto os nomes dos elementos são iguais. 
      * @param rightNode nome do elemento do lado direito do documento
-     * @return retorna o percentual de similaridade encontrado
+     * @return retorna o percentual de similaridade encontrado entre 0 e 1
      */
     protected float elementsNameSimilarity(Node rightNode) {
-        float similarity = 0;
+        float similarity = 0.0f;
 
         if (leftNode.getNodeName().equals(rightNode.getNodeName())) {
-            similarity = ELEMENT_NAME_WEIGTH;
+            similarity = 1.0f;
         }
 
         return similarity;
@@ -82,43 +133,38 @@ public class SimilarNode extends Similar<SimilarNode> {
      * usando o algoritmo LCS.
      * @param rightNode conteudo do lado direito
      * @param diff diff corrente 
-     * @return total de similaridade encontrado entre os conteúdos
+     * @return total de similaridade encontrado entre os conteúdos entre 0 e 1.
      * @throws DOMException 
      */
-    protected float elementsValueSimilarity(Node rightNode, Diff diff) throws DOMException {
+    protected float elementsValueSimilarity(Node rightNode, Diff diff) 
+            throws DOMException {
+        
         float similarity = 0;
 
-        if (leftNode.hasChildNodes() || rightNode.hasChildNodes()) {
-            String leftNodeValue = null;
-            String rightNodeValue = null;
-
-            if (leftNode.hasChildNodes()) {
-                //O valor do elemento é um de seus filhos.
-                leftNodeValue = leftNode.getFirstChild().getNodeValue();
-            }
-
-            if (rightNode.hasChildNodes()) {
-                //O valor do elemento é um de seus filhos.
-                rightNodeValue = rightNode.getFirstChild().getNodeValue();
-            }
-
-            if (leftNodeValue == null && rightNodeValue == null) {
-                similarity = ELEMENT_VALUE_WEIGTH;
-            } else {
-                diff.setValue(leftNodeValue, rightNodeValue);
-
-                if (leftNodeValue != null && rightNodeValue != null) {
-                    similarity += new LcsString(leftNodeValue, rightNodeValue).similaridade() * ELEMENT_VALUE_WEIGTH;
-                }
-            }
+        String leftNodeValue = leftNode.hasChildNodes()?
+                leftNode.getFirstChild().getNodeValue():
+                null;
+        
+        String rightNodeValue = rightNode.hasChildNodes()?
+                rightNode.getFirstChild().getNodeValue():
+                null;        
+        
+        if (leftNodeValue == null && rightNodeValue == null) {
+            similarity = SKIP_SIMILARITY;
         } else {
-            similarity = ELEMENT_VALUE_WEIGTH;
+            diff.setValue(leftNodeValue, rightNodeValue);
+
+            if (leftNodeValue != null && rightNodeValue != null) {
+                LcsString cmp = new LcsString(leftNodeValue, rightNodeValue); 
+                similarity = cmp.similaridade();
+            }
         }
 
         return similarity;
     }
 
     /**
+     * TODO revisar comentário
      * Comparação de similaridade dos atributos do elemento corrente. A comparação
      * é feita agrupando todos os atributos pertencentes aos elementos, tanto da
      * esquerda quanto da direita, e colocado em uma classe Map, onde a chave é
@@ -132,36 +178,56 @@ public class SimilarNode extends Similar<SimilarNode> {
     protected float elementsAttributesSimilarity(Node rightNode, Diff diff) {
         float similarity = 0;
 
+        // if both don't have attributes, this shouldn't be considered
+        // at similarity calculus
         if (!leftNode.hasAttributes() && !rightNode.hasAttributes()) {
-            similarity = ATTRIBUTE_WEIGTH;
+            similarity = SKIP_SIMILARITY;
         } else {
+            // if one of them don't have attributes, the similarity is zero!
             if (leftNode.hasAttributes() && rightNode.hasAttributes()) {
-                NamedNodeMap attributesFromLeftNode = leftNode.getAttributes();
-                NamedNodeMap attributesFromRightNode = rightNode.getAttributes();
+                
+                NamedNodeMap attrsLeft = leftNode.getAttributes();
+                NamedNodeMap attrsRight = rightNode.getAttributes();
+                
+                // get all attributes names, from both nodes
+                List<String> allAttr = 
+                        getAllAttributesNames(attrsLeft, attrsRight);
+                
+                // go through all attributes and for each one, check if it's 
+                // present on one or both nodes, and if value is the same.
+                Iterator<String> iter = allAttr.iterator();
+                while (iter.hasNext()) {
 
-                Map<String, List<SimilarString>> attributesMap = getAttributesFromNamedNodeMaps(attributesFromLeftNode, attributesFromRightNode);
-                Iterator mapIterator = attributesMap.entrySet().iterator();
-
-                while (mapIterator.hasNext()) {
-                    Map.Entry<String, List<SimilarString>> entry = (Map.Entry) mapIterator.next();
-
-                    String attributeName = entry.getKey();
-                    SimilarString leftElementAttributeValue = entry.getValue().get(0);
-                    SimilarString rightElementAttributeValue = entry.getValue().get(1);
-
-                    diff.addAttribute(attributeName, leftElementAttributeValue.toString(), rightElementAttributeValue.toString());
-                    //Alguns atributos vem com seu conteudo vazio. Logo, esta
-                    //condição é necessária senão pode ocorrer erro de divisao(NaN).
-                    if (leftElementAttributeValue.getString().isEmpty()
-                            && rightElementAttributeValue.getString().isEmpty()) {
-                        similarity += 1.0f;
-                    } else {
-                        similarity += new LcsString(leftElementAttributeValue, rightElementAttributeValue).similaridade();
+                    String attributeName = iter.next();
+                    
+                    Node attributeLeft = attrsLeft.getNamedItem(attributeName);
+                    Node attributeRight = attrsRight.getNamedItem(attributeName);
+                    
+                    // if it is not present at one side, the similarity for 
+                    // this particular attribute is zero.
+                    if (attributeLeft != null && attributeRight != null) {
+                        
+                        String attributeLeftValue = attributeLeft.getNodeValue();
+                        String attributeRightValue = attributeRight.getNodeValue();
+                        
+                        diff.addAttribute(attributeName, attributeLeftValue, 
+                                attributeRightValue);
+                        
+                        // if both values are equal
+                        if (attributeLeftValue.equals(attributeRightValue)) {
+                            similarity += MAXIMUM_SIMILARITY;
+                        } else {
+                            // calculate similarity based on LCS between values
+                            similarity = (new LcsString(
+                                    new SimilarString(attributeLeftValue),
+                                    new SimilarString(attributeRightValue)))
+                                    .similaridade();
+                        }
                     }
                 }
-
-                similarity = similarity / attributesMap.keySet().size() * ATTRIBUTE_WEIGTH;
-            } else {
+                // each attribute contributes equally to the 
+                // similarity accounting
+                similarity = similarity / allAttr.size();
             }
         }
 
@@ -180,18 +246,22 @@ public class SimilarNode extends Similar<SimilarNode> {
 
         float similarity = 0;
 
+        // no children nodes, why compare them or use them to 
+        // calculate similarity?
         if (!leftNode.hasChildNodes() && !rightNode.hasChildNodes()) {
-            similarity = ELEMENT_CHILDREN_WEIGTH;
+            similarity = SKIP_SIMILARITY;
         } else {
+            
             NodeSet leftSubElements = getElementNodes(leftNode.getChildNodes());
             NodeSet rightSubElements = getElementNodes(rightNode.getChildNodes());
 
+            // none of the children nodes was a element
             if ((leftSubElements.size() == 0 && rightSubElements.size() == 0)) {
-                similarity = ELEMENT_CHILDREN_WEIGTH;
+                similarity = SKIP_SIMILARITY;
             } else if ((leftSubElements.size() != 0 && rightSubElements.size() != 0)) {
                 HungarianList hungarianList = new HungarianList(leftSubElements, rightSubElements);
                 diff = hungarianList.calcularSimilaridadeDosSubElementos(diff);
-                similarity = hungarianList.similaridade() * ELEMENT_CHILDREN_WEIGTH;
+                similarity = hungarianList.similaridade();
 
             } else {
                 if (leftSubElements.size() != 0) {
@@ -199,7 +269,6 @@ public class SimilarNode extends Similar<SimilarNode> {
 
                 } else {
                     diff = varreTodosSubelementosParaMostrar(diff, rightNode, "right");
-
                 }
 
             }
@@ -240,36 +309,23 @@ public class SimilarNode extends Similar<SimilarNode> {
      *  Retorna uma biblioteca com todos os atributos de ambos os lados dos documentos
      * com seus respectivos conteúdos.
      */
-    protected Map<String, List<SimilarString>> getAttributesFromNamedNodeMaps(NamedNodeMap ladoEsquerdo, NamedNodeMap ladoDireito) {
+    protected List<String> getAllAttributesNames(NamedNodeMap left, 
+            NamedNodeMap right) {
 
-        Map<String, List<SimilarString>> attributesMap = new TreeMap<String, List<SimilarString>>();
+        List<String> attributes = new ArrayList<String>();
 
-        for (int i = 0; i < ladoEsquerdo.getLength(); i++) {
-            Node item = ladoEsquerdo.item(i);
-
-            List<SimilarString> similarList = new ArrayList<SimilarString>(2);
-            similarList.add(new SimilarString(item.getNodeValue()));
-            similarList.add(new SimilarString(""));
-
-            attributesMap.put(item.getNodeName(), similarList);
+        for (int i = 0; i < left.getLength(); i++) {
+            Node item = left.item(i);
+            attributes.add(item.getNodeName());
         }
-        for (int i = 0; i < ladoDireito.getLength(); i++) {
-            Node item = ladoDireito.item(i);
-
-            List<SimilarString> similarList = attributesMap.get(item.getNodeName());
-            if (similarList != null) {
-                similarList.remove(1);
-                similarList.add(new SimilarString(item.getNodeValue()));
-            } else {
-                similarList = new ArrayList<SimilarString>(2);
-                similarList.add(new SimilarString(""));
-                similarList.add(new SimilarString(item.getNodeValue()));
-
-                attributesMap.put(item.getNodeName(), similarList);
+        for (int i = 0; i < right.getLength(); i++) {
+            Node item = right.item(i);
+            if (!attributes.contains(item.getNodeName())) {
+                attributes.add(item.getNodeName());
             }
         }
 
-        return attributesMap;
+        return attributes;
     }
 
     public Node getNode() {
