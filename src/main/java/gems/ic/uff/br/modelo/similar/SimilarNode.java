@@ -103,10 +103,9 @@ public class SimilarNode extends Similar<SimilarNode> {
      */
     private float calculateSimilarity(float elementNameSimilarity,
             float attributeSimilarity, float valueSimilarity, float childrenSimilarity) {
-        
+
         float similarity = 0.0f;
-        int consideredSimilarities = 4;
-        
+
         boolean ignoreTrivial = SettingsHelper.getIgnoreTrivialSimilarities();
         boolean nameSimilarityRequired = SettingsHelper.getNameSimilarityRequired();
 
@@ -114,59 +113,49 @@ public class SimilarNode extends Similar<SimilarNode> {
         float valueWeight = SettingsHelper.getValueSimilarityWeight();
         float attributeWeight = SettingsHelper.getAttributeSimilarityWeight();
         float childrenWeight = SettingsHelper.getChildrenSimilarityWeight();
-        
-        float totalWeight = 1.0f;
 
-        // if name similarity is required it is not considered to calculate weight
         if (nameSimilarityRequired) {
-            elementNameSimilarity = 0.0f;
-            totalWeight -= nameWeight;
-            consideredSimilarities--;
+            nameWeight = 0;
         }
 
         if (attributeSimilarity == SKIP_SIMILARITY) {
             if (ignoreTrivial) {
-                attributeSimilarity = 0.0f;
-                totalWeight -= attributeWeight;
-                consideredSimilarities--;
+                attributeWeight = 0;
             }
             else {
-                attributeSimilarity = 1.0f;
+                attributeSimilarity = MAXIMUM_SIMILARITY;
             }
         }
 
         if (valueSimilarity == SKIP_SIMILARITY) {
             if (ignoreTrivial) {
-                valueSimilarity = 0.0f;
-                totalWeight -= valueWeight;
-                consideredSimilarities--;
+                valueWeight = 0;
             }
             else {
-                valueSimilarity = 1.0f;
+                valueSimilarity = MAXIMUM_SIMILARITY;
             }
         }
 
         if (childrenSimilarity == SKIP_SIMILARITY) {
             if (ignoreTrivial) {
-                childrenSimilarity = 0.0f;
-                totalWeight -= childrenWeight;
-                consideredSimilarities--;
+                childrenWeight = 0;
             }
             else {
-                childrenSimilarity = 1.0f;
+                childrenSimilarity = MAXIMUM_SIMILARITY;
             }
         }
 
-        if (consideredSimilarities == 0) {
-            similarity = 1.0f;
+        float totalWeight = nameWeight + attributeWeight + valueWeight + childrenWeight;
+        // if all components are to be skipped, they are equal.
+        if (totalWeight == 0) {
+            similarity = MAXIMUM_SIMILARITY;
         }
         else {
             similarity = 
-                     (elementNameSimilarity*SettingsHelper.getNameSimilarityWeight()
-                    + attributeSimilarity * SettingsHelper.getAttributeSimilarityWeight()
-                    + valueSimilarity * SettingsHelper.getValueSimilarityWeight()
-                    + childrenSimilarity * SettingsHelper.getChildrenSimilarityWeight())
-                    /totalWeight;
+                     (elementNameSimilarity*nameWeight +
+                      attributeSimilarity*attributeWeight +
+                      valueSimilarity*valueWeight + 
+                    + childrenSimilarity*childrenWeight)/totalWeight;
         }
 
         return similarity;
@@ -220,13 +209,15 @@ public class SimilarNode extends Similar<SimilarNode> {
     }
 
     /**
-     * TODO revisar comentário
      * Comparação de similaridade dos atributos do elemento corrente. A comparação
-     * é feita agrupando todos os atributos pertencentes aos elementos, tanto da
-     * esquerda quanto da direita, e colocado em uma classe Map, onde a chave é
-     * o nome do elemento e o valor é uma lista do tipo SimilarString. Dentro 
-     * dessa lista, a posição 0 indica o conteudo do lado esquerdo do documento
-     * comparado, e a posição 1 indica o conteudo do lado direito.
+     * é feita agrupando todos os nomes dos atributos pertencentes aos elementos, 
+     * tanto do elemento da esquerda quanto do da direita, e colocado em uma lista. 
+     * Feito isto a lista é percorrida e, para cada elemento:
+     * - se só está presente em um dos elementos, similaridade deste atributo = 0;
+     * - se esta nos dois lados, faz se a comparação com LCS;
+     * Após percorrer toda lista, a soma de todas as similaridades, dividida pelo 
+     * número de atributos nos dá a similaridade resultante desta componente.
+     * 
      * @param rightNode Elemento do lado direito do documento
      * @param diff Diff corrente até o momento
      * @return Retorna a similaridade total encontrada entre os atributos.
@@ -274,7 +265,7 @@ public class SimilarNode extends Similar<SimilarNode> {
                             similarity += MAXIMUM_SIMILARITY;
                         } else {
                             // calculate similarity based on LCS between values
-                            similarity = (new LcsString(
+                            similarity += (new LcsString(
                                     new SimilarString(attributeLeftValue),
                                     new SimilarString(attributeRightValue)))
                                     .similaridade();
