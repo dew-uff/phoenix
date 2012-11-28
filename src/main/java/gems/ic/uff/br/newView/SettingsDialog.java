@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -119,8 +120,12 @@ public class SettingsDialog {
             
             @Override
             public void actionPerformed(ActionEvent arg0) {
-                saveAllSettings();
-                closeDialog();
+                if (areValuesOk()) {
+                    saveAllSettings();
+                    closeDialog();
+                } else {
+                    showError();
+                }
             }
         });
         
@@ -134,6 +139,35 @@ public class SettingsDialog {
         });
     }
     
+    protected void showError() {
+        JOptionPane.showMessageDialog(dialog,
+                "The weight values must sum to 1.0!",
+                "Error",
+                JOptionPane.ERROR_MESSAGE);
+    }
+
+    protected boolean areValuesOk() {
+
+        boolean dynamicAllocation = dynamicAllocationBox.isSelected();
+
+        if (dynamicAllocation) {
+            return true;
+        }
+
+        boolean nameSimilarityRequired = nameSimilarityBox.isSelected();
+        float nameWeight = Float.parseFloat(nameWeightField.getText());
+        float valueWeight = Float.parseFloat(valueWeightField.getText());
+        float attributeWeight = Float
+                .parseFloat(attributeWeightField.getText());
+        float childrenWeight = Float.parseFloat(childrenWeightField.getText());
+
+        if (nameSimilarityRequired) {
+            return (valueWeight + attributeWeight + childrenWeight) == 1.0f;
+        } else {
+            return (nameWeight + valueWeight + attributeWeight + childrenWeight) == 1.0f;
+        }
+    }
+
     protected void closeDialog() {
         dialog.setVisible(false);
         dialog.dispose();
