@@ -4,7 +4,7 @@ import gems.ic.uff.br.modelo.similar.Similar;
 
 public abstract class AbstractAlgorithm<VALUE extends Similar> {
 
-    float similarThreshold = 0.5f;
+    float similarThreshold = 0.0f;
 
     protected abstract int lengthOfX();
 
