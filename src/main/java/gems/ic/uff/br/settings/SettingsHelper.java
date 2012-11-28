@@ -19,20 +19,22 @@ public class SettingsHelper {
     public static final String SETTINGS_FILEPATH = ".phoenix_settings";
 
     // identifiers of the settings inside the file
-    public static final String SETTINGS_NAME_LABEL = "NameSimilarityWeight";
-    public static final String SETTINGS_ATTRIBUTE_LABEL = "AttributeSimilarityWeight";
-    public static final String SETTINGS_VALUE_LABEL = "ValueSimilarityWeight";
-    public static final String SETTINGS_CHILDREN_LABEL = "ChildrenSimilarityWeight";
-    public static final String SETTINGS_NAME_SIMILARITY_REQUIRED_LABEL = "NameSimilarityRequired";
-    public static final String SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_LABEL = "DynamicWeightAllocation";
+    public static final String NAME_WEIGHT_LABEL = "NameSimilarityWeight";
+    public static final String ATTRIBUTE_WEIGHT_LABEL = "AttributeSimilarityWeight";
+    public static final String VALUE_WEIGHT_LABEL = "ValueSimilarityWeight";
+    public static final String CHILDREN_WEIGHT_LABEL = "ChildrenSimilarityWeight";
+    public static final String NAME_SIMILARITY_REQUIRED_LABEL = "NameSimilarityRequired";
+    public static final String AUTOMATIC_WEIGHT_ALLOCATION_LABEL = "AutomaticWeightAllocation";
+    public static final String IGNORE_TRIVIAL_SIMILARITIES_LABEL = "IgnoreTrivialSimilarities";
 
     // default values for each setting
-    public static final float SETTINGS_NAME_HARD_DEFAULT = 0.25f;
-    public static final float SETTINGS_ATTRIBUTE_HARD_DEFAULT = 0.25f;
-    public static final float SETTINGS_VALUE_HARD_DEFAULT = 0.25f;
-    public static final float SETTINGS_CHILDREN_HARD_DEFAULT = 0.25f;
-    public static final boolean SETTINGS_NAME_SIMILARITY_REQUIRED_HARD_DEFAULT = false;
-    public static final boolean SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_HARD_DEFAULT = false;
+    public static final float NAME_WEIGHT_HARD_DEFAULT = 0.25f;
+    public static final float ATTRIBUTE__WEIGHT_HARD_DEFAULT = 0.25f;
+    public static final float VALUE_WEIGHT_HARD_DEFAULT = 0.25f;
+    public static final float CHILDREN_WEIGHT_HARD_DEFAULT = 0.25f;
+    public static final boolean NAME_SIMILARITY_REQUIRED_HARD_DEFAULT = false;
+    public static final boolean AUTOMATIC_WEIGHT_ALLOCATION_HARD_DEFAULT = false;
+    public static final boolean IGNORE_TRIVIAL_SIMILARITIES_HARD_DEFAULT = false;
 
     // this singleton instance
     private static Properties properties = null;
@@ -76,24 +78,39 @@ public class SettingsHelper {
             init();
         }
         String value = properties
-                .getProperty(SETTINGS_NAME_SIMILARITY_REQUIRED_LABEL);
+                .getProperty(NAME_SIMILARITY_REQUIRED_LABEL);
         return (value != null) ? Boolean.parseBoolean(value)
-                : SETTINGS_NAME_SIMILARITY_REQUIRED_HARD_DEFAULT;
+                : NAME_SIMILARITY_REQUIRED_HARD_DEFAULT;
     }
 
     /**
-     * The value for the Dynamic Weight Allocation setting
+     * The value for the Automatic Weight Allocation setting
      * 
      * @return true if setting is turned on, false otherwise
      */
-    public static boolean getDynamicWeightAllocation() {
+    public static boolean getAutomaticWeightAllocation() {
         if (properties == null) {
             init();
         }
         String value = properties
-                .getProperty(SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_LABEL);
+                .getProperty(AUTOMATIC_WEIGHT_ALLOCATION_LABEL);
         return (value != null) ? Boolean.parseBoolean(value)
-                : SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_HARD_DEFAULT;
+                : AUTOMATIC_WEIGHT_ALLOCATION_HARD_DEFAULT;
+    }
+
+    /**
+     * The value for the Ignore Trivial Similarities setting
+     * 
+     * @return true if setting is turned on, false otherwise
+     */
+    public static boolean getIgnoreTrivialSimilarities() {
+        if (properties == null) {
+            init();
+        }
+        String value = properties
+                .getProperty(IGNORE_TRIVIAL_SIMILARITIES_LABEL);
+        return (value != null) ? Boolean.parseBoolean(value)
+                : IGNORE_TRIVIAL_SIMILARITIES_HARD_DEFAULT;
     }
 
     /**
@@ -105,9 +122,9 @@ public class SettingsHelper {
         if (properties == null) {
             init();
         }
-        String value = properties.getProperty(SETTINGS_NAME_LABEL);
+        String value = properties.getProperty(NAME_WEIGHT_LABEL);
         return (value != null) ? Float.parseFloat(value)
-                : SETTINGS_NAME_HARD_DEFAULT;
+                : NAME_WEIGHT_HARD_DEFAULT;
     }
 
     /**
@@ -119,9 +136,9 @@ public class SettingsHelper {
         if (properties == null) {
             init();
         }
-        String value = properties.getProperty(SETTINGS_VALUE_LABEL);
+        String value = properties.getProperty(VALUE_WEIGHT_LABEL);
         return (value != null) ? Float.parseFloat(value)
-                : SETTINGS_VALUE_HARD_DEFAULT;
+                : VALUE_WEIGHT_HARD_DEFAULT;
     }
 
     /**
@@ -133,9 +150,9 @@ public class SettingsHelper {
         if (properties == null) {
             init();
         }
-        String value = properties.getProperty(SETTINGS_ATTRIBUTE_LABEL);
+        String value = properties.getProperty(ATTRIBUTE_WEIGHT_LABEL);
         return (value != null) ? Float.parseFloat(value)
-                : SETTINGS_ATTRIBUTE_HARD_DEFAULT;
+                : ATTRIBUTE__WEIGHT_HARD_DEFAULT;
     }
 
     /**
@@ -147,9 +164,9 @@ public class SettingsHelper {
         if (properties == null) {
             init();
         }
-        String value = properties.getProperty(SETTINGS_CHILDREN_LABEL);
+        String value = properties.getProperty(CHILDREN_WEIGHT_LABEL);
         return (value != null) ? Float.parseFloat(value)
-                : SETTINGS_CHILDREN_HARD_DEFAULT;
+                : CHILDREN_WEIGHT_HARD_DEFAULT;
     }
 
     /**
@@ -161,21 +178,35 @@ public class SettingsHelper {
         if (properties == null) {
             init();
         }
-        properties.setProperty(SETTINGS_NAME_SIMILARITY_REQUIRED_LABEL,
+        properties.setProperty(NAME_SIMILARITY_REQUIRED_LABEL,
                 (new Boolean(value)).toString());
         save();
     }
 
     /**
-     * Set value for the Dynamic Weight Allocation setting
+     * Set value for the Automatic Weight Allocation setting
      * 
      * @param value the value for the setting
      */
-    public static void setDynamicWeightAllocation(boolean value) {
+    public static void setAutomaticWeightAllocation(boolean value) {
         if (properties == null) {
             init();
         }
-        properties.setProperty(SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_LABEL,
+        properties.setProperty(AUTOMATIC_WEIGHT_ALLOCATION_LABEL,
+                (new Boolean(value)).toString());
+        save();
+    }
+
+    /**
+     * Set value for the Ignore Trivial Similarities setting
+     * 
+     * @param value the value for the setting
+     */
+    public static void setIgnoreTrivialSimilarities(boolean value) {
+        if (properties == null) {
+            init();
+        }
+        properties.setProperty(IGNORE_TRIVIAL_SIMILARITIES_LABEL,
                 (new Boolean(value)).toString());
         save();
     }
@@ -189,7 +220,7 @@ public class SettingsHelper {
         if (properties == null) {
             init();
         }
-        properties.setProperty(SETTINGS_NAME_LABEL,
+        properties.setProperty(NAME_WEIGHT_LABEL,
                 (new Float(value)).toString());
         save();
     }
@@ -203,7 +234,7 @@ public class SettingsHelper {
         if (properties == null) {
             init();
         }
-        properties.setProperty(SETTINGS_VALUE_LABEL,
+        properties.setProperty(VALUE_WEIGHT_LABEL,
                 (new Float(value)).toString());
         save();
     }
@@ -217,7 +248,7 @@ public class SettingsHelper {
         if (properties == null) {
             init();
         }
-        properties.setProperty(SETTINGS_ATTRIBUTE_LABEL,
+        properties.setProperty(ATTRIBUTE_WEIGHT_LABEL,
                 (new Float(value)).toString());
         save();
     }
@@ -231,7 +262,7 @@ public class SettingsHelper {
         if (properties == null) {
             init();
         }
-        properties.setProperty(SETTINGS_CHILDREN_LABEL,
+        properties.setProperty(CHILDREN_WEIGHT_LABEL,
                 (new Float(value)).toString());
         save();
     }

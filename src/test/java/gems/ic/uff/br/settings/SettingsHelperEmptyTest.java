@@ -26,37 +26,37 @@ public class SettingsHelperEmptyTest {
     
     @Test
     public void testGetNameSimilarityRequired() {
-        assertEquals(SettingsHelper.SETTINGS_NAME_SIMILARITY_REQUIRED_HARD_DEFAULT,
+        assertEquals(SettingsHelper.NAME_SIMILARITY_REQUIRED_HARD_DEFAULT,
                 SettingsHelper.getNameSimilarityRequired());
     }
 
     @Test
     public void testGetDynamicWeightAllocation() {
-        assertEquals(SettingsHelper.SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_HARD_DEFAULT,
-                SettingsHelper.getDynamicWeightAllocation());
+        assertEquals(SettingsHelper.AUTOMATIC_WEIGHT_ALLOCATION_HARD_DEFAULT,
+                SettingsHelper.getAutomaticWeightAllocation());
     }
 
     @Test
     public void testGetNameSimilarityWeight() {
-        assertEquals(SettingsHelper.SETTINGS_NAME_HARD_DEFAULT,
+        assertEquals(SettingsHelper.NAME_WEIGHT_HARD_DEFAULT,
                 SettingsHelper.getNameSimilarityWeight(),0);
     }
 
     @Test
     public void testGetValueSimilarityWeight() {
-        assertEquals(SettingsHelper.SETTINGS_VALUE_HARD_DEFAULT,
+        assertEquals(SettingsHelper.VALUE_WEIGHT_HARD_DEFAULT,
                 SettingsHelper.getValueSimilarityWeight(),0);
     }
 
     @Test
     public void testGetAttributeSimilarityWeight() {
-        assertEquals(SettingsHelper.SETTINGS_ATTRIBUTE_HARD_DEFAULT,
+        assertEquals(SettingsHelper.ATTRIBUTE__WEIGHT_HARD_DEFAULT,
                 SettingsHelper.getAttributeSimilarityWeight(),0);
     }
 
     @Test
     public void testGetChildrenSimilarityWeight() {
-        assertEquals(SettingsHelper.SETTINGS_CHILDREN_HARD_DEFAULT,
+        assertEquals(SettingsHelper.CHILDREN_WEIGHT_HARD_DEFAULT,
                 SettingsHelper.getChildrenSimilarityWeight(),0);
     }
 }

@@ -25,11 +25,11 @@ public class SettingsHelperRetrieveTest {
     private static final boolean SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_TEST = true;
     
     private final static String SETTINGS_FILE_TEXT = 
-            SettingsHelper.SETTINGS_NAME_LABEL + "=" + SETTINGS_NAME_TEST + "\n" +
-            SettingsHelper.SETTINGS_VALUE_LABEL + "=" + SETTINGS_VALUE_TEST + "\n" +
-            SettingsHelper.SETTINGS_ATTRIBUTE_LABEL + "=" + SETTINGS_ATTRIBUTE_TEST + "\n" +
-            SettingsHelper.SETTINGS_CHILDREN_LABEL + "=" + SETTINGS_CHILDREN_TEST + "\n" +
-            SettingsHelper.SETTINGS_NAME_SIMILARITY_REQUIRED_LABEL + "=" + SETTINGS_NAME_SIMILARITY_REQUIRED_TEST + "\n" +
+            SettingsHelper.NAME_WEIGHT_LABEL + "=" + SETTINGS_NAME_TEST + "\n" +
+            SettingsHelper.VALUE_WEIGHT_LABEL + "=" + SETTINGS_VALUE_TEST + "\n" +
+            SettingsHelper.ATTRIBUTE_WEIGHT_LABEL + "=" + SETTINGS_ATTRIBUTE_TEST + "\n" +
+            SettingsHelper.CHILDREN_WEIGHT_LABEL + "=" + SETTINGS_CHILDREN_TEST + "\n" +
+            SettingsHelper.NAME_SIMILARITY_REQUIRED_LABEL + "=" + SETTINGS_NAME_SIMILARITY_REQUIRED_TEST + "\n" +
             SettingsHelper.SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_LABEL + "=" + SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_TEST;
             
     @BeforeClass
@@ -52,7 +52,7 @@ public class SettingsHelperRetrieveTest {
 
     @Test
     public void testGetDynamicWeightAllocation() {
-        assertEquals(SettingsHelper.getDynamicWeightAllocation(),
+        assertEquals(SettingsHelper.getAutomaticWeightAllocation(),
                 SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_TEST);
     }
 

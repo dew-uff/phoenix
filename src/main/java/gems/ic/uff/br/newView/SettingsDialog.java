@@ -14,6 +14,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 public class SettingsDialog {
@@ -24,7 +25,7 @@ public class SettingsDialog {
     // widgets
     private JTextField nameWeightField, valueWeightField, attributeWeightField,
             childrenWeightField;
-    private JCheckBox nameSimilarityBox, dynamicAllocationBox;
+    private JCheckBox nameSimilarityBox, automaticAllocationBox, ignoreTrivialBox;
     private JButton okButton, cancelButton;
 
     /**
@@ -57,7 +58,8 @@ public class SettingsDialog {
         dialog.setLayout(layout);
 
         dialog.getContentPane().add(nameSimilarityBox);
-        dialog.getContentPane().add(dynamicAllocationBox);
+        dialog.getContentPane().add(ignoreTrivialBox);
+        dialog.getContentPane().add(automaticAllocationBox);
 
         JPanel nameWeightPane = new JPanel();
         nameWeightPane.add(new JLabel("Name weight ", JLabel.TRAILING));
@@ -92,12 +94,31 @@ public class SettingsDialog {
      * on the selections made by the user.
      */
     private void updateFields() {
-        boolean dynEnabled = dynamicAllocationBox.isSelected();
+        boolean autEnabled = automaticAllocationBox.isSelected();
         boolean nameReqEnabled = nameSimilarityBox.isSelected();
-        nameWeightField.setEnabled(!dynEnabled && !nameReqEnabled);
-        valueWeightField.setEnabled(!dynEnabled);
-        attributeWeightField.setEnabled(!dynEnabled);
-        childrenWeightField.setEnabled(!dynEnabled);
+
+        if (nameReqEnabled) {
+            nameWeightField.setText("0.0");
+        }
+
+        if (autEnabled) {
+            if (nameReqEnabled) {
+                valueWeightField.setText("0.33");
+                attributeWeightField.setText("0.33");
+                childrenWeightField.setText("0.34");
+            }
+            else {
+                nameWeightField.setText("0.25");
+                valueWeightField.setText("0.25");
+                attributeWeightField.setText("0.25");
+                childrenWeightField.setText("0.25");
+            }
+        }
+
+        nameWeightField.setEnabled(!autEnabled && !nameReqEnabled);
+        valueWeightField.setEnabled(!autEnabled);
+        attributeWeightField.setEnabled(!autEnabled);
+        childrenWeightField.setEnabled(!autEnabled);
     }
 
     /**
@@ -107,7 +128,7 @@ public class SettingsDialog {
      */
     private void constructWidgets() {
 
-        nameSimilarityBox = new JCheckBox("Name Similarity Required");
+        nameSimilarityBox = new JCheckBox("Name similarity required");
         nameSimilarityBox.setSelected(SettingsHelper
                 .getNameSimilarityRequired());
         nameSimilarityBox.addActionListener(new ActionListener() {
@@ -118,16 +139,21 @@ public class SettingsDialog {
             }
         });
 
-        dynamicAllocationBox = new JCheckBox(
-                "Dinamically allocate similarity weight");
-        dynamicAllocationBox.addActionListener(new ActionListener() {
+        ignoreTrivialBox = new JCheckBox(
+                "Ignore trivial similarities");
+        ignoreTrivialBox.setSelected(SettingsHelper
+                .getIgnoreTrivialSimilarities());
+
+        automaticAllocationBox = new JCheckBox(
+                "Automatic similarity weight");
+        automaticAllocationBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 updateFields();
             }
         });
-        dynamicAllocationBox.setSelected(SettingsHelper
-                .getDynamicWeightAllocation());
+        automaticAllocationBox.setSelected(SettingsHelper
+                .getAutomaticWeightAllocation());
 
         nameWeightField = new JTextField(Float.toString(SettingsHelper
                 .getNameSimilarityWeight()), 5);
@@ -179,9 +205,9 @@ public class SettingsDialog {
      */
     protected boolean areValuesOk() {
 
-        boolean dynamicAllocation = dynamicAllocationBox.isSelected();
+        boolean automaticAllocation = automaticAllocationBox.isSelected();
 
-        if (dynamicAllocation) {
+        if (automaticAllocation) {
             return true;
         }
 
@@ -214,23 +240,22 @@ public class SettingsDialog {
 
         SettingsHelper
                 .setNameSimilarityRequired(nameSimilarityBox.isSelected());
+        
+        SettingsHelper.setIgnoreTrivialSimilarities(ignoreTrivialBox.isSelected());
 
-        boolean dynamicWeightAllocation = dynamicAllocationBox.isSelected();
-        SettingsHelper.setDynamicWeightAllocation(dynamicWeightAllocation);
+        SettingsHelper.setAutomaticWeightAllocation(automaticAllocationBox.isSelected());
 
-        if (!dynamicWeightAllocation) {
-            SettingsHelper.setNameSimilarityWeight(Float
-                    .parseFloat(nameWeightField.getText()));
+        SettingsHelper.setNameSimilarityWeight(Float
+                .parseFloat(nameWeightField.getText()));
 
-            SettingsHelper.setValueSimilarityWeight(Float
-                    .parseFloat(valueWeightField.getText()));
+        SettingsHelper.setValueSimilarityWeight(Float
+                .parseFloat(valueWeightField.getText()));
 
-            SettingsHelper.setAttributeSimilarityWeight(Float
-                    .parseFloat(attributeWeightField.getText()));
+        SettingsHelper.setAttributeSimilarityWeight(Float
+                .parseFloat(attributeWeightField.getText()));
 
-            SettingsHelper.setChildrenSimilarityWeight(Float
-                    .parseFloat(childrenWeightField.getText()));
-        }
+        SettingsHelper.setChildrenSimilarityWeight(Float
+                .parseFloat(childrenWeightField.getText()));
     }
 
     /**

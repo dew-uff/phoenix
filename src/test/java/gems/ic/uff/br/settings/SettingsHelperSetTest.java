@@ -28,7 +28,7 @@ public class SettingsHelperSetTest {
     public void testDynamicWeightAllocation() {
         boolean value = true;
         SettingsHelper.setDynamicWeightAllocation(value);
-        assertEquals(value, SettingsHelper.getDynamicWeightAllocation());
+        assertEquals(value, SettingsHelper.getAutomaticWeightAllocation());
     }
 
     @Test

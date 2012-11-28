@@ -9,9 +9,6 @@ import gems.ic.uff.br.settings.SettingsHelper;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
@@ -89,65 +86,70 @@ public class SimilarNode extends Similar<SimilarNode> {
     private float calculateSimilarity(float elementNameSimilarity,
             float attributeSimilarity, float valueSimilarity,
             float childrenSimilarity, boolean nameSimilarityRequired) {
-
+        
         float similarity = 0.0f;
+        int consideredSimilarities = 4;
+        
+        boolean ignoreTrivial = SettingsHelper.getIgnoreTrivialSimilarities();
 
-        if (SettingsHelper.getDynamicWeightAllocation()) {
+        float nameWeight = SettingsHelper.getNameSimilarityWeight();
+        float valueWeight = SettingsHelper.getValueSimilarityWeight();
+        float attributeWeight = SettingsHelper.getAttributeSimilarityWeight();
+        float childrenWeight = SettingsHelper.getChildrenSimilarityWeight();
+        
+        float totalWeight = 1.0f;
 
-            int consideredSimilarities = 4;
+        // if name is required it is not considered to calculate weight
+        if (nameSimilarityRequired) {
+            elementNameSimilarity = 0;
+            totalWeight -= nameWeight;
+            consideredSimilarities--;
+        }
 
-            // if name is required it is not considered to calculate weight
-            if (nameSimilarityRequired) {
-                elementNameSimilarity = 0;
-                consideredSimilarities--;
-            }
-
-            // consider attribute similarity only if at least one node has
-            // elements
-            if (attributeSimilarity == SKIP_SIMILARITY) {
+        if (attributeSimilarity == SKIP_SIMILARITY) {
+            if (ignoreTrivial) {
                 attributeSimilarity = 0;
+                totalWeight -= attributeWeight;
                 consideredSimilarities--;
             }
+            else {
+                attributeSimilarity = 1.0f;
+            }
+        }
 
-            if (valueSimilarity == SKIP_SIMILARITY) {
+        if (valueSimilarity == SKIP_SIMILARITY) {
+            if (ignoreTrivial) {
                 valueSimilarity = 0;
+                totalWeight -= valueWeight;
                 consideredSimilarities--;
             }
+            else {
+                valueSimilarity = 1.0f;
+            }
+        }
 
-            if (childrenSimilarity == SKIP_SIMILARITY) {
+        if (childrenSimilarity == SKIP_SIMILARITY) {
+            if (ignoreTrivial) {
                 childrenSimilarity = 0;
+                totalWeight -= childrenWeight;
                 consideredSimilarities--;
             }
-
-            // consideredSimilarities is 0 means that element doesn't have
-            // children, doesn't have attributes and doesn't have values, but
-            // are equal (otherwise this should not have been hit).
-            similarity = (consideredSimilarities == 0) ? 1.0f
-                    : (elementNameSimilarity + attributeSimilarity
-                            + valueSimilarity + childrenSimilarity)
-                            / consideredSimilarities;
-        } else {
-
-            if (nameSimilarityRequired) {
-                elementNameSimilarity = 0.0f;
+            else {
+                childrenSimilarity = 1.0f;
             }
+        }
 
-            attributeSimilarity = (attributeSimilarity == SKIP_SIMILARITY) ? 1.0f
-                    : attributeSimilarity;
-            valueSimilarity = (valueSimilarity == SKIP_SIMILARITY) ? 1.0f
-                    : valueSimilarity;
-            childrenSimilarity = (childrenSimilarity == SKIP_SIMILARITY) ? 1.0f
-                    : childrenSimilarity;
-
-            similarity = elementNameSimilarity
+        
+        similarity = (consideredSimilarities == 0)?1.0f
+                    :(elementNameSimilarity
                     * SettingsHelper.getNameSimilarityWeight()
                     + attributeSimilarity
                     * SettingsHelper.getAttributeSimilarityWeight()
                     + valueSimilarity
                     * SettingsHelper.getValueSimilarityWeight()
                     + childrenSimilarity
-                    * SettingsHelper.getChildrenSimilarityWeight();
-        }
+                    * SettingsHelper.getChildrenSimilarityWeight())/totalWeight;
+        
         return similarity;
     }
 
@@ -157,13 +159,10 @@ public class SimilarNode extends Similar<SimilarNode> {
      * @return retorna o percentual de similaridade encontrado entre 0 e 1
      */
     protected float elementsNameSimilarity(Node rightNode) {
-        float similarity = 0.0f;
 
-        if (leftNode.getNodeName().equals(rightNode.getNodeName())) {
-            similarity = MAXIMUM_SIMILARITY;
-        }
-
-        return similarity;
+        LcsString cmp = new LcsString(leftNode.getNodeName(), 
+                rightNode.getNodeName()); 
+        return cmp.similaridade();
     }
 
     /**
