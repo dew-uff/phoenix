@@ -6,11 +6,12 @@ import gems.ic.uff.br.modelo.HungarianList;
 import gems.ic.uff.br.modelo.LcsString;
 import gems.ic.uff.br.settings.SettingsHelper;
 
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
@@ -81,7 +82,8 @@ public class SimilarNode extends Similar<SimilarNode> {
         }
 
         // round number to deal with floating point precision
-        DecimalFormat df = new DecimalFormat("#.###");
+        NumberFormat df = DecimalFormat.getInstance(Locale.ENGLISH);
+        df.setMaximumFractionDigits(3);
         similarity = Float.parseFloat(df.format(similarity));
         
         diff.setSimilarity(similarity);
