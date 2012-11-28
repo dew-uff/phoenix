@@ -27,21 +27,12 @@ import com.sun.org.apache.xpath.internal.NodeSet;
 public class SimilarNode extends Similar<SimilarNode> {
     
     public static float MAXIMUM_SIMILARITY = 1.0f;
-    
+    public static float NO_SIMILARITY = 0.0f;
     private static float SKIP_SIMILARITY = -1.0f;
 
     //elemento do lado esquerdo do documento
     private Node leftNode;
     
-    //peso dos métodos de comparação
-    //public static float ATTRIBUTE_WEIGTH = 0.25f;
-    //public static float ELEMENT_VALUE_WEIGTH = 0.25f;
-    //private static float ELEMENT_NAME_WEIGHT = 0.25f;
-    
-    //private static float ELEMENT_NAME_SIMILARITY_MINIMUM = MAXIMUM_SIMILARITY;
-
-    //public static float ELEMENT_CHILDREN_WEIGTH = 0.25f;
-
     public SimilarNode(Node node) {
         this.leftNode = node;
     }
@@ -53,8 +44,8 @@ public class SimilarNode extends Similar<SimilarNode> {
 
         Diff diff = new Diff(leftNode, rightNode);
         
-        float similarity = 0;
-
+        float similarity = 0.0f;
+        
         if (leftNode != null && rightNode != null) {
             
             int consideredSimilarities = 4;
@@ -62,23 +53,12 @@ public class SimilarNode extends Similar<SimilarNode> {
             // element name is always considered in diff
             float elementSimilarity = elementsNameSimilarity(rightNode);
             
-            // just consider the similarity if it is NOT 100% equal
-            //if (elementSimilarity != MAXIMUM_SIMILARITY) {
-                // elementSimilarity *= ELEMENT_NAME_WEIGHT;
-                //similarity += elementSimilarity;
-                //remainingWeight -= ELEMENT_NAME_WEIGHT;
-            //}
-            
             // consider attribute similarity only if at least one node has 
             // elements
             float attributeSimilarity = elementsAttributesSimilarity(rightNode, 
                     diff);
             if (attributeSimilarity == SKIP_SIMILARITY) {
                 attributeSimilarity = 0;
-                //float attributeWeight = remainingWeight/(3+consideredSimilarities);
-                //attributeSimilarity *= attributeWeight;
-                //similarity += attributeSimilarity;
-                //remainingWeight -= attributeWeight;
                 consideredSimilarities--;
             }
             
@@ -87,9 +67,6 @@ public class SimilarNode extends Similar<SimilarNode> {
                 valueSimilarity = 0;
                 consideredSimilarities--;
             }
-            //float valueWeight = remainingWeight/(2+consideredSimilarities);
-            //similarity += valueSimilarity*valueWeight;
-            //remainingWeight -= valueWeight;
             
             float childrenSimilarity = elementsChildrenSimilarity(rightNode, diff);
             if (childrenSimilarity == SKIP_SIMILARITY) {
@@ -101,7 +78,7 @@ public class SimilarNode extends Similar<SimilarNode> {
                     valueSimilarity + childrenSimilarity)/consideredSimilarities;
 
         } else {
-            /**
+            /*
              * Se chegou nesta condição, então o elemento da esquerda é diferente
              * do elemento da direita. Logo, esta informação deve ser exposta
              * para usuário. Este método trata esta requisição.
@@ -122,7 +99,7 @@ public class SimilarNode extends Similar<SimilarNode> {
         float similarity = 0.0f;
 
         if (leftNode.getNodeName().equals(rightNode.getNodeName())) {
-            similarity = 1.0f;
+            similarity = MAXIMUM_SIMILARITY;
         }
 
         return similarity;
@@ -194,7 +171,7 @@ public class SimilarNode extends Similar<SimilarNode> {
                         getAllAttributesNames(attrsLeft, attrsRight);
                 
                 // go through all attributes and for each one, check if it's 
-                // present on one or both nodes, and if value is the same.
+                // present in one or both nodes, and if value is the same.
                 Iterator<String> iter = allAttr.iterator();
                 while (iter.hasNext()) {
 
