@@ -22,7 +22,8 @@ public class SettingsHelperRetrieveTest {
     private static final float SETTINGS_VALUE_TEST = 0.40f;
     private static final float SETTINGS_CHILDREN_TEST = 0.20f;
     private static final boolean SETTINGS_NAME_SIMILARITY_REQUIRED_TEST = true;
-    private static final boolean SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_TEST = true;
+    private static final boolean AUTOMATIC_WEIGHT_ALLOCATION_TEST = true;
+    private static final boolean IGNORE_TRIVIAL_SIMILARITIES_TEST = true;
     
     private final static String SETTINGS_FILE_TEXT = 
             SettingsHelper.NAME_WEIGHT_LABEL + "=" + SETTINGS_NAME_TEST + "\n" +
@@ -30,7 +31,8 @@ public class SettingsHelperRetrieveTest {
             SettingsHelper.ATTRIBUTE_WEIGHT_LABEL + "=" + SETTINGS_ATTRIBUTE_TEST + "\n" +
             SettingsHelper.CHILDREN_WEIGHT_LABEL + "=" + SETTINGS_CHILDREN_TEST + "\n" +
             SettingsHelper.NAME_SIMILARITY_REQUIRED_LABEL + "=" + SETTINGS_NAME_SIMILARITY_REQUIRED_TEST + "\n" +
-            SettingsHelper.SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_LABEL + "=" + SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_TEST;
+            SettingsHelper.AUTOMATIC_WEIGHT_ALLOCATION_LABEL + "=" + AUTOMATIC_WEIGHT_ALLOCATION_TEST + "\n" +
+            SettingsHelper.IGNORE_TRIVIAL_SIMILARITIES_LABEL + "=" + IGNORE_TRIVIAL_SIMILARITIES_TEST;
             
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
@@ -51,9 +53,15 @@ public class SettingsHelperRetrieveTest {
     }
 
     @Test
-    public void testGetDynamicWeightAllocation() {
+    public void testGetAutomaticWeightAllocation() {
         assertEquals(SettingsHelper.getAutomaticWeightAllocation(),
-                SETTINGS_DYNAMIC_WEIGHT_ALLOCATION_TEST);
+                AUTOMATIC_WEIGHT_ALLOCATION_TEST);
+    }
+    
+    @Test
+    public void testGetIgnoreTrivialSimilarities() {
+        assertEquals(SettingsHelper.getIgnoreTrivialSimilarities(),
+                IGNORE_TRIVIAL_SIMILARITIES_TEST);
     }
 
     @Test

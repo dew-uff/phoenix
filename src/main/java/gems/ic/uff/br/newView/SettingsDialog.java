@@ -3,6 +3,7 @@ package gems.ic.uff.br.newView;
 import gems.ic.uff.br.settings.SettingsHelper;
 
 import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -12,9 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 public class SettingsDialog {
@@ -33,7 +32,7 @@ public class SettingsDialog {
      * 
      * @param parent The parent frame for the settings modal dialog
      */
-    public SettingsDialog(Frame parent) {
+    public SettingsDialog(Window parent) {
 
         constructWidgets();
 
@@ -45,7 +44,7 @@ public class SettingsDialog {
      * 
      * @param parent The parent frame for the settings modal dialog
      */
-    private void constructDialog(Frame parent) {
+    private void constructDialog(Window parent) {
 
         dialog = new JDialog(parent, "Settings");
         dialog.setModal(true);
@@ -173,7 +172,7 @@ public class SettingsDialog {
                     saveAllSettings();
                     closeDialog();
                 } else {
-                    showError();
+                    SettingsHelper.showError(dialog);
                 }
             }
         });
@@ -186,15 +185,6 @@ public class SettingsDialog {
                 closeDialog();
             }
         });
-    }
-
-    /**
-     * Helper method to show error dialog to the user.
-     */
-    protected void showError() {
-        JOptionPane.showMessageDialog(dialog,
-                "The weight values must sum to 1.0!", "Error",
-                JOptionPane.ERROR_MESSAGE);
     }
 
     /**

@@ -31,7 +31,7 @@ public class SettingsHelperEmptyTest {
     }
 
     @Test
-    public void testGetDynamicWeightAllocation() {
+    public void testGetAutomaticWeightAllocation() {
         assertEquals(SettingsHelper.AUTOMATIC_WEIGHT_ALLOCATION_HARD_DEFAULT,
                 SettingsHelper.getAutomaticWeightAllocation());
     }

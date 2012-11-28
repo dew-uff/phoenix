@@ -1,10 +1,13 @@
 package gems.ic.uff.br.settings;
 
+import java.awt.Window;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Properties;
+
+import javax.swing.JOptionPane;
 
 /**
  * Singleton to isolate the file access logic from the application logic.
@@ -265,6 +268,32 @@ public class SettingsHelper {
         properties.setProperty(CHILDREN_WEIGHT_LABEL,
                 (new Float(value)).toString());
         save();
+    }
+    
+    /**
+     * Basically guarantees that all weight values sum to 1.0.
+     * 
+     * @return true if settings are OK, false otherwise.
+     */
+    public static boolean areSettingsOk() {
+
+        boolean nameSimilarityRequired = getNameSimilarityRequired();
+        float nameWeight = getNameSimilarityWeight();
+        float valueWeight = getValueSimilarityWeight();
+        float attributeWeight = getAttributeSimilarityWeight();
+        float childrenWeight = getChildrenSimilarityWeight();
+
+        if (nameSimilarityRequired) {
+            return (valueWeight + attributeWeight + childrenWeight) == 1.0f;
+        } else {
+            return (nameWeight + valueWeight + attributeWeight + childrenWeight) == 1.0f;
+        }
+    }
+    
+    public static void showError(Window parent) {
+        JOptionPane.showMessageDialog(parent,
+                "The weight values must sum to 1.0!", "Error",
+                JOptionPane.ERROR_MESSAGE);
     }
 
 }

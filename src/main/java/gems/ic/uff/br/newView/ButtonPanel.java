@@ -2,12 +2,14 @@ package gems.ic.uff.br.newView;
 
 import edu.uci.ics.jung.visualization.control.CrossoverScalingControl;
 import edu.uci.ics.jung.visualization.control.ScalingControl;
+import gems.ic.uff.br.settings.SettingsHelper;
 import gems.ic.uff.br.xmlEditorKit.XMLEditorKit;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Frame;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -132,7 +134,7 @@ public class ButtonPanel extends JPanel {
 
     }
 
-    private void buttonsActions(final NewInitialScreen initialScreen, final MyTree tree, final MyTabbedPane tabbedPane) {
+    private void buttonsActions(final Window initialScreen, final MyTree tree, final MyTabbedPane tabbedPane) {
 
         buttonImport.addActionListener(new ActionListener() {
             @Override
@@ -215,6 +217,11 @@ public class ButtonPanel extends JPanel {
 
             public void actionPerformed(ActionEvent e) {
                 
+                if (!SettingsHelper.areSettingsOk()) {
+                    SettingsHelper.showError(initialScreen);
+                    return;
+                }
+                
                 tabbedPane.getDocumentsPanel().changed = false;
                 
                 treePanel = new TreePanel(tabbedPane);
@@ -277,6 +284,12 @@ public class ButtonPanel extends JPanel {
         buttonSimilarity.addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent e) {
+                
+                if (!SettingsHelper.areSettingsOk()) {
+                    SettingsHelper.showError(initialScreen);
+                    return;
+                }
+                
                 similarityPanel = new SimilarityPanel();
                 
                 if(!similarityPanel.isChoosenDirectoryEmpty()){
@@ -363,7 +376,7 @@ public class ButtonPanel extends JPanel {
         });
     }
     
-    protected void showSettingsFrame(Frame parent) {
+    protected void showSettingsFrame(Window parent) {
         SettingsDialog settingsFrame = new SettingsDialog(parent);
         settingsFrame.show();
         

@@ -6,6 +6,8 @@ import gems.ic.uff.br.modelo.HungarianList;
 import gems.ic.uff.br.modelo.LcsString;
 import gems.ic.uff.br.settings.SettingsHelper;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +27,6 @@ import com.sun.org.apache.xpath.internal.NodeSet;
 public class SimilarNode extends Similar<SimilarNode> {
     
     public static float MAXIMUM_SIMILARITY = 1.0f;
-    public static float NO_SIMILARITY = 0.0f;
     private static float SKIP_SIMILARITY = -1.0f;
 
     //elemento do lado esquerdo do documento
@@ -56,7 +57,8 @@ public class SimilarNode extends Similar<SimilarNode> {
             boolean nameSimilarityRequired = SettingsHelper
                     .getNameSimilarityRequired();
 
-            if ((nameSimilarityRequired && elementNameSimilarity == MAXIMUM_SIMILARITY)
+            // only continue if necessary
+            if ((nameSimilarityRequired && elementNameSimilarity == MAXIMUM_SIMILARITY) 
                     || (!nameSimilarityRequired)) {
 
                 attributeSimilarity = elementsAttributesSimilarity(rightNode,
@@ -67,8 +69,7 @@ public class SimilarNode extends Similar<SimilarNode> {
                 childrenSimilarity = elementsChildrenSimilarity(rightNode, diff);
 
                 similarity = calculateSimilarity(elementNameSimilarity,
-                        attributeSimilarity, valueSimilarity,
-                        childrenSimilarity, nameSimilarityRequired);
+                        attributeSimilarity, valueSimilarity, childrenSimilarity);
             }
         } else {
             /*
@@ -79,18 +80,33 @@ public class SimilarNode extends Similar<SimilarNode> {
             diff = varreTodosSubelementosParaMostrar(diff, leftNode, "left");
         }
 
+        // round number to deal with floating point precision
+        DecimalFormat df = new DecimalFormat("#.###");
+        similarity = Float.parseFloat(df.format(similarity));
+        
         diff.setSimilarity(similarity);
         return diff;
     }
 
+    /**
+     * Helper method to calculate similarity based on values for each similarity 
+     * element and settings chosen by user.
+     * 
+     * @param elementNameSimilarity
+     * @param attributeSimilarity
+     * @param valueSimilarity
+     * @param childrenSimilarity
+     * 
+     * @return the similarity
+     */
     private float calculateSimilarity(float elementNameSimilarity,
-            float attributeSimilarity, float valueSimilarity,
-            float childrenSimilarity, boolean nameSimilarityRequired) {
+            float attributeSimilarity, float valueSimilarity, float childrenSimilarity) {
         
         float similarity = 0.0f;
         int consideredSimilarities = 4;
         
         boolean ignoreTrivial = SettingsHelper.getIgnoreTrivialSimilarities();
+        boolean nameSimilarityRequired = SettingsHelper.getNameSimilarityRequired();
 
         float nameWeight = SettingsHelper.getNameSimilarityWeight();
         float valueWeight = SettingsHelper.getValueSimilarityWeight();
@@ -99,16 +115,16 @@ public class SimilarNode extends Similar<SimilarNode> {
         
         float totalWeight = 1.0f;
 
-        // if name is required it is not considered to calculate weight
+        // if name similarity is required it is not considered to calculate weight
         if (nameSimilarityRequired) {
-            elementNameSimilarity = 0;
+            elementNameSimilarity = 0.0f;
             totalWeight -= nameWeight;
             consideredSimilarities--;
         }
 
         if (attributeSimilarity == SKIP_SIMILARITY) {
             if (ignoreTrivial) {
-                attributeSimilarity = 0;
+                attributeSimilarity = 0.0f;
                 totalWeight -= attributeWeight;
                 consideredSimilarities--;
             }
@@ -119,7 +135,7 @@ public class SimilarNode extends Similar<SimilarNode> {
 
         if (valueSimilarity == SKIP_SIMILARITY) {
             if (ignoreTrivial) {
-                valueSimilarity = 0;
+                valueSimilarity = 0.0f;
                 totalWeight -= valueWeight;
                 consideredSimilarities--;
             }
@@ -130,7 +146,7 @@ public class SimilarNode extends Similar<SimilarNode> {
 
         if (childrenSimilarity == SKIP_SIMILARITY) {
             if (ignoreTrivial) {
-                childrenSimilarity = 0;
+                childrenSimilarity = 0.0f;
                 totalWeight -= childrenWeight;
                 consideredSimilarities--;
             }
@@ -139,17 +155,18 @@ public class SimilarNode extends Similar<SimilarNode> {
             }
         }
 
-        
-        similarity = (consideredSimilarities == 0)?1.0f
-                    :(elementNameSimilarity
-                    * SettingsHelper.getNameSimilarityWeight()
-                    + attributeSimilarity
-                    * SettingsHelper.getAttributeSimilarityWeight()
-                    + valueSimilarity
-                    * SettingsHelper.getValueSimilarityWeight()
-                    + childrenSimilarity
-                    * SettingsHelper.getChildrenSimilarityWeight())/totalWeight;
-        
+        if (consideredSimilarities == 0) {
+            similarity = 1.0f;
+        }
+        else {
+            similarity = 
+                     (elementNameSimilarity*SettingsHelper.getNameSimilarityWeight()
+                    + attributeSimilarity * SettingsHelper.getAttributeSimilarityWeight()
+                    + valueSimilarity * SettingsHelper.getValueSimilarityWeight()
+                    + childrenSimilarity * SettingsHelper.getChildrenSimilarityWeight())
+                    /totalWeight;
+        }
+
         return similarity;
     }
 

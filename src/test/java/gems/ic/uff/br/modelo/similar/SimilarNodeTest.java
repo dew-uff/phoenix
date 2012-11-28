@@ -45,8 +45,8 @@ public class SimilarNodeTest {
 
     @Test
     public void desigualdadeEntreNomes() {
-        SimilarNode node = createSimilarNode("<diferente/>");
-        SimilarNode unequalNode = createSimilarNode("<diferente2/>");
+        SimilarNode node = createSimilarNode("<aaaaaaaa/>");
+        SimilarNode unequalNode = createSimilarNode("<bbbbbbbb/>");
         float elementsNameSimilarity = node.elementsNameSimilarity(unequalNode.getNode());
 
         assertEquals(0, elementsNameSimilarity, 0);

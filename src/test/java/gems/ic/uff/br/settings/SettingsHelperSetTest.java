@@ -25,10 +25,17 @@ public class SettingsHelperSetTest {
     }
 
     @Test
-    public void testDynamicWeightAllocation() {
+    public void testSetAutomaticWeightAllocation() {
         boolean value = true;
-        SettingsHelper.setDynamicWeightAllocation(value);
+        SettingsHelper.setAutomaticWeightAllocation(value);
         assertEquals(value, SettingsHelper.getAutomaticWeightAllocation());
+    }
+
+    @Test
+    public void testSetIgnoreTrivialSimilarities() {
+        boolean value = true;
+        SettingsHelper.setIgnoreTrivialSimilarities(value);
+        assertEquals(value, SettingsHelper.getIgnoreTrivialSimilarities());
     }
 
     @Test
