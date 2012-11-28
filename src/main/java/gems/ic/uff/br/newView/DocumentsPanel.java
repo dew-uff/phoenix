@@ -4,13 +4,20 @@
  */
 package gems.ic.uff.br.newView;
 
+import gems.ic.uff.br.xmlEditorKit.XMLEditorKit;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.JEditorPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.border.TitledBorder;
-import xmlEditorKit.XMLEditorKit;
 
 /**
  *

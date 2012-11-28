@@ -1,4 +1,4 @@
-package xmlEditorKit;
+package gems.ic.uff.br.xmlEditorKit;
 
 import org.w3c.dom.*;
 import org.w3c.dom.Element;

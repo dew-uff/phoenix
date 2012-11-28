@@ -1,4 +1,4 @@
-package xmlEditorKit;
+package gems.ic.uff.br.xmlEditorKit;
 
 import javax.swing.text.*;
 import javax.swing.*;

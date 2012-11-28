@@ -4,8 +4,9 @@
  */
 package gems.ic.uff.br.newView;
 
+import gems.ic.uff.br.xmlEditorKit.XMLEditorKit;
+
 import javax.swing.JTextPane;
-import xmlEditorKit.XMLEditorKit;
 
 
 
