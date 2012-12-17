@@ -70,6 +70,13 @@ public class SettingsHelper {
             }
         }
     }
+    
+    /**
+     * Only for tests. Do not use it.
+     */
+    static public void dispose() {
+        properties = null;
+    }
 
     /**
      * The value for the Name Similarity Required setting

@@ -44,6 +44,7 @@ public class SettingsHelperRetrieveTest {
         FileWriter fw = new FileWriter(file);
         fw.write(SETTINGS_FILE_TEXT);
         fw.close();
+        SettingsHelper.dispose();
     }
     
     @Test

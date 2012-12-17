@@ -22,6 +22,7 @@ public class SettingsHelperEmptyTest {
         if (file.exists()) {
             file.delete();
         }
+        SettingsHelper.dispose();
     }
     
     @Test

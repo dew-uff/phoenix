@@ -72,14 +72,15 @@ public class SimilarNode extends Similar<SimilarNode> {
                 similarity = calculateSimilarity(elementNameSimilarity,
                         attributeSimilarity, valueSimilarity, childrenSimilarity);
             }
-        } else {
-            /*
-             * Se chegou nesta condição, então o elemento da esquerda é
-             * diferente do elemento da direita. Logo, esta informação deve ser
-             * exposta para usuário. Este método trata esta requisição.
-             */
-            diff = varreTodosSubelementosParaMostrar(diff, leftNode, "left");
-        }
+            else {
+                /*
+                 * Se chegou nesta condição, então o elemento da esquerda é
+                 * diferente do elemento da direita. Logo, esta informação deve ser
+                 * exposta para usuário. Este método trata esta requisição.
+                 */
+                diff = varreTodosSubelementosParaMostrar(diff, leftNode, "left");
+            }
+        } 
 
         // round number to deal with floating point precision
         NumberFormat df = DecimalFormat.getInstance(Locale.ENGLISH);

@@ -1,6 +1,8 @@
 package gems.ic.uff.br.modelo;
 
 import gems.ic.uff.br.modelo.similar.SimilarNode;
+import gems.ic.uff.br.settings.SettingsHelper;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -18,6 +20,7 @@ public class LcsXMLTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        SettingsHelper.setNameSimilarityRequired(true);
     }
 
     @AfterClass
