@@ -192,19 +192,20 @@ public final class MyTree {
         public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {  
             super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);  
 
-            URL xmlIconURL = getClass().getResource("images/xmlIcon.png");
-            URL tagIconURL = getClass().getResource("images/tagIcon.png");
-            URL leafIconURL = getClass().getResource("images/leafIcon.png");
+            //URL xmlIconURL = getClass().getResource("images/xmlIcon.png");
+            //URL tagIconURL = getClass().getResource("images/tagIcon.png");
+            //URL leafIconURL = getClass().getResource("images/leafIcon.png");
+            
             
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;  
             if(node.toString().equals("Documento 1")) {  
-                setIcon(new ImageIcon(xmlIconURL));  
+                setIcon(new ImageIcon("images/xmlIcon.png"));  
             } else if (node.toString().equals("Documento 2")) {  
-               setIcon(new ImageIcon(xmlIconURL)); 
+               setIcon(new ImageIcon("images/xmlIcon.png")); 
             } else if (!node.isLeaf()) { 
-                 setIcon(new ImageIcon(tagIconURL)); 
+                 setIcon(new ImageIcon("images/tagIcon.png")); 
             } else if (node.isLeaf()){
-                setIcon(new ImageIcon(leafIconURL)); 
+                setIcon(new ImageIcon("images/leafIcon.png")); 
             }
             return this;  
         }

@@ -6,6 +6,8 @@ package gems.ic.uff.br.view;
 
 import gems.ic.uff.br.Exception.LcsXMLFilesException;
 import gems.ic.uff.br.modelo.LcsXMLFiles;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -32,6 +34,9 @@ public class SimilarityDiff extends javax.swing.JFrame {
 
     public SimilarityDiff() {
         initComponents();
+        Image img = null;
+        img = Toolkit.getDefaultToolkit().createImage("../newView/images/Phoenix.png");
+        this.setIconImage(img);
         directoryPath = "";
         diffFrame = null;
         diffPanel = null;

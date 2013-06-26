@@ -18,6 +18,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JEditorPane;
@@ -51,17 +55,19 @@ public class ButtonPanel extends JPanel {
     
     MyButton buttonImport, buttonCompare, buttonZoomIn, buttonZoomOut,buttonHide, 
              buttonExpand, buttonHelp, buttonSimilarity, buttonEditText, buttonView,
-             buttonSettings;
+             buttonSettings,buttonCompareThreeWay,buttonMergeThreeWay;
     JFileChooser fc;
     ImageIcon img;
     JLabel labelImg;
     ImageIcon icon;
     DefaultMutableTreeNode contents;
     Boolean contains;
-    JSeparator sep1, sep2, sep3;
+    JSeparator sep1, sep2, sep3,sep4;
     Dimension sepDim;
     TreePanel treePanel;
     DiffTreePanel diffTreePanel;
+    DiffThreeWayPanel diffThreeWayPanel;
+    MergeThreeWayPanel  mergeThreeWayPanel;
     SimilarityPanel similarityPanel;
     static MyTree tree1;
     static MyTree tree2;
@@ -69,18 +75,26 @@ public class ButtonPanel extends JPanel {
     
     
     public ButtonPanel(NewInitialScreen initialScreen, MyTree tree, final MyTabbedPane tabbedPane){
-        
-        buttonImport = new MyButton(getClass().getResource("images/open.png"));
-        buttonCompare = new MyButton(getClass().getResource("images/compare.png"));  
-        buttonZoomIn = new MyButton(getClass().getResource("images/zoom+.png"));
-        buttonZoomOut = new MyButton(getClass().getResource("images/zoom-.png"));
-        buttonHide = new MyButton(getClass().getResource("images/hide.png"));
-        buttonExpand = new MyButton(getClass().getResource("images/expand.png"));
-        buttonHelp = new MyButton(getClass().getResource("images/help.png"));
-        buttonSimilarity = new MyButton(getClass().getResource("images/similarity.png"));
-        buttonEditText = new MyButton(getClass().getResource("images/edit.png"));
-        buttonView = new MyButton(getClass().getResource("images/view.png"));
-        buttonSettings = new MyButton(getClass().getResource("images/settings.png"));
+        try 
+        {
+            buttonImport = new MyButton("images/open.png");
+            buttonCompare = new MyButton("images/compare.png");  
+            buttonZoomIn = new MyButton("images/zoom+.png");
+            buttonZoomOut = new MyButton("images/zoom-.png");
+            buttonHide = new MyButton("images/hide.png");
+            buttonExpand = new MyButton("images/expand.png");
+            buttonHelp = new MyButton("images/help.png");
+            buttonSimilarity = new MyButton("images/similarity.png");
+            buttonEditText = new MyButton("images/edit.png");
+            buttonView = new MyButton("images/view.png");
+            buttonSettings = new MyButton("images/settings.png");
+             //##########
+            buttonCompareThreeWay =new MyButton("images/compareThreeWay.png"); 
+            buttonMergeThreeWay =new MyButton("images/merge.png"); 
+        }
+        catch (Exception ex) {
+            Logger.getLogger(ButtonPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         buttonImport.setToolTipText("Import XML files");
         buttonCompare.setToolTipText("Compare XML documents");
@@ -93,6 +107,10 @@ public class ButtonPanel extends JPanel {
         buttonEditText.setToolTipText("Edit XML documents.");
         buttonView.setToolTipText("View XML documents.");
         buttonSettings.setToolTipText("Edit application settings");
+        
+         //##########
+        buttonCompareThreeWay.setToolTipText("Compare XML documents with comum ancestral");
+        buttonMergeThreeWay.setToolTipText("Merge XML documents with comum ancestral");
        
         buttonZoomIn.setEnabled(false);
         buttonZoomOut.setEnabled(false);
@@ -112,15 +130,21 @@ public class ButtonPanel extends JPanel {
         sep1 = new JSeparator(SwingConstants.VERTICAL);
         sep2 = new JSeparator(SwingConstants.VERTICAL);
         sep3 = new JSeparator(SwingConstants.VERTICAL);
+        sep4 = new JSeparator(SwingConstants.VERTICAL);
         sepDim = new Dimension(1, 30);
         sep1.setPreferredSize(sepDim);
         sep2.setPreferredSize(sepDim);
         sep3.setPreferredSize(sepDim);
+        sep4.setPreferredSize(sepDim);
         
         add(buttonImport);
         add(buttonCompare);
         add(buttonSimilarity);
         add(sep3);
+           //##########
+        add(buttonCompareThreeWay);
+        add(buttonMergeThreeWay);
+        add(sep4);
         add(buttonEditText);
         add(buttonView);
         add(sep1);
@@ -231,6 +255,123 @@ public class ButtonPanel extends JPanel {
                 diffTreePanel = new DiffTreePanel(tabbedPane);
                 tabbedPane.getJTabbedPane().setEnabledAt(2, true);
                 tabbedPane.getJTabbedPane().setComponentAt(2,diffTreePanel);
+            }
+       });
+        
+         //##########
+        buttonCompareThreeWay.addActionListener(new ActionListener() {
+            @Override
+
+            public void actionPerformed(ActionEvent e) {
+                
+                
+                // ##Arquivo Pai
+                 Object[] options = {"Ancestral Document"};
+                int op = JOptionPane.showOptionDialog(null,"Import the ancestral document", 
+                        "Import XML Document",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,options,options[0]);
+                fc = new JFileChooser();
+                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                
+                if(fc.showOpenDialog(fc) == JFileChooser.APPROVE_OPTION){
+                    File selecionado = fc.getSelectedFile();   //pegar doc xml e preencher primeiro txtare1 depois o segundo               
+                    try {
+                        FileReader in = new FileReader(selecionado);
+                        BufferedReader br = new BufferedReader(in); 
+                        String s,text=""; 
+                        try {
+                            while((s = br.readLine()) != null) {
+                                text = text+s+"\n";   
+                            }
+                            
+                            tabbedPane.getDocumentsPanel().xmlAncestral.setText(text);
+                            //tabbedPane.getDocumentsPanel().changeScrollToEdit();
+                            // tabbedPane.getDocumentsPanel().xmlComparable1Edit.setEditorKit(new XMLEditorKit());
+                             //   tabbedPane.getDocumentsPanel().xmlComparable1Edit.setText(text);
+                            
+                        } catch (IOException ex) {
+                            System.out.println("erro no while");
+                        }
+                    } catch (FileNotFoundException ex) {
+                        System.out.println("erro de leitura do arquivo");
+                    }
+                }
+                
+                
+                if (!SettingsHelper.areSettingsOk()) {
+                    SettingsHelper.showError(initialScreen);
+                    return;
+                }
+                
+                tabbedPane.getDocumentsPanel().changed = false;
+                
+                treePanel = new TreePanel(tabbedPane);
+                tabbedPane.getJTabbedPane().setEnabledAt(1, true);
+                tabbedPane.getJTabbedPane().setComponentAt(1,treePanel);
+                
+                diffThreeWayPanel = new DiffThreeWayPanel(tabbedPane);
+                tabbedPane.getJTabbedPane().setEnabledAt(3, true);
+                tabbedPane.getJTabbedPane().setComponentAt(3,diffThreeWayPanel);
+                
+                
+            }
+       });
+        
+        
+          //##########
+        buttonMergeThreeWay.addActionListener(new ActionListener() {
+            @Override
+
+            public void actionPerformed(ActionEvent e) {
+                
+                
+                // ##Arquivo Pai
+                 Object[] options = {"Ancestral Document"};
+                int op = JOptionPane.showOptionDialog(null,"Import the ancestral document", 
+                        "Import XML Document",JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,options,options[0]);
+                fc = new JFileChooser();
+                fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                
+                if(fc.showOpenDialog(fc) == JFileChooser.APPROVE_OPTION){
+                    File selecionado = fc.getSelectedFile();   //pegar doc xml e preencher primeiro txtare1 depois o segundo               
+                    try {
+                        FileReader in = new FileReader(selecionado);
+                        BufferedReader br = new BufferedReader(in); 
+                        String s,text=""; 
+                        try {
+                            while((s = br.readLine()) != null) {
+                                text = text+s+"\n";   
+                            }
+                            
+                            tabbedPane.getDocumentsPanel().xmlAncestral.setText(text);
+                            //tabbedPane.getDocumentsPanel().changeScrollToEdit();
+                            // tabbedPane.getDocumentsPanel().xmlComparable1Edit.setEditorKit(new XMLEditorKit());
+                             //   tabbedPane.getDocumentsPanel().xmlComparable1Edit.setText(text);
+                            
+                        } catch (IOException ex) {
+                            System.out.println("erro no while");
+                        }
+                    } catch (FileNotFoundException ex) {
+                        System.out.println("erro de leitura do arquivo");
+                    }
+                }
+                
+                
+                if (!SettingsHelper.areSettingsOk()) {
+                    SettingsHelper.showError(initialScreen);
+                    return;
+                }
+                
+                tabbedPane.getDocumentsPanel().changed = false;
+                
+                treePanel = new TreePanel(tabbedPane);
+                tabbedPane.getJTabbedPane().setEnabledAt(1, true);
+                tabbedPane.getJTabbedPane().setComponentAt(1,treePanel);
+                
+                mergeThreeWayPanel = new MergeThreeWayPanel(tabbedPane);
+                tabbedPane.getJTabbedPane().setEnabledAt(4, true);
+                tabbedPane.getJTabbedPane().setComponentAt(4,mergeThreeWayPanel);
+                
+                
             }
        });
         
@@ -358,7 +499,7 @@ public class ButtonPanel extends JPanel {
                 frameHelp.setSize(FRAME_WIDTH, FRAME_HEIGHT);
                 frameHelp.setLocationRelativeTo(null);
                 frameHelp.setLayout(new BorderLayout());
-                frameHelp.setIconImage(new ImageIcon(getClass().getResource("images/help.png")).getImage());
+                frameHelp.setIconImage(new ImageIcon("images/help.png").getImage());
                 frameHelp.setVisible(true);
                 
                 //Create program help with an HTML file

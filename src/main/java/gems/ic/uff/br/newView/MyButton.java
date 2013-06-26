@@ -35,6 +35,19 @@ public class MyButton extends JButton{
            
     }
     
+    public MyButton(String caminho){
+              
+        icon = new ImageIcon(caminho);
+        //icon = new ImageIcon(getClass().getResource(caminho));
+        setIcon(icon);
+        setBorder(new BevelBorder(BevelBorder.RAISED));
+        setBorderPainted(false);
+        setBackground(new Color (getBackground().getRGB()));
+        
+        criaInteracao();
+           
+    }
+    
     private void criaInteracao(){
         
         mouseListener = new MouseListener() {

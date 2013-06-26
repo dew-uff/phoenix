@@ -70,7 +70,11 @@ public class XML {
     public void addChildren(Diff anotherDiff) {
         document.appendChild(anotherDiff.getDiffNode());
     }
-
+    
+    public void addChildren(ThreeWayDiff anotherDiff) {
+        document.appendChild(anotherDiff.getDiffNode());
+    }
+    
     public Document getDocument() {
         return document;
     }

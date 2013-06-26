@@ -25,7 +25,7 @@ import javax.swing.border.TitledBorder;
  */
 public class DocumentsPanel extends JPanel {
     
-    JTextArea xmlComparable1, xmlComparable2;
+    JTextArea xmlComparable1, xmlComparable2,xmlAncestral;
     JEditorPane xmlComparable1Edit, xmlComparable2Edit;
     JScrollPane scrollXML1, scrollXML2;
     JSplitPane splitPane;
@@ -36,6 +36,7 @@ public class DocumentsPanel extends JPanel {
         
         xmlComparable1 = new JTextArea();//abrir algum documento aqui, se quiser.
         xmlComparable2 = new JTextArea();
+        xmlAncestral= new JTextArea();
         xmlComparable1Edit = new JEditorPane();
         xmlComparable2Edit = new JEditorPane();
         
@@ -99,7 +100,11 @@ public class DocumentsPanel extends JPanel {
     public JTextArea getTextAreaDoc2(){
         return xmlComparable2;
     }
-
+    
+     public JTextArea getTextAreaAncestral(){
+        return xmlAncestral;
+    }
+    
     private void createListener() {
         xmlComparable1.addKeyListener(new KeyListener() {
 

@@ -18,6 +18,8 @@ class MyTabbedPane{
     DocumentsPanel documentsPanel;
     TreePanel treePanel;
     DiffTreePanel diffTreePanel;
+    DiffThreeWayPanel threeWayDiffTreePanel;
+    DiffThreeWayPanel threeWayMergeTreePanel;
     SimilarityPanel similarityPanel;
     
     public MyTabbedPane(){
@@ -25,23 +27,31 @@ class MyTabbedPane{
         tabbedPane = new JTabbedPane();
         tabbedPane.setBackground(Color.white);
         
-        iconDoc = new ImageIcon(getClass().getResource("images/documents.png"));
-        iconTree = new ImageIcon(getClass().getResource("images/tree.png"));
-        iconDiffTree = new ImageIcon(getClass().getResource("images/diff.png"));
-        iconSimilarity = new ImageIcon(getClass().getResource("images/similarityIcon.png"));
+        iconDoc = new ImageIcon("images/documents.png");
+        iconTree = new ImageIcon("images/tree.png");
+        iconDiffTree = new ImageIcon("images/diff.png");
+        iconSimilarity = new ImageIcon("images/similarityIcon.png");
         
         documentsPanel = new DocumentsPanel();
         treePanel = new TreePanel();
         diffTreePanel = new DiffTreePanel();
         
+        threeWayDiffTreePanel = new DiffThreeWayPanel();
+        threeWayMergeTreePanel= new DiffThreeWayPanel();
+        
         tabbedPane.addTab("Documents", iconDoc, documentsPanel,"Documents XML");
         tabbedPane.addTab("Trees", iconTree, treePanel,"XML Trees");
         tabbedPane.addTab("Diff Tree", iconDiffTree, diffTreePanel,"Difference Tree");
+        tabbedPane.addTab("Three Way Diff", iconDiffTree, threeWayDiffTreePanel,"Difference tree with comum ancestral");
+        tabbedPane.addTab("Three Way Merge", iconDiffTree, threeWayMergeTreePanel,"Merge Tree versions with comum ancestral");
         tabbedPane.addTab("Similarity", iconSimilarity, similarityPanel,"XMLs Similarity");
+        
         
         tabbedPane.setEnabledAt(1, false);
         tabbedPane.setEnabledAt(2, false);
         tabbedPane.setEnabledAt(3, false);
+        tabbedPane.setEnabledAt(4, false);
+        tabbedPane.setEnabledAt(5, false);
     }
     
      public JTabbedPane getJTabbedPane(){
@@ -54,6 +64,15 @@ class MyTabbedPane{
      public TreePanel getTreePanel(){
         return treePanel;
      }
+     public DiffThreeWayPanel getThreeWayDiffTreePanel(){
+        return threeWayDiffTreePanel;
+     }
+     
+      public DiffThreeWayPanel getThreeWayMergeTreePanel(){
+        return threeWayMergeTreePanel;
+     }
+     
+     
      public DiffTreePanel getdiffTreePanel(){
         return diffTreePanel;
      }

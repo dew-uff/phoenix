@@ -127,8 +127,8 @@ public class Diff {
                 if (leftElementAttributeValue.equals(rightElementAttributeValue)) {
                     ((Element) this.diffNode).setAttribute(attributeName, leftElementAttributeValue);
                 } else {
-                    ((Element) this.diffNode).setAttributeNS(NAMESPACE, LEFT_PREFIX + attributeName, leftElementAttributeValue);
-                    ((Element) this.diffNode).setAttributeNS(NAMESPACE, RIGHT_PREFIX + attributeName, rightElementAttributeValue);
+                    //((Element) this.diffNode).setAttributeNS(NAMESPACE, LEFT_PREFIX + attributeName, leftElementAttributeValue);
+                   // ((Element) this.diffNode).setAttributeNS(NAMESPACE, RIGHT_PREFIX + attributeName, rightElementAttributeValue);
                 }
             }
         }
@@ -164,6 +164,10 @@ public class Diff {
     public Node getDiffNode() {
         return diffNode;
     }
+    
+     public SimilarNode getLeftNode() {
+        return leftNode;
+    }
 
     public void setSimilarity(float similarity) {
         this.similarity = similarity > 1 ? 1 : similarity;
@@ -188,4 +192,5 @@ public class Diff {
         }
         return this;
     }
+    
 }

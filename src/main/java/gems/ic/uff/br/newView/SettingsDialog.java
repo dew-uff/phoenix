@@ -49,8 +49,7 @@ public class SettingsDialog {
         dialog = new JDialog(parent, "Settings");
         dialog.setModal(true);
         dialog.setLocationRelativeTo(null);
-        dialog.setIconImage(new ImageIcon(getClass().getResource(
-                "images/settings.png")).getImage());
+        dialog.setIconImage(new ImageIcon("images/settings.png").getImage());
 
         BoxLayout layout = new BoxLayout(dialog.getContentPane(),
                 BoxLayout.Y_AXIS);

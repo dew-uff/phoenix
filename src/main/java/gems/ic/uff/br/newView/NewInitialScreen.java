@@ -6,6 +6,8 @@ package gems.ic.uff.br.newView;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Image;
+import java.awt.Toolkit;
 import javax.swing.*;
 
 /**
@@ -25,13 +27,17 @@ public class NewInitialScreen extends JFrame {
     
      public NewInitialScreen() {
     
-        super("PHOENIX");       
+        super("PHOENIX");
+        this.repaint();
         setSize(800, 600);
         setLocationRelativeTo(null);
         layout = new BorderLayout();
         setLayout(layout);
 
-        setIconImage(new ImageIcon(getClass().getResource("images/Phoenix.png")).getImage());
+        //setIconImage(new ImageIcon("images/Phoenix.png").getImage());
+        Image img = null; 
+        img = Toolkit.getDefaultToolkit().createImage("images/Phoenix.png");
+        this.setIconImage(img);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         tabbedPane = new MyTabbedPane();
