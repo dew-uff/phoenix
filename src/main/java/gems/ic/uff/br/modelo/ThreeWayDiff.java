@@ -281,14 +281,6 @@ public class ThreeWayDiff {
          similar += " son2: "+ Float.toString(similaritySon2);
         ((Element) this.diffNode).setAttributeNS(NAMESPACE, DIFF_PREFIX + "similarity",similar );
     }
-    
-   /* public void addSimilarityAttributeSon1() {
-        ((Element) this.diffNode).setAttributeNS(NAMESPACE, DIFF_PREFIX + "similaritySon1", Float.toString(similaritySon1));
-    }
-    
-    public void addSimilarityAttributeSon2() {
-        ((Element) this.diffNode).setAttributeNS(NAMESPACE, DIFF_PREFIX + "similaritySon2", Float.toString(similaritySon2));
-    }*/
 
     public void addSideAttribute(String nodeSide) {
         ((Element) this.diffNode).setAttributeNS(NAMESPACE, DIFF_SIDE, nodeSide);
@@ -319,244 +311,7 @@ public class ThreeWayDiff {
     {
         this.diffNode.appendChild(anotherDiff.getDiffNode());
     }
-    
-    //###
-    public void updateDiffPrefix(Node diffNode,String newPrefixLeft, String newPrefixRight,String newJoinPrefix ) 
-    {
-                    
-        if(diffNode == null)
-               return;
-        if(diffNode.getNodeName().contains("diff:value"))
-        {
-
-            Node noEsquerdo = diffNode.getAttributes().getNamedItem("diff:left");
-            Node noDireito = diffNode.getAttributes().getNamedItem("diff:right");
-            if (noEsquerdo != null) 
-            {
-                   ((Element) diffNode).setAttributeNS(NAMESPACE, DIFF_PREFIX+newPrefixLeft,noEsquerdo.getNodeValue() );
-                  //noEsquerdo.setUserData("side", DIFF_PREFIX+newPrefixLeft, null);
-                 //Node newNode = noEsquerdo.getOwnerDocument().createElement(DIFF_PREFIX+newPrefixLeft);
-                 //newNode.setNodeValue(noEsquerdo.getNodeValue());
-                 //newNode.getOwnerDocument().replaceChild(newNode, noEsquerdo);
-                 /*for(int i=0;i<noEsquerdo.getChildNodes().getLength();i++)
-                 {
-                      Node child = noEsquerdo.getChildNodes().item(i);
-                      child = noEsquerdo.getOwnerDocument().importNode(child, true);
-                      newNode.appendChild(child);
-                 }
-                 
-                NamedNodeMap attrs = noEsquerdo.getAttributes();
-                String[] names = new String[attrs.getLength()];
-                for (int i = 0; i < names.length; i++) 
-                {
-                    names[i] = attrs.item(i).getNodeName();
-                }
-                
-                for (int i = 0; i < names.length; i++) 
-                {
-                    
-                   newNode.setAttributeNode(noEsquerdo.getAttributeNode(names[i]));
-                    //attrs.removeNamedItemNS(NAMESPACE,names[i]);
-                    //
-                }*/
-                 
-                
-                
-            } 
-            if (noDireito != null) 
-            {
-                    //return Color.GREEN;
-                ((Element) diffNode).setAttributeNS(NAMESPACE, DIFF_PREFIX+newPrefixRight,noDireito.getNodeValue() );
-               // noDireito.setUserData("side", DIFF_PREFIX+newPrefixRight, null);
-                 //Node newNode = noDireito.getOwnerDocument().createElement(DIFF_PREFIX+newPrefixRight);
-                 //newNode.setNodeValue(noDireito.getNodeValue());
-                 //newNode.getOwnerDocument().replaceChild(newNode, noDireito);
-            }
-        }
-        
-           if(diffNode.hasAttributes())
-           {
-                Node nodeSimilaridade = diffNode.getAttributes().getNamedItem("diff:similarity");
-                if (nodeSimilaridade != null) 
-                {
-                    if (nodeSimilaridade.getNodeValue().equals("1.0")) 
-                    {
-                        //return Color.WHITE;
-                        ((Element) diffNode).setAttributeNS(NAMESPACE, DIFF_PREFIX+"side", newJoinPrefix);
-                        
-                    } else if (nodeSimilaridade.getNodeValue().equals("0.0")) 
-                    {
-
-                        Node nodeSide = diffNode.getAttributes().getNamedItem("diff:side");
-                        if (nodeSide != null && nodeSide.getNodeValue().equals("left")) 
-                        {
-                                //return Color.RED;
-                                ((Element) diffNode).setAttributeNS(NAMESPACE, DIFF_PREFIX+"side", newPrefixLeft);
-                        }
-                        else 
-                        {
-
-                            if (nodeSide != null && nodeSide.getNodeValue().equals("right")) 
-                            {
-                                //return Color.GREEN;
-                                 ((Element) diffNode).setAttributeNS(NAMESPACE, DIFF_PREFIX+"side", newPrefixRight);
-                            }
-
-                        }
-
-                    }
-                }
-           }
-                  
-        if (diffNode.hasChildNodes()) 
-        {  
-             NodeList subElementos = diffNode.getChildNodes();
-            for (int i = 0; i < subElementos.getLength(); i++) 
-            {
-                Node filho = subElementos.item(i);
-                updateDiffPrefix(filho, newPrefixLeft,  newPrefixRight,newJoinPrefix ); 
-            }
-        }
-        
-        /*if (diffNode.hasChildNodes()) 
-        {
-            NodeList subElementos = diffNode.getChildNodes();
-            for (int i = 0; i < subElementos.getLength(); i++) 
-            {
-                Node filho = subElementos.item(i);
-                System.out.println(filho.getNodeName());
-                System.out.println(filho.getNodeValue());
-               
-                /*if(filho.hasAttributes() /*&& (filho.getNodeType() == Node.ELEMENT_NODE)*///)
-               /* {
-                    
-                    NamedNodeMap attributes = filho.getAttributes();
-//                    for (int j = 0; j < attributes.getLength(); j++) 
-//                    {
-//                        System.out.println("ATRIBUTOS");
-//                        attributes.item(i).getNodeName();
-//                        //attributes.item(i).getNodeValue();
-//                         System.out.println("FIM ATRIBUTOS");
-//                    }
-                    Node nodeSimilaridade = filho.getAttributes().getNamedItem("diff:similarity");
-                    Node nodeSide = filho.getAttributes().getNamedItem("diff:side");
-                    if(nodeSide != null)
-                    {
-                        if (nodeSide != null && nodeSide.getNodeValue().equals("left")) 
-                        {
-                                //filho.setPrefix(newPrefixLeft); 
-                            ((Element) filho).setAttributeNS(NAMESPACE, DIFF_RELATION, newPrefixLeft);
-                            System.out.println(DIFF_RELATION+newPrefixLeft);
-                        } 
-                        else 
-                        {
-
-                            if (nodeSide != null && nodeSide.getNodeValue().equals("right")) 
-                            {
-                                //filho.setPrefix(newPrefixRight);  
-                                ((Element) filho).setAttributeNS(NAMESPACE, DIFF_RELATION, newPrefixRight);
-                                 System.out.println(DIFF_RELATION+newPrefixRight);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        ((Element) filho).setAttributeNS(NAMESPACE, DIFF_RELATION, newJoinPrefix);
-                        System.out.println(DIFF_RELATION+newJoinPrefix); 
-                    }   
-                }
-                else
-                {
-                   //((Element) filho).setAttributeNS(NAMESPACE, DIFF_RELATION, newJoinPrefix);
-                   //System.out.println(DIFF_RELATION+newJoinPrefix); 
-                    System.out.println("SEM ATRIBUTOS");
-                     if (filho.getNodeName().contains("diff:left")) 
-                     {
-                         //((Element) filho).setAttributeNS(NAMESPACE, DIFF_RELATION, newPrefixLeft);
-                         System.out.println("qqweqweqweqweqweqweqwewq");
-                     }
-                     if (filho.getNodeName().contains("diff:right")) 
-                     {
-                          //((Element) filho).setAttributeNS(NAMESPACE, DIFF_RELATION, newPrefixRight);
-                          System.out.println("asdasdasdasdsadsad");
-                     }
-                }
-                
-                updateDiffPrefix(filho,newPrefixLeft,newPrefixRight,newJoinPrefix);
-                
-            }*/
             
-        //}
-        
-    }
-    
- 
-//    public Diff mergeUsualDiff(Diff diff1, Diff diff2) 
-//    {
-//          
-//            if(diff1 != null && diff2 !=null)
-//            {
-//                Node nodeDiff1  = diff1.getDiffNode();
-//                Node nodeDiff2  = diff2.getDiffNode();
-//                
-//                
-//                
-//                NodeSet diff1SubElements = getElementNodes(nodeDiff1.getChildNodes());
-//                NodeSet diff2SubElements = getElementNodes(nodeDiff2.getChildNodes());
-//
-//                int diff1Size = diff1SubElements.size();
-//                int diff2Size = diff2SubElements.size();
-//                if(diff1Size>=diff2Size)
-//                {
-//
-//                }
-//                else
-//                {
-//
-//                }
-//
-//                diff.addChildren(finalDiff);
-//            }
-//        
-//        
-//        if (diffNode.hasChildNodes()) 
-//        {
-//            NodeList subElementos = diffNode.getChildNodes();
-//            for (int i = 0; i < subElementos.getLength(); i++) 
-//            {
-//                Node filho = subElementos.item(i);
-//                if(filho.hasAttributes())
-//                {
-//                    Node nodeSide = filho.getAttributes().getNamedItem("diff:side");
-//                    if(nodeSide != null)
-//                    {
-//                        if (nodeSide != null && nodeSide.getNodeValue().equals("left")) 
-//                        {
-//                                //filho.setPrefix(newPrefixLeft); 
-//                            ((Element) filho).setAttributeNS(NAMESPACE, DIFF_RELATION, newPrefixLeft);
-//                            System.out.println(DIFF_RELATION+newPrefixLeft);
-//                        } 
-//                        else 
-//                        {
-//
-//                            if (nodeSide != null && nodeSide.getNodeValue().equals("right")) 
-//                            {
-//                                //filho.setPrefix(newPrefixRight);  
-//                                ((Element) filho).setAttributeNS(NAMESPACE, DIFF_RELATION, newPrefixRight);
-//                                 System.out.println(DIFF_RELATION+newPrefixRight);
-//                            }
-//                        }
-//                    }
-//
-//                    updateDiffPrefix(filho,newPrefixLeft,newPrefixRight);
-//                }
-//                
-//            }
-//            
-//        }
-//        
-//    }
-
     public float getSimilaritySon1() {
         return similaritySon1;
     }
@@ -569,16 +324,6 @@ public class ThreeWayDiff {
     public Node getDiffNode() {
         return diffNode;
     }
-
-    /*public void setSimilaritySon1(float similaritySon1) {
-        this.similaritySon1 = similaritySon1 > 1 ? 1 : similaritySon1;
-        addSimilarityAttributeSon1();
-    }*/
-    
-    /*public void setSimilaritySon2(float similaritySon2) {
-        this.similaritySon2 = similaritySon2 > 1 ? 1 : similaritySon2;
-        addSimilarityAttributeSon2();
-    }*/
 
     public ThreeWayDiff varreTodosSubelementosParaMostrar(Node nodeCorrente) {
         if (nodeCorrente.hasChildNodes()) {
@@ -598,43 +343,7 @@ public class ThreeWayDiff {
         }
         return this;
     }
-
-    /*public Node mergeTree(Node diffNode1, Node diffNode2) 
-    {
-        
-        Node mergeNode = DiffXML.getInstance().getDocument().createElement("root");
-        
-        if(diffNode1 == null && diffNode2 ==null)
-            return mergeNode;
-        
-        if(diffNode1 == null && diffNode2 != null)
-        {
-            mergeNode.appendChild(diffNode1.cloneNode(true));
-            
-        }
-        else
-        {
-            if(diffNode1 != null && diffNode2 == null)
-            {
-                mergeNode.appendChild(diffNode2.cloneNode(true));
-            }
-        }
-        
-        if(diffNode1.equals(diffNode2))
-        {
-            mergeNode.appendChild(diffNode1.cloneNode(false));
-        }
-        else
-        {
-            mergeNode.appendChild(diffNode1.cloneNode(false));
-            mergeNode.appendChild(diffNode2.cloneNode(false));
-        }
-        
-        return mergeNode;
-           
-        //throw new UnsupportedOperationException("Not yet implemented");
-    }*/
-    
+ 
     private boolean compareNode(Node node1, Node node2)
     {
         boolean bEqual = true;
@@ -717,7 +426,18 @@ public class ThreeWayDiff {
        //ImprimirElementos("ELEMENTOS 2",subElementos2);
        List<Node> elementosInseridos = new ArrayList<Node>();
        //boolean bConflito = false;
-       for (int i = 0; i < subElementos2.getLength(); i++) 
+       
+       mergeSubElementos2( subElementos2, subElementos1, elementosInseridos, ancestral, diff, bKeepAncestral);
+       //ImprimirLista("ELEMENTOS INSERIDOS ",elementosInseridos);
+       mergeSubElementos1( subElementos1, elementosInseridos, ancestral, diff, bKeepAncestral);
+      
+       
+    }
+    
+    
+    private void mergeSubElementos2(NodeList subElementos2,NodeList subElementos1,List<Node> elementosInseridos,Node ancestral,ThreeWayDiff diff,boolean bKeepAncestral)
+    {
+        for (int i = 0; i < subElementos2.getLength(); i++) 
        {
                 Node filho2 = subElementos2.item(i);
                 preencherOrigemFilho2(filho2);
@@ -750,7 +470,7 @@ public class ThreeWayDiff {
                                 if(noDireito1 != null && noDireito2 != null)
                                 {
                                     if(! noDireito1.getNodeValue().equals(noDireito2.getNodeValue()))
-                                    diff.setConflito(true);
+                                       diff.setConflito(true);
                                     //bConflito =true;
                                 }
                                 
@@ -805,7 +525,7 @@ public class ThreeWayDiff {
                         
                         
                         //MERGE
-                         if(!bKeepAncestral)
+                        if(!bKeepAncestral)
                         {
                                 if(filho2.getNodeName().contains("diff:value"))
                                 {
@@ -852,33 +572,7 @@ public class ThreeWayDiff {
                if(!bFind)
                 {
                         Document doc = ancestral.getOwnerDocument();
-                        ///DocumentFragment fragment = doc.createDocumentFragment();
-                        //fragment.appendChild(filho1);
-                        
-                        /* if (filho2.hasAttributes()) 
-                        {
-                             Node nodeSimilaridade = filho2.getAttributes().getNamedItem("diff:similarity");
-                             if(nodeSimilaridade != null)
-                             {
-                                  if (nodeSimilaridade.getNodeValue().equals("1.0"))
-                                    ((Element) filho2).setAttributeNS(NAMESPACE, DIFF_RELATION, DIFF_ANCESTRAL_SON2);  
-                             }
-                        }
-                        
-                         if(filho2.getNodeName().contains("diff:value"))
-                        {
-                          if( filho2.getAttributes().getNamedItem("diff:left") != null)
-                                ((Element) filho2).setAttributeNS(NAMESPACE, DIFF_RELATION, DIFF_SON1);
-                          if( filho2.getAttributes().getNamedItem("diff:right") != null)
-                                ((Element) filho2).setAttributeNS(NAMESPACE, DIFF_RELATION, DIFF_ANCESTRAL);
-                        }
-                         
-                         if(filho2.getNodeName().contains("diff:left"))
-                              ((Element) filho2).setAttributeNS(NAMESPACE, DIFF_RELATION, DIFF_SON1);
-                         
-                         if(filho2.getNodeName().contains("diff:right"))
-                              ((Element) filho2).setAttributeNS(NAMESPACE, DIFF_RELATION, DIFF_ANCESTRAL);*/
-                        
+                       
                         //MERGE
                         if(!bKeepAncestral)
                         {
@@ -908,15 +602,15 @@ public class ThreeWayDiff {
                         //preencherOrigem(filho2,"son2");
                         Node fragment = doc.importNode(filho2,true);
                        
-                        //(fragment).setNodeValue("diff:center") ;
-                        //fragment.setUserData(DIFF_RELATION, DIFF_SON2, null);
                         fragment = ancestral.appendChild(fragment);
                 }
        }
-       
-       //ImprimirLista("ELEMENTOS INSERIDOS ",elementosInseridos);
-       
-       for (int i = 0; i < subElementos1.getLength(); i++) 
+    }
+    
+    private void mergeSubElementos1(NodeList subElementos1,List<Node> elementosInseridos,Node ancestral,ThreeWayDiff diff,boolean bKeepAncestral)
+    {
+        
+         for (int i = 0; i < subElementos1.getLength(); i++) 
        {
                  //
                 Node filho1 = subElementos1.item(i);
@@ -1088,30 +782,12 @@ public class ThreeWayDiff {
                  
                  if(bEqual)
                      continue;
-                 
-                  //if(filho1.hasAttributes())
-                    //((Element) filho1).setAttributeNS(NAMESPACE, DIFF_PREFIX+"relation" , "son1Ancestral");
-                 //preencherOrigem(filho1,"son1");
+              
                  Node fragment = doc.importNode(filho1,true);
-                 
-                 
-                 /*System.out.println("ANCESTRAL");
-                 System.out.println(ancestral.getNodeName());
-                 if(ancestral.getNodeValue()!= null )
-                     System.out.println(ancestral.getNodeValue());
-                 System.out.println("FILHO2");
-                 System.out.println(filho2.getNodeName());
-                 if(filho2.getNodeValue()!= null )
-                     System.out.println(filho2.getNodeValue());
-                 System.out.println("########");*/
-                 //if(fragment.getNodeValue() != null)
-                 //fragment.setNodeValue("DIFF 2");
                  ancestral.appendChild(fragment);
                 
        }
-       
     }
-    
     
     public void removeAttributes(Node root)
     {

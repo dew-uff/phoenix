@@ -30,22 +30,6 @@ public class DiffTreePanel extends JPanel {
        
     }
     
-    /*public DiffTreePanel (MyTabbedPane tabbedPane){
-        
-        XML xmlPai = new XML("F:\\ESTUDOS\\MESTRADO\\GDSE\\Pai.xml");
-        xml1 = new XML("F:\\ESTUDOS\\MESTRADO\\GDSE\\Filho1.xml");
-        xml2 = new XML("F:\\ESTUDOS\\MESTRADO\\GDSE\\Filho2.xml");
-              
-        lcsXML = new LcsXML(xmlPai,xml1, xml2);
-                
-        createTitle();
-        diffGrafico = new VisualizarDiffXML(lcsXML.getDiffXML().toString());
-        diffGrafico.setBorder(new BevelBorder(BevelBorder.LOWERED));
-        diffGrafico.setBorder(title);
-        setLayout(new BorderLayout());
-        add(diffGrafico, BorderLayout.CENTER);
-    }*/
-    
     public DiffTreePanel (MyTabbedPane tabbedPane){
         xml1 = new XML(tabbedPane.getDocumentsPanel().getTextAreaDoc1().getText());
         xml2 = new XML(tabbedPane.getDocumentsPanel().getTextAreaDoc2().getText());

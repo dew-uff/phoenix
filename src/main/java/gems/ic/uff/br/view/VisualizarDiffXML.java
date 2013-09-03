@@ -52,7 +52,7 @@ public class VisualizarDiffXML extends JPanel {
 
         public String transform(Node arg0) {
             if (arg0.getNodeType() != Node.TEXT_NODE) {
-                if (arg0.getNodeName().contains("diff:left") || arg0.getNodeName().contains("diff:right") || arg0.getNodeName().contains("diff:center") ) {
+                if (arg0.getNodeName().contains("diff:left") || arg0.getNodeName().contains("diff:right")) {
                     return arg0.getNodeValue();
                 } else {
                     return arg0.getNodeName();
@@ -89,86 +89,37 @@ public class VisualizarDiffXML extends JPanel {
             public Paint transform(Node arg0) {
                                     
                 if (arg0.hasAttributes()) 
-                {
-                    Node nodeRelationT = arg0.getAttributes().getNamedItem("diff:relation");
-                   
+                {  
                     Node nodeSimilaridade = arg0.getAttributes().getNamedItem("diff:similarity");
                     if (nodeSimilaridade != null) 
                     {
                         String similaridade = nodeSimilaridade.getNodeValue();
-                        if(similaridade.contains("son1"))
-                        {
-                            similaridade = similaridade.replace("son1:", "");
-                            similaridade = similaridade.replace("son2: ", "");
-                            String [] vetSim = similaridade.split(" ");
-                            float sim1 =1;
-                            float sim2 =0;
-                            if(vetSim.length>=2)
-                            {
-                                 sim1 = Float.parseFloat(vetSim[2]  );
-                                 sim2 = Float.parseFloat(vetSim[3]  );
-                            }
-                            
-                            similaridade = String.valueOf((sim1+sim2)/2);
-                        }
-                        
                         if (similaridade.equals("1.0")) {
                             return Color.WHITE;
                         } else if (similaridade.equals("0.0")) {
                             
-                            Node nodeRelation = arg0.getAttributes().getNamedItem("diff:relation");
                             Node nodeSide = arg0.getAttributes().getNamedItem("diff:side");
-                            
-                            if(nodeRelation != null)
+                             
+                            if (nodeSide != null && nodeSide.getNodeValue().equals("left")) 
                             {
-                                if (nodeRelation.getNodeValue().equals("son1")) 
+                                return Color.RED;
+                            } 
+                            else 
+                            {
+
+                                if (nodeSide != null && nodeSide.getNodeValue().equals("right")) 
                                 {
-                                     System.out.println("son1 !!!");
-                                    return Color.RED;
-                                }
-                                if(nodeRelation.getNodeValue().equals("son2"))
-                                {
-                                    System.out.println("son2 !!!");
-                                    return Color.PINK;
-                                }
-                                
-                                
-                                if(nodeRelation.getNodeValue().equals("ancestral"))
-                                {
-                                    System.out.println("ancestral !!!");
                                     return Color.GREEN;
                                 }
-                                
-                                if(nodeRelation.getNodeValue().equals("ancestralSon1"))
+                                else
                                 {
-                                    return Color.BLUE;
-                                }
-                                
-                                if(nodeRelation.getNodeValue().equals("ancestralSon2"))
-                                {
-                                    return Color.YELLOW;
-                                }
-                                if(nodeRelation.getNodeValue().equals("son1Son2"))
-                                {
-                                    return Color.ORANGE;
+                                    return Color.MAGENTA;
                                 }
                             }
-                            else
-                            {
-                                if (nodeSide != null && nodeSide.getNodeValue().equals("left")) {
-                                    return Color.RED;
-                                } else {
-
-                                    if (nodeSide != null && nodeSide.getNodeValue().equals("right")) {
-                                        return Color.GREEN;
-                                    }
-                                    else
-                                    {
-                                        return Color.MAGENTA;
-                                    }
-                                }
-                            }
-                        } else {
+                            
+                        } 
+                        else 
+                        {
                             int escalaTrucada = Math.round(255 * Float.parseFloat(similaridade));
                             return new Color(escalaTrucada, escalaTrucada, escalaTrucada); // similaridade diferente de 0 e 1;
 //                            return new Color((255 * Float.parseFloat(nodeSimilaridade.getNodeValue())),
@@ -179,11 +130,9 @@ public class VisualizarDiffXML extends JPanel {
                 }
                 if (arg0.getNodeName().contains("diff:left")) {
                     return Color.RED;
-                } else if (arg0.getNodeName().contains("diff:right")) {
+                }  
+                if (arg0.getNodeName().contains("diff:right")) {
                     return Color.GREEN;
-                }
-                else if (arg0.getNodeName().contains("diff:center")) {
-                    return Color.YELLOW;
                 }
                 if (arg0.getNodeType() == Node.TEXT_NODE) {
                     return Color.WHITE;
@@ -236,15 +185,11 @@ public class VisualizarDiffXML extends JPanel {
             if (nl.item(i).getNodeName().contains("diff:value")) {
                 Node noEsquerdo = nl.item(i).getAttributes().getNamedItem("diff:left");
                 Node noDireito = nl.item(i).getAttributes().getNamedItem("diff:right");
-                Node noCentral = nl.item(i).getAttributes().getNamedItem("diff:center");
                 if (noEsquerdo != null) {
                     floresta.addEdge(edgeFactory.create(), item, noEsquerdo);
                 }
                 if (noDireito != null) {
                     floresta.addEdge(edgeFactory.create(), item, noDireito);
-                }
-                if (noCentral != null) {
-                    floresta.addEdge(edgeFactory.create(), item, noCentral);
                 }
             } else {
                 floresta.addEdge(edgeFactory.create(), item, nl.item(i));

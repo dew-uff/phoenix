@@ -152,8 +152,8 @@ public class SimilarNode extends Similar<SimilarNode> {
 
         Node son1Node = son1.getNode();
         Node son2Node = son2.getNode();
-
-        //Diff diff = new Diff(leftNode, son1Node);
+        
+        //Left Node -> Ancestral 
         ThreeWayDiff diff = new ThreeWayDiff(leftNode, son1Node, son2Node);
 
         float similaritySon1 = 0.0f;
@@ -162,13 +162,10 @@ public class SimilarNode extends Similar<SimilarNode> {
         if (leftNode != null && son1Node != null && son2Node != null) 
         {
 
-            float elementNameSimilarity = 0.0f,
-                  elementNameSimilaritySon1 = 0.0f,
+            float elementNameSimilaritySon1 = 0.0f,
                   elementNameSimilaritySon2 = 0.0f,
                   attributeSimilaritySon1 = 0.0f,
-                  attributeSimilaritySon2 = 0.0f,
-                  childrenSimilaritySon1 = 0.0f,
-                  childrenSimilaritySon2 = 0.0f;
+                  attributeSimilaritySon2 = 0.0f;
             
             float[] valueSimilarity = {0.0f,0.0f};
             float[] childrenSimilarity = {0.0f,0.0f};
@@ -197,29 +194,24 @@ public class SimilarNode extends Similar<SimilarNode> {
                 
                 similaritySon2 = calculateSimilarity(elementNameSimilaritySon2,
                         attributeSimilaritySon2, valueSimilarity[1], childrenSimilarity[1]);
-
-                //similarity = calculateSimilarity(elementNameSimilaritySon1,
-                        //attributeSimilaritySon1, valueSimilaritySon1, childrenSimilaritySon1);
             }
             else 
             {
                 /*
-                 * Se chegou nesta condição, então o elemento da esquerda é
-                 * diferente do elemento da direita. Logo, esta informação deve ser
-                 * exposta para usuário. Este método trata esta requisição.
+                 * Os Nós do 3 elementos Pai, Filho1 e Filho2 não sao todos iguais
                  */
                 boolean bS1 = nameSimilarityRequired && elementNameSimilaritySon1 == MAXIMUM_SIMILARITY;
                 boolean bS2 = nameSimilarityRequired && elementNameSimilaritySon2 == MAXIMUM_SIMILARITY;
                 if(!bS1 && bS2)
                 {
-                    //Diff usualDiff = new Diff(leftNode,son2Node);
+                    // DIFF PAI e FILHO2
                     Diff usualDiff  = similar(son2Node);
                     diff.addChildren(usualDiff);
                     diff = varreTodosSubelementosParaMostrar(diff, son1Node, "left","son2");
                 }
                 else if(!bS2 && bS1)
                 {
-                    //diff  = similar(son1Node);
+                    // DIFF PAI e FILHO1
                     Diff usualDiff  = similar(son1Node);
                     diff.addChildren(usualDiff);
                     diff = varreTodosSubelementosParaMostrar(diff, son2Node,"right", "son1");
@@ -227,6 +219,7 @@ public class SimilarNode extends Similar<SimilarNode> {
                 } 
                 else
                 {
+                    // OS 3 Nós INICIAIS SÃO DIFERENTES
                     diff = varreTodosSubelementosParaMostrar(diff, son1Node, "left","son1");
                     diff = varreTodosSubelementosParaMostrar(diff, leftNode, "center","ancestral");
                     diff = varreTodosSubelementosParaMostrar(diff, son2Node, "right", "son2");
@@ -241,8 +234,6 @@ public class SimilarNode extends Similar<SimilarNode> {
         similaritySon1 = Float.parseFloat(df.format(similaritySon1));
         similaritySon2 = Float.parseFloat(df.format(similaritySon2));
         
-        //diff.setSimilaritySon1(similaritySon1);
-        //diff.setSimilaritySon1(similaritySon2);
        diff.addSimilarityAttribute(similaritySon1,similaritySon2);
         return diff;
     }
@@ -253,7 +244,6 @@ public class SimilarNode extends Similar<SimilarNode> {
         Node son1Node = son1.getNode();
         Node son2Node = son2.getNode();
 
-        //Diff diff = new Diff(leftNode, son1Node);
         ThreeWayDiff diff = new ThreeWayDiff(leftNode, son1Node, son2Node);
 
         float similaritySon1 = 0.0f;
@@ -262,13 +252,10 @@ public class SimilarNode extends Similar<SimilarNode> {
         if (leftNode != null && son1Node != null && son2Node != null) 
         {
 
-            float elementNameSimilarity = 0.0f,
-                  elementNameSimilaritySon1 = 0.0f,
+            float elementNameSimilaritySon1 = 0.0f,
                   elementNameSimilaritySon2 = 0.0f,
                   attributeSimilaritySon1 = 0.0f,
-                  attributeSimilaritySon2 = 0.0f,
-                  childrenSimilaritySon1 = 0.0f,
-                  childrenSimilaritySon2 = 0.0f;
+                  attributeSimilaritySon2 = 0.0f;
             
             float[] valueSimilarity = {0.0f,0.0f};
             float[] childrenSimilarity = {0.0f,0.0f};
@@ -297,29 +284,24 @@ public class SimilarNode extends Similar<SimilarNode> {
                 
                 similaritySon2 = calculateSimilarity(elementNameSimilaritySon2,
                         attributeSimilaritySon2, valueSimilarity[1], childrenSimilarity[1]);
-
-                //similarity = calculateSimilarity(elementNameSimilaritySon1,
-                        //attributeSimilaritySon1, valueSimilaritySon1, childrenSimilaritySon1);
             }
             else 
             {
                 /*
-                 * Se chegou nesta condição, então o elemento da esquerda é
-                 * diferente do elemento da direita. Logo, esta informação deve ser
-                 * exposta para usuário. Este método trata esta requisição.
+                 * Os Nós do 3 elementos Pai, Filho1 e Filho2 não sao todos iguais
                  */
                 boolean bS1 = nameSimilarityRequired && elementNameSimilaritySon1 == MAXIMUM_SIMILARITY;
                 boolean bS2 = nameSimilarityRequired && elementNameSimilaritySon2 == MAXIMUM_SIMILARITY;
                 if(!bS1 && bS2)
                 {
-                    //Diff usualDiff = new Diff(leftNode,son2Node);
+                     // DIFF PAI e FILHO2
                     Diff usualDiff  = similar(son2Node);
                     diff.addChildren(usualDiff);
                     diff = varreTodosSubelementosParaMostrar(diff, son1Node, "left","son2");
                 }
                 else if(!bS2 && bS1)
                 {
-                    //diff  = similar(son1Node);
+                     // DIFF PAI e FILHO1
                     Diff usualDiff  = similar(son1Node);
                     diff.addChildren(usualDiff);
                     diff = varreTodosSubelementosParaMostrar(diff, son2Node,"right", "son1");
@@ -327,8 +309,8 @@ public class SimilarNode extends Similar<SimilarNode> {
                 } 
                 else
                 {
+                    // OS 3 Nós INICIAIS SÃO DIFERENTES
                     diff = varreTodosSubelementosParaMostrar(diff, son1Node, "left","son1");
-                   // diff = varreTodosSubelementosParaMostrar(diff, leftNode, "center","ancestral");
                     diff = varreTodosSubelementosParaMostrar(diff, son2Node, "right", "son2");
                 }
             }
@@ -700,32 +682,24 @@ public class SimilarNode extends Similar<SimilarNode> {
 
         // no children nodes, why compare them or use them to 
         // calculate similarity?
-        if (!leftNode.hasChildNodes() && !son1Node.hasChildNodes() && !son2Node.hasChildNodes()) 
-        {
-            //similarity = SKIP_SIMILARITY;
-        } 
-        else 
+        // LeftNode -> Ancestral
+        if (leftNode.hasChildNodes() || son1Node.hasChildNodes() || son2Node.hasChildNodes())  
         {
             
             NodeSet ancestralSubElements = getElementNodes(leftNode.getChildNodes());
             NodeSet son1SubElements = getElementNodes(son1Node.getChildNodes());
             NodeSet son2SubElements = getElementNodes(son2Node.getChildNodes());
 
-            // none of the children nodes was a element
-            if ((ancestralSubElements.size() == 0 && son1SubElements.size() == 0 && son2SubElements.size() == 0)) 
-            {
-                //similarity = SKIP_SIMILARITY;
-            } 
-            else 
+            if (ancestralSubElements.size() != 0 || son1SubElements.size() != 0 || son2SubElements.size() != 0) 
             {       
                     Diff diff1 = null;
+                    // ### Calculo "individual" dos DIFFs
+                    
                     if ((ancestralSubElements.size() != 0 && son1SubElements.size() != 0)) 
                     {
                         HungarianList hungarianList = new HungarianList(ancestralSubElements, son1SubElements);
                         Diff usualDiff = new Diff(son1Node);
                         usualDiff = hungarianList.calcularSimilaridadeDosSubElementos(usualDiff);
-                        //diff.updateDiffPrefix(usualDiff.getDiffNode(),ThreeWayDiff.DIFF_ANCESTRAL, ThreeWayDiff.DIFF_SON1, ThreeWayDiff.DIFF_ANCESTRAL_SON1 ) ;
-                        //diff.addChildren(usualDiff);
                         diff1 = usualDiff;
                         similarity[0] = hungarianList.similaridade();
                     }
@@ -736,113 +710,18 @@ public class SimilarNode extends Similar<SimilarNode> {
                         HungarianList hungarianList = new HungarianList(ancestralSubElements, son2SubElements);
                         Diff usualDiff = new Diff(son2Node);
                         usualDiff = hungarianList.calcularSimilaridadeDosSubElementos(usualDiff);
-                        //diff.updateDiffPrefix(usualDiff.getDiffNode(),ThreeWayDiff.DIFF_ANCESTRAL, ThreeWayDiff.DIFF_SON2, ThreeWayDiff.DIFF_ANCESTRAL_SON2 ) ;
-                        
-                        //diff.addChildren(usualDiff);
                         diff2 = usualDiff;
                         similarity[1] = hungarianList.similaridade();
                     }
                     
+                    
+                    // ### Merge dos DIFFs Calculados, mantendo o ancestral
                     if(diff1 != null && diff2 !=null)
-                    {               
-                        Document doc = diff.getDiffNode().getOwnerDocument();
-                        
-                        Document doc1 = diff1.getDiffNode().getOwnerDocument();
-                        Document doc2 = diff2.getDiffNode().getOwnerDocument();
-                       
-                         
-                        //Node root1 = doc1.getDocumentElement();
-                        /*NodeList rootchildren1 = diff1.getDiffNode().getChildNodes();
-                        Element newroot1 = doc1.createElement(diff1.getDiffNode().getNodeName());
-                        for (int i=0;i<rootchildren1.getLength();i++) {
-                            newroot1.appendChild(rootchildren1.item(i).cloneNode(true));
-                        }
-                        doc1.replaceChild(newroot1, diff1.getDiffNode());
-                        
-                        
-                       
-                        //Node root2 = doc2.getDocumentElement();
-                        NodeList rootchildren2 = diff2.getDiffNode().getChildNodes();
-                        Element newroot2 = doc1.createElement(diff2.getDiffNode().getNodeName());
-                        for (int i=0;i<rootchildren2.getLength();i++) {
-                            newroot2.appendChild(rootchildren2.item(i).cloneNode(true));
-                        }
-                        doc1.replaceChild(newroot2, diff2.getDiffNode());*/
-                        
-                        //Node node1 =doc1.importNode(diff1.getDiffNode(),true);
-                       // Node node2 = doc2.importNode(diff2.getDiffNode(),true);
-                         // TransformerFactory tFactory = TransformerFactory.newInstance();
-                         // Transformer transformer = tFactory.newTransformer();
-                         // transformer.setOutputProperty(OutputKeys.INDENT, "yes"); 
-                          //transformer.transform(source, result); */
-                        
-                        //Node root1 = doc1.createElement("Teste");
-                        //Node root2 = doc2.createElement("Teste2");
-                        //diff.copyTree(diff1.getDiffNode(),root1);
-                        //diff.copyTree(diff2.getDiffNode(),root2);
-                       //diff.updateDiffPrefix(diff1.getDiffNode(),diff.DIFF_SON1, diff.DIFF_ANCESTRAL,diff.DIFF_ANCESTRAL_SON1 );
-                       //diff.updateDiffPrefix(diff2.getDiffNode(),diff.DIFF_SON2, diff.DIFF_ANCESTRAL,diff.DIFF_ANCESTRAL_SON2 );
-                        //HungarianList hungarianList = new HungarianList(getElementNodes(diff1.getDiffNode().getChildNodes()), getElementNodes(diff2.getDiffNode().getChildNodes()));
-                        //Diff usualDiff = new Diff(diff1.getDiffNode(),diff2.getDiffNode());
-                        //usualDiff = hungarianList.calcularSimilaridadeDosSubElementos(usualDiff);
-                        //diff.addChildren(usualDiff);
-                        //Diff finalDiff = new Diff(diff1.getDiffNode());
-                        
-                        //float a[] = threeWayElementsValueSimilarity( diff ,diff1.getDiffNode(),diff2.getDiffNode());
-                        //Node finalNode = diff.mergeTree(diff1.getDiffNode(),diff2.getDiffNode());
-                        
-                        
-//                        Document doc = new DocumentImpl();  
-//                        Element root = doc.createElement( "MergedDocument" );
-//                        doc.importNode( diff1.getDiffNode(),true);
-//                        doc.importNode( diff2.getDiffNode(),true); 
-//                        NodeSet diff1SubElements = getElementNodes(nodeDiff1.getChildNodes());
-//                        NodeSet diff2SubElements = getElementNodes(nodeDiff2.getChildNodes());
-//                        
-//                        int diff1Size = diff1SubElements.size();
-//                        int diff2Size = diff2SubElements.size();
-//                        if(diff1Size>=diff2Size)
-//                        {
-//                            
-//                        }
-//                        else
-//                        {
-//                            
-//                        }
-                        
-                       diff.mergeTree(diff1.getDiffNode(), diff2.getDiffNode(), diff.getDiffNode(),true,diff);
+                    {                
+                        diff.mergeTree(diff1.getDiffNode(), diff2.getDiffNode(), diff.getDiffNode(),true,diff);
                     }
-                    
-                    
-                    /*
-                    if((son1SubElements.size() != 0 && son2SubElements.size() != 0) && ancestralSubElements.size() == 0)
-                    {
-                        HungarianList hungarianList = new HungarianList(son1SubElements, son2SubElements);
-                        Diff usualDiff = new Diff(son1Node,son2Node);
-                        usualDiff = hungarianList.calcularSimilaridadeDosSubElementos(usualDiff);
-                        diff.updateDiffPrefix(usualDiff.getDiffNode(),ThreeWayDiff.DIFF_SON1, ThreeWayDiff.DIFF_SON2 ) ;
-                        diff.addChildren(usualDiff);
-                        //Não possuem simililaridade com o Pai
-                    }*/
-                    /*
-                    if (ancestralSubElements.size() != 0) 
-                    {
-                        diff = varreTodosSubelementosParaMostrar(diff, leftNode, "center","ancetral");
-                    } 
-                    else if(son1SubElements.size() != 0)
-                    {
-                        diff = varreTodosSubelementosParaMostrar(diff, son1Node, "left","son1");
-                    }
-                    else if(son2SubElements.size() != 0)
-                    {
-                        diff = varreTodosSubelementosParaMostrar(diff, son2Node, "right","son2");
-                    }
-                    */
             }
         }
-
-        //diff.setSimilaritySon1(similarity[0]);
-        //diff.setSimilaritySon2(similarity[1]);
         return similarity;
     }
     
@@ -853,23 +732,14 @@ public class SimilarNode extends Similar<SimilarNode> {
 
         // no children nodes, why compare them or use them to 
         // calculate similarity?
-        if (!leftNode.hasChildNodes() && !son1Node.hasChildNodes() && !son2Node.hasChildNodes()) 
-        {
-            //similarity = SKIP_SIMILARITY;
-        } 
-        else 
+        if (leftNode.hasChildNodes() || son1Node.hasChildNodes() || son2Node.hasChildNodes())  
         {
             
             NodeSet ancestralSubElements = getElementNodes(leftNode.getChildNodes());
             NodeSet son1SubElements = getElementNodes(son1Node.getChildNodes());
             NodeSet son2SubElements = getElementNodes(son2Node.getChildNodes());
 
-            // none of the children nodes was a element
-            if ((ancestralSubElements.size() == 0 && son1SubElements.size() == 0 && son2SubElements.size() == 0)) 
-            {
-                //similarity = SKIP_SIMILARITY;
-            } 
-            else 
+            if (ancestralSubElements.size() != 0 || son1SubElements.size() != 0 || son2SubElements.size() != 0)  
             {       
                     Diff diff1 = null;
                     if ((ancestralSubElements.size() != 0 && son1SubElements.size() != 0)) 
@@ -877,8 +747,6 @@ public class SimilarNode extends Similar<SimilarNode> {
                         HungarianList hungarianList = new HungarianList(ancestralSubElements, son1SubElements);
                         Diff usualDiff = new Diff(son1Node);
                         usualDiff = hungarianList.calcularSimilaridadeDosSubElementos(usualDiff);
-                        //diff.updateDiffPrefix(usualDiff.getDiffNode(),ThreeWayDiff.DIFF_ANCESTRAL, ThreeWayDiff.DIFF_SON1, ThreeWayDiff.DIFF_ANCESTRAL_SON1 ) ;
-                        //diff.addChildren(usualDiff);
                         diff1 = usualDiff;
                         similarity[0] = hungarianList.similaridade();
                     }
@@ -889,28 +757,17 @@ public class SimilarNode extends Similar<SimilarNode> {
                         HungarianList hungarianList = new HungarianList(ancestralSubElements, son2SubElements);
                         Diff usualDiff = new Diff(son2Node);
                         usualDiff = hungarianList.calcularSimilaridadeDosSubElementos(usualDiff);
-                        //diff.updateDiffPrefix(usualDiff.getDiffNode(),ThreeWayDiff.DIFF_ANCESTRAL, ThreeWayDiff.DIFF_SON2, ThreeWayDiff.DIFF_ANCESTRAL_SON2 ) ;
-                        
-                        //diff.addChildren(usualDiff);
                         diff2 = usualDiff;
                         similarity[1] = hungarianList.similaridade();
                     }
                     
                     if(diff1 != null && diff2 !=null)
                     {               
-                        //Document doc = diff.getDiffNode().getOwnerDocument();
-                        
-                        //Document doc1 = diff1.getDiffNode().getOwnerDocument();
-                        //Document doc2 = diff2.getDiffNode().getOwnerDocument();
-                        
-                        diff.mergeTree(diff1.getDiffNode(), diff2.getDiffNode(), diff.getDiffNode(),false,diff);
-                        
+                        diff.mergeTree(diff1.getDiffNode(), diff2.getDiffNode(), diff.getDiffNode(),false,diff);     
                     }
             }
         }
-
-        //diff.setSimilaritySon1(similarity[0]);
-       // diff.setSimilaritySon2(similarity[1]);
+        
         return similarity;
     }
 

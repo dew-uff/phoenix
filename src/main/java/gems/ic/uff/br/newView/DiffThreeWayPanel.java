@@ -40,9 +40,8 @@ public class DiffThreeWayPanel extends JPanel {
         xml1 = new XML(tabbedPane.getDocumentsPanel().getTextAreaDoc1().getText());
         xml2 = new XML(tabbedPane.getDocumentsPanel().getTextAreaDoc2().getText());
         xmlPai = new XML(tabbedPane.getDocumentsPanel().getTextAreaAncestral().getText());  
-        //new LcsXML(xmlPai,xml1, xml2);
-        //lcsXML = new LcsXML(xml1, xml2);
-       lcsXML = new LcsXML(xmlPai,xml1, xml2,false);
+       
+        lcsXML = new LcsXML(xmlPai,xml1, xml2,false);
         
         createTitle();
         diffGrafico = new VisualizarThreeWayDiffXML(lcsXML.getDiffXML().toString());
