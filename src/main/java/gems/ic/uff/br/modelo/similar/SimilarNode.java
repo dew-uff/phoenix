@@ -267,8 +267,8 @@ public class SimilarNode extends Similar<SimilarNode> {
                         } else {
                             // calculate similarity based on LCS between values
                             similarity += (new LcsString(
-                                    new SimilarString(attributeLeftValue),
-                                    new SimilarString(attributeRightValue)))
+                                    attributeLeftValue,
+                                    attributeRightValue))
                                     .similaridade();
                         }
                     }

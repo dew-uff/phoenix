@@ -2,6 +2,7 @@ package gems.ic.uff.br.newView;
 
 import gems.ic.uff.br.settings.SettingsHelper;
 
+import java.awt.Component;
 import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
@@ -23,7 +24,7 @@ public class SettingsDialog {
     
     // widgets
     private JTextField nameWeightField, valueWeightField, attributeWeightField,
-            childrenWeightField;
+            childrenWeightField, thresholdField;
     private JCheckBox nameSimilarityBox, automaticAllocationBox, ignoreTrivialBox;
     private JButton okButton, cancelButton;
 
@@ -79,6 +80,11 @@ public class SettingsDialog {
         childrenPane.add(new JLabel("Children weight ", JLabel.TRAILING));
         childrenPane.add(childrenWeightField);
         dialog.getContentPane().add(childrenPane);
+        
+        JPanel thresholdPane = new JPanel();
+        thresholdPane.add(new JLabel("Similarity threshold ", JLabel.TRAILING));
+        thresholdPane.add(thresholdField);
+        dialog.getContentPane().add(thresholdPane);
 
         JPanel buttonsPane = new JPanel();
         buttonsPane.add(cancelButton);
@@ -123,7 +129,6 @@ public class SettingsDialog {
     /**
      * Helper method to construct and set all the parameters for the widgets.
      * 
-     * @param parent The parent frame for the settings modal dialog
      */
     private void constructWidgets() {
 
@@ -162,6 +167,8 @@ public class SettingsDialog {
                 .getAttributeSimilarityWeight()), 5);
         childrenWeightField = new JTextField(Float.toString(SettingsHelper
                 .getChildrenSimilarityWeight()), 5);
+        thresholdField = new JTextField(Float.toString(SettingsHelper
+                .getSimilarityThreshold()), 5);
 
         okButton = new JButton("OK");
         okButton.addActionListener(new ActionListener() {
@@ -246,6 +253,9 @@ public class SettingsDialog {
 
         SettingsHelper.setChildrenSimilarityWeight(Float
                 .parseFloat(childrenWeightField.getText()));
+        
+        SettingsHelper.setSimilarityThreshold(Float
+                .parseFloat(thresholdField.getText()));
     }
 
     /**

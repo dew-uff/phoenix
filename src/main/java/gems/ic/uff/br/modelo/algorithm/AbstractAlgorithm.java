@@ -1,10 +1,11 @@
 package gems.ic.uff.br.modelo.algorithm;
 
 import gems.ic.uff.br.modelo.similar.Similar;
+import gems.ic.uff.br.settings.SettingsHelper;
 
 public abstract class AbstractAlgorithm<VALUE extends Similar> {
 
-    float similarThreshold = 0.0f;
+    float similarThreshold = SettingsHelper.getSimilarityThreshold();
 
     protected abstract int lengthOfX();
 

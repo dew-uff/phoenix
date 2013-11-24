@@ -29,6 +29,7 @@ public class SettingsHelper {
     public static final String NAME_SIMILARITY_REQUIRED_LABEL = "NameSimilarityRequired";
     public static final String AUTOMATIC_WEIGHT_ALLOCATION_LABEL = "AutomaticWeightAllocation";
     public static final String IGNORE_TRIVIAL_SIMILARITIES_LABEL = "IgnoreTrivialSimilarities";
+    public static final String THRESHOLD_LABEL = "SimilarityThreshold";
 
     // default values for each setting
     public static final float NAME_WEIGHT_HARD_DEFAULT = 0.25f;
@@ -38,6 +39,7 @@ public class SettingsHelper {
     public static final boolean NAME_SIMILARITY_REQUIRED_HARD_DEFAULT = false;
     public static final boolean AUTOMATIC_WEIGHT_ALLOCATION_HARD_DEFAULT = false;
     public static final boolean IGNORE_TRIVIAL_SIMILARITIES_HARD_DEFAULT = false;
+    public static final float THRESHOLD_HARD_DEFAULT = 0.0f;
 
     // this singleton instance
     private static Properties properties = null;
@@ -178,6 +180,20 @@ public class SettingsHelper {
         return (value != null) ? Float.parseFloat(value)
                 : CHILDREN_WEIGHT_HARD_DEFAULT;
     }
+    
+    /**
+     * The value for the Similarity Threshold setting
+     * 
+     * @return the value between 0 and 1
+     */
+    public static float getSimilarityThreshold() {
+        if (properties == null) {
+            init();
+        }
+        String value = properties.getProperty(THRESHOLD_LABEL);
+        return (value != null) ? Float.parseFloat(value)
+                : THRESHOLD_HARD_DEFAULT;
+    }
 
     /**
      * Set value for the Name Similarity Required setting
@@ -278,6 +294,20 @@ public class SettingsHelper {
     }
     
     /**
+     * Set value for the Similarity Threshold setting
+     * 
+     * @param value the value for the setting
+     */
+    public static void setSimilarityThreshold(float value) {
+        if (properties == null) {
+            init();
+        }
+        properties.setProperty(THRESHOLD_LABEL,
+                (new Float(value)).toString());
+        save();
+    }
+    
+    /**
      * Basically guarantees that all weight values sum to 1.0.
      * 
      * @return true if settings are OK, false otherwise.
@@ -302,5 +332,4 @@ public class SettingsHelper {
                 "The weight values must sum to 1.0!", "Error",
                 JOptionPane.ERROR_MESSAGE);
     }
-
 }
