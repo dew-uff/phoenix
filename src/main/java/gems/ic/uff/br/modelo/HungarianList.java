@@ -122,20 +122,16 @@ public class HungarianList extends Hungarian<Similar> {
      */
     private void incluirElementosLadoEsquerdos(Diff pai) {
        
-        
-        if (lengthOfX() - lengthOfY() >= 0) {
+        for (int i = 0; i < lengthOfX(); i++) {
+            if (!indicesElementosEsquerdo.contains(i)) {
 
-            for (int i = 0; i < lengthOfX(); i++) {
-                if (!indicesElementosEsquerdo.contains(i)) {
-
-                    SimilarNode similarNode = (SimilarNode) x.get(i);
-                    Node nodeEsquerdo = similarNode.getNode();
-                    Diff diffLadoEsquerdo = new Diff(nodeEsquerdo);
-                    diffLadoEsquerdo = varreSubelementos(diffLadoEsquerdo, nodeEsquerdo, "left");
-                    diffLadoEsquerdo.addSideAttribute("left");
-                    diffLadoEsquerdo.setSimilarity(0);
-                    pai.addChildren(diffLadoEsquerdo);
-                }
+                SimilarNode similarNode = (SimilarNode) x.get(i);
+                Node nodeEsquerdo = similarNode.getNode();
+                Diff diffLadoEsquerdo = new Diff(nodeEsquerdo);
+                diffLadoEsquerdo = varreSubelementos(diffLadoEsquerdo, nodeEsquerdo, "left");
+                diffLadoEsquerdo.addSideAttribute("left");
+                diffLadoEsquerdo.setSimilarity(0);
+                pai.addChildren(diffLadoEsquerdo);
             }
         }
     }
@@ -150,21 +146,19 @@ public class HungarianList extends Hungarian<Similar> {
          * elementos do documento a esquerda da comparação que não tem
          * similaridade alguma com os elementos a direita do documento
          */
-        if (lengthOfY() - lengthOfX() >= 0) {
+        for (int i = 0; i < lengthOfY(); i++) {
+            if (!indicesElementosDireito.contains(i)) {
 
-            for (int i = 0; i < lengthOfY(); i++) {
-                if (!indicesElementosDireito.contains(i)) {
-
-                    SimilarNode similarNode = (SimilarNode) y.get(i);
-                    Node nodeDireito = similarNode.getNode();
-                    Diff diffLadoDireito = new Diff(nodeDireito);
-                    diffLadoDireito = varreSubelementos(diffLadoDireito, nodeDireito, "right");
-                    diffLadoDireito.addSideAttribute("right");
-                    diffLadoDireito.setSimilarity(0);
-                    pai.addChildren(diffLadoDireito);
-                }
+                SimilarNode similarNode = (SimilarNode) y.get(i);
+                Node nodeDireito = similarNode.getNode();
+                Diff diffLadoDireito = new Diff(nodeDireito);
+                diffLadoDireito = varreSubelementos(diffLadoDireito, nodeDireito, "right");
+                diffLadoDireito.addSideAttribute("right");
+                diffLadoDireito.setSimilarity(0);
+                pai.addChildren(diffLadoDireito);
             }
         }
+
     }
 
     /**

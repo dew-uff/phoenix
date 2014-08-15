@@ -8,6 +8,7 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
     protected float[][] originalMatrix;
     protected int[][] result;
     protected Diff[][] calculaSimilaridadeDosElementosCorrentes;
+    protected float similaridadeCalculada = -1;
 
     private void calculateHungarian() {
         if (result == null) {
@@ -81,14 +82,17 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
 
     @Override
     public float similaridade() {
-        calculateHungarian();
-        float similarity = 0;
+        if (similaridadeCalculada == -1) {
+        	calculateHungarian();
+            float similarity = 0;
 
-        for (int i = 0; i < result.length; i++) {
-            similarity += originalMatrix[result[i][0]][result[i][1]];
+            for (int i = 0; i < result.length; i++) {
+                similarity += originalMatrix[result[i][0]][result[i][1]];
+            }
+            similaridadeCalculada = similarity / result.length;
         }
 
-        return similarity / result.length;
+        return similaridadeCalculada;
     }
 
     //METODO OBSOLOTE. NAO IREI APAGAR AGORA POIS EXISTEM TESTES QUE AINDA O USAM
