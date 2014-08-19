@@ -86,12 +86,39 @@ public class SimilarNode extends Similar<SimilarNode> {
         NumberFormat df = DecimalFormat.getInstance(Locale.ENGLISH);
         df.setMaximumFractionDigits(3);
         similarity = Float.parseFloat(df.format(similarity));
+      
+        // TODO remove. Debug code
+        //checkAndPrint(leftNode,rightNode,similarity);
         
         diff.setSimilarity(similarity);
         return diff;
     }
 
-    /**
+    // TODO remove. debug code.
+    private void checkAndPrint(Node left, Node right, float similarity) {
+		if (left.getNodeName().equals("emp")) {
+			NodeList leftChildren = left.getChildNodes();
+			NodeList rightChildren = right.getChildNodes();
+			String empnoLeft = null;
+			String empnoRight = null;
+			for (int i = 0; i < leftChildren.getLength(); i++) {
+				if (leftChildren.item(i).getNodeName().equals("empno")) {
+					empnoLeft = leftChildren.item(i).getFirstChild().getNodeValue();
+					break;
+				}
+			}
+			for (int i = 0; i < rightChildren.getLength(); i++) {
+				if (rightChildren.item(i).getNodeName().equals("empno")) {
+					empnoRight = rightChildren.item(i).getFirstChild().getNodeValue();
+					break;
+				}
+			}
+			assert(empnoRight != null && empnoLeft != null);
+			System.out.println("Similarity " + empnoLeft + " - " + empnoRight + " = " + similarity);
+		}
+	}
+
+	/**
      * Helper method to calculate similarity based on values for each similarity 
      * element and settings chosen by user.
      * 
@@ -307,8 +334,19 @@ public class SimilarNode extends Similar<SimilarNode> {
             if ((leftSubElements.size() == 0 && rightSubElements.size() == 0)) {
                 similarity = SKIP_SIMILARITY;
             } else if ((leftSubElements.size() != 0 && rightSubElements.size() != 0)) {
+            	// TODO REMOVE. Debug code
+//            	if (leftNode.getNodeName().equals("company")) {
+//            		printNodeSet("left",leftSubElements);
+//            		printNodeSet("right",rightSubElements);
+//            	}
                 HungarianList hungarianList = new HungarianList(leftSubElements, rightSubElements);
                 diff = hungarianList.calcularSimilaridadeDosSubElementos(diff);
+                // TODO REMOVE. Debug code
+//                if (leftNode.getNodeName().equals("company")) {
+//            		hungarianList.printResult();
+//                    hungarianList.visualizarMatrixSimilaridade();
+//            	}
+
                 similarity = hungarianList.similaridade();
 
             } else {
@@ -326,7 +364,16 @@ public class SimilarNode extends Similar<SimilarNode> {
         return similarity;
     }
 
-    /**
+    // TODO remove. debug code.
+    private void printNodeSet(String id, NodeList list) {
+    	System.out.println("NodeSet ["+id+"]: ");
+		for (int i = 0; i < list.getLength(); i++) {
+			System.out.print(list.item(i).getFirstChild().getFirstChild().getNodeValue() + " ");
+		}
+		System.out.println();
+	}
+
+	/**
      * Retornar os nós de um NodeList que são do tipo elemento.
      *
      * @param nodeList

@@ -1,394 +1,328 @@
 package gems.ic.uff.br.modelo.algorithm;
 
-/*
- * This file is part of the TimeFinder project.
- *  Visit http://www.timefinder.de for more information.
- *  Copyright (c) 2009 the original author or authors.
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
- */
-
-/*
- * HungarianAlgorithm.java
- *
- * Created on 10. December 2007, 20:34
- * 
- * This code stands under the GPLv3! 
- * Use KuhnMunkresAlgorithm for an Apache2 licensed alternative.
- *
- * History:
- * The Hungarian Method based on ideas of König and Egervary, and
- *                      was published from Kuhn.
- * Later on Munkres showed that this algorithm is strongly polynomial O(n^4)
- * => Hungarian Algorithm (== Kuhn-Munkres algorithm)
- * Edmonds showed then that the time complexity of the algorithm is O(n^3)
- */
-
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+
+/* Copyright (c) 2012 Kevin L. Stern
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
 /**
- * This is the basic assignment algorithm known as Hungarian Method.
- * Where a matching between the sets S and T is represented as a
- * m x n matrix, with |S|=m and |T|=n.
- *
- * @author gary baker, http://www.thegarybakery.com
- * @author Peter Karich, peat_hal 'at' users 'dot' sourceforge 'dot' net
+ * An implementation of the Hungarian algorithm for solving the assignment
+ * problem. An instance of the assignment problem consists of a number of
+ * workers along with a number of jobs and a cost matrix which gives the cost of
+ * assigning the i'th worker to the j'th job at position (i, j). The goal is to
+ * find an assignment of workers to jobs so that no job is assigned more than
+ * one worker and so that no worker is assigned to more than one job in such a
+ * manner so as to minimize the total cost of completing the jobs.
+ * <p>
+ * 
+ * An assignment for a cost matrix that has more workers than jobs will
+ * necessarily include unassigned workers, indicated by an assignment value of
+ * -1; in no other circumstance will there be unassigned workers. Similarly, an
+ * assignment for a cost matrix that has more jobs than workers will necessarily
+ * include unassigned jobs; in no other circumstance will there be unassigned
+ * jobs. For completeness, an assignment for a square cost matrix will give
+ * exactly one unique worker to each job.
+ * <p>
+ * 
+ * This version of the Hungarian algorithm runs in time O(n^3), where n is the
+ * maximum among the number of workers and the number of jobs.
+ * 
+ * @author Kevin L. Stern
  */
 public class HungarianAlgorithm {
+  private final double[][] costMatrix;
+  private final int rows, cols, dim;
+  private final double[] labelByWorker, labelByJob;
+  private final int[] minSlackWorkerByJob;
+  private final double[] minSlackValueByJob;
+  private final int[] matchJobByWorker, matchWorkerByJob;
+  private final int[] parentWorkerByCommittedJob;
+  private final boolean[] committedWorkers;
 
-    /**
-     * We need these arrays to ignore the invalid (all entries are MAX_VALUE)
-     * rows or columns.
+  /**
+   * Construct an instance of the algorithm.
+   * 
+   * @param costMatrix
+   *          the cost matrix, where matrix[i][j] holds the cost of assigning
+   *          worker i to job j, for all i, j. The cost matrix must not be
+   *          irregular in the sense that all rows must be the same length.
+   */
+  public HungarianAlgorithm(double[][] costMatrix) {
+    this.dim = Math.max(costMatrix.length, costMatrix[0].length);
+    this.rows = costMatrix.length;
+    this.cols = costMatrix[0].length;
+    this.costMatrix = new double[this.dim][this.dim];
+    for (int w = 0; w < this.dim; w++) {
+      if (w < costMatrix.length) {
+        if (costMatrix[w].length != this.cols) {
+          throw new IllegalArgumentException("Irregular cost matrix");
+        }
+        this.costMatrix[w] = Arrays.copyOf(costMatrix[w], this.dim);
+      } else {
+        this.costMatrix[w] = new double[this.dim];
+      }
+    }
+    labelByWorker = new double[this.dim];
+    labelByJob = new double[this.dim];
+    minSlackWorkerByJob = new int[this.dim];
+    minSlackValueByJob = new double[this.dim];
+    committedWorkers = new boolean[this.dim];
+    parentWorkerByCommittedJob = new int[this.dim];
+    matchJobByWorker = new int[this.dim];
+    Arrays.fill(matchJobByWorker, -1);
+    matchWorkerByJob = new int[this.dim];
+    Arrays.fill(matchWorkerByJob, -1);
+  }
+
+  /**
+   * Compute an initial feasible solution by assigning zero labels to the
+   * workers and by assigning to each job a label equal to the minimum cost
+   * among its incident edges.
+   */
+  protected void computeInitialFeasibleSolution() {
+    for (int j = 0; j < dim; j++) {
+      labelByJob[j] = Double.POSITIVE_INFINITY;
+    }
+    for (int w = 0; w < dim; w++) {
+      for (int j = 0; j < dim; j++) {
+        if (costMatrix[w][j] < labelByJob[j]) {
+          labelByJob[j] = costMatrix[w][j];
+        }
+      }
+    }
+  }
+
+  /**
+   * Execute the algorithm.
+   * 
+   * @return the minimum cost matching of workers to jobs based upon the
+   *         provided cost matrix. A matching value of -1 indicates that the
+   *         corresponding worker is unassigned.
+   */
+  public int[] execute() {
+    /*
+     * Heuristics to improve performance: Reduce rows and columns by their
+     * smallest element, compute an initial non-zero dual feasible solution and
+     * create a greedy matching from workers to jobs of the cost matrix.
      */
-    private boolean[] initialCovRows;
-    private boolean[] initialCovCols;
-    private boolean[] coveredRows;
-    private boolean[] coveredCols;
-    private int[] starsByRow;
-    private int[] starsByCol;
+    reduce();
+    computeInitialFeasibleSolution();
+    greedyMatch();
 
-    public int[][] computeAssignments(float[][] matrix) {
-        return originalComputeAssignments(matrix);
+    int w = fetchUnmatchedWorker();
+    while (w < dim) {
+      initializePhase(w);
+      executePhase();
+      w = fetchUnmatchedWorker();
     }
-
-    public int[][] originalComputeAssignments(float[][] matrix) {
-        //assert matrix[0].length <= matrix.length : "Do not process matrices where cols > rows!";
-
-        initialCovRows = new boolean[matrix.length];
-        initialCovCols = new boolean[matrix[0].length];
-
-        // subtract minumum value from rows and columns to create lots of zeroes
-        // reduceMatrix(matrix);
-        reduceMatrixAndInitialize(matrix);
-
-        // non negative values are the index of the starred or primed zero in the row or column
-        starsByRow = new int[matrix.length];
-        Arrays.fill(starsByRow, -1);
-        starsByCol = new int[matrix[0].length];
-        Arrays.fill(starsByCol, -1);
-        int[] primesByRow = new int[matrix.length];
-        Arrays.fill(primesByRow, -1);
-
-        // star any zero that has no other starred zero in the same row or column
-        initStars(matrix);
-
-        coveredRows = initCoveredRows();
-        coveredCols = initCoveredCols();
-        coverColumnsOfStarredZeroes();
-
-        while (!allColsAreCovered()) {
-
-            int[] primedZero = primeSomeUncoveredZero(matrix, primesByRow);
-            boolean onlyInvalidEntries = false;
-
-            while (primedZero == null) {
-                // keep making more zeroes until we find something that we can
-                // prime (i.e. a zero that is uncovered)                
-                if (!makeMoreZeroes(matrix)) {
-                    onlyInvalidEntries = true;
-                    break;
-                }
-                primedZero = primeSomeUncoveredZero(matrix, primesByRow);
-                onlyInvalidEntries = false;
-            }
-            if (onlyInvalidEntries) {
-                break;
-            }
-            // check if there is a starred zero in the primed zero's row
-            int columnIndex = starsByRow[primedZero[0]];
-            if (-1 == columnIndex) {
-                // if not, then we need to increment the zeroes and start over
-                incrementSetOfStarredZeroes(primedZero, primesByRow);
-                Arrays.fill(primesByRow, -1);
-
-                coveredCols = initCoveredCols();
-                coveredRows = initCoveredRows();
-                coverColumnsOfStarredZeroes();
-            } else {
-
-                // cover the row of the primed zero and uncover the column of
-                // the starred zero in the same row
-                coverRow(primedZero[0], true);
-                coverColumn(columnIndex, false);
-            }
-        }
-
-        // now we should have assigned everything
-        // take the starred zeroes in each column as the correct assignments
-
-        int[][] retval = new int[matrix[0].length][];
-
-        for (int i = 0; i < matrix[0].length; i++) {
-            if (starsByCol[i] != -1) {
-                retval[i] = new int[]{starsByCol[i], i};
-            }
-            //else could happen if we covered an invalid col, because no valid entries
-            //-> no assignment possible
-        }
-        return retval;
+    int[] result = Arrays.copyOf(matchJobByWorker, rows);
+    for (w = 0; w < result.length; w++) {
+      if (result[w] >= cols) {
+        result[w] = -1;
+      }
     }
+    return result;
+  }
 
-    /**
-     * @param b true if you want to cover the specified row; false to uncover
-     */
-    private void coverRow(int row, boolean b) {
-        //TODO change initial array
-        //TODO change maxPossibleRows
-        if (b) {
-            coveredRows[row] = true;
-        } else {
-            assert false : "uncover of rows isn't used. Row:" + row;
+  /**
+   * Execute a single phase of the algorithm. A phase of the Hungarian algorithm
+   * consists of building a set of committed workers and a set of committed jobs
+   * from a root unmatched worker by following alternating unmatched/matched
+   * zero-slack edges. If an unmatched job is encountered, then an augmenting
+   * path has been found and the matching is grown. If the connected zero-slack
+   * edges have been exhausted, the labels of committed workers are increased by
+   * the minimum slack among committed workers and non-committed jobs to create
+   * more zero-slack edges (the labels of committed jobs are simultaneously
+   * decreased by the same amount in order to maintain a feasible labeling).
+   * <p>
+   * 
+   * The runtime of a single phase of the algorithm is O(n^2), where n is the
+   * dimension of the internal square cost matrix, since each edge is visited at
+   * most once and since increasing the labeling is accomplished in time O(n) by
+   * maintaining the minimum slack values among non-committed jobs. When a phase
+   * completes, the matching will have increased in size.
+   */
+  protected void executePhase() {
+    while (true) {
+      int minSlackWorker = -1, minSlackJob = -1;
+      double minSlackValue = Double.POSITIVE_INFINITY;
+      for (int j = 0; j < dim; j++) {
+        if (parentWorkerByCommittedJob[j] == -1) {
+          if (minSlackValueByJob[j] < minSlackValue) {
+            minSlackValue = minSlackValueByJob[j];
+            minSlackWorker = minSlackWorkerByJob[j];
+            minSlackJob = j;
+          }
         }
+      }
+      if (minSlackValue > 0) {
+        updateLabeling(minSlackValue);
+      }
+      parentWorkerByCommittedJob[minSlackJob] = minSlackWorker;
+      if (matchWorkerByJob[minSlackJob] == -1) {
+        /*
+         * An augmenting path has been found.
+         */
+        int committedJob = minSlackJob;
+        int parentWorker = parentWorkerByCommittedJob[committedJob];
+        while (true) {
+          int temp = matchJobByWorker[parentWorker];
+          match(parentWorker, committedJob);
+          committedJob = temp;
+          if (committedJob == -1) {
+            break;
+          }
+          parentWorker = parentWorkerByCommittedJob[committedJob];
+        }
+        return;
+      } else {
+        /*
+         * Update slack values since we increased the size of the committed
+         * workers set.
+         */
+        int worker = matchWorkerByJob[minSlackJob];
+        committedWorkers[worker] = true;
+        for (int j = 0; j < dim; j++) {
+          if (parentWorkerByCommittedJob[j] == -1) {
+            double slack = costMatrix[worker][j] - labelByWorker[worker]
+                - labelByJob[j];
+            if (minSlackValueByJob[j] > slack) {
+              minSlackValueByJob[j] = slack;
+              minSlackWorkerByJob[j] = worker;
+            }
+          }
+        }
+      }
     }
+  }
 
-    /**
-     * @param b true if you want to cover the specified columns; false to uncover
-     */
-    private void coverColumn(int column, boolean b) {
-        //TODO change initial array
-        //TODO change maxPossibleCols
-        if (b) {
-            coveredCols[column] = true;
-        } else {
-            assert !initialCovCols[column] :
-                    "We should uncover an invalid col:" + column;
-            coveredCols[column] = false;
-        }
+  /**
+   * 
+   * @return the first unmatched worker or {@link #dim} if none.
+   */
+  protected int fetchUnmatchedWorker() {
+    int w;
+    for (w = 0; w < dim; w++) {
+      if (matchJobByWorker[w] == -1) {
+        break;
+      }
     }
+    return w;
+  }
 
-    private boolean allColsAreCovered() {
-        for (boolean covered : coveredCols) {
-            if (!covered) {
-                return false;
-            }
+  /**
+   * Find a valid matching by greedily selecting among zero-cost matchings. This
+   * is a heuristic to jump-start the augmentation algorithm.
+   */
+  protected void greedyMatch() {
+    for (int w = 0; w < dim; w++) {
+      for (int j = 0; j < dim; j++) {
+        if (matchJobByWorker[w] == -1 && matchWorkerByJob[j] == -1
+            && costMatrix[w][j] - labelByWorker[w] - labelByJob[j] == 0) {
+          match(w, j);
         }
-        return true;
+      }
     }
+  }
 
-    private boolean[] initCoveredRows() {
-        //Arrays.fill(coveredRows, false);
-        boolean[] covRows = new boolean[initialCovRows.length];
-        System.arraycopy(initialCovRows, 0, covRows, 0, initialCovRows.length);
-        return covRows;
+  /**
+   * Initialize the next phase of the algorithm by clearing the committed
+   * workers and jobs sets and by initializing the slack arrays to the values
+   * corresponding to the specified root worker.
+   * 
+   * @param w
+   *          the worker at which to root the next phase.
+   */
+  protected void initializePhase(int w) {
+    Arrays.fill(committedWorkers, false);
+    Arrays.fill(parentWorkerByCommittedJob, -1);
+    committedWorkers[w] = true;
+    for (int j = 0; j < dim; j++) {
+      minSlackValueByJob[j] = costMatrix[w][j] - labelByWorker[w]
+          - labelByJob[j];
+      minSlackWorkerByJob[j] = w;
     }
+  }
 
-    private boolean[] initCoveredCols() {
-        //Arrays.fill(coveredCols, false);
-        boolean[] covCols = new boolean[initialCovCols.length];
-        System.arraycopy(initialCovCols, 0, covCols, 0, initialCovCols.length);
-        return covCols;
+  /**
+   * Helper method to record a matching between worker w and job j.
+   */
+  protected void match(int w, int j) {
+    matchJobByWorker[w] = j;
+    matchWorkerByJob[j] = w;
+  }
+
+  /**
+   * Reduce the cost matrix by subtracting the smallest element of each row from
+   * all elements of the row as well as the smallest element of each column from
+   * all elements of the column. Note that an optimal assignment for a reduced
+   * cost matrix is optimal for the original cost matrix.
+   */
+  protected void reduce() {
+    for (int w = 0; w < dim; w++) {
+      double min = Double.POSITIVE_INFINITY;
+      for (int j = 0; j < dim; j++) {
+        if (costMatrix[w][j] < min) {
+          min = costMatrix[w][j];
+        }
+      }
+      for (int j = 0; j < dim; j++) {
+        costMatrix[w][j] -= min;
+      }
     }
-
-    /**
-     * The first step of the hungarian algorithm is to find the smallest element
-     * in each row and subtract it's values from all elements in that row.
-     * <p/>
-     * Initializes initialCovRows, initialCovCols and maxPossibleAssignment.
-     */
-    private void reduceMatrixAndInitialize(float[][] matrix) {
-
-        // find the min value in each row
-        float minValInRow;
-        for (int row = 0; row < matrix.length; row++) {
-            minValInRow = Float.MAX_VALUE;
-            for (int col = 0; col < matrix[row].length; col++) {
-                if (minValInRow > matrix[row][col]) {
-                    minValInRow = matrix[row][col];
-                }
-            }
-
-            // subtract it from all values in the row            
-            if (minValInRow < Float.MAX_VALUE) {
-                for (int col = 0; col < matrix[row].length; col++) {
-                    if (matrix[row][col] < Float.MAX_VALUE) {
-                        matrix[row][col] -= minValInRow;
-                    }
-                }
-            } else {
-                initialCovRows[row] = true;
-            }
-        }
-
-        //do the same for the columns
-        float minValInCol = Float.MAX_VALUE;
-        for (int col = 0; col < matrix[0].length; col++) {
-            minValInCol = Float.MAX_VALUE;
-            for (int row = 0; row < matrix.length; row++) {
-                if (minValInCol > matrix[row][col]) {
-                    minValInCol = matrix[row][col];
-                }
-            }
-
-            if (minValInCol < Float.MAX_VALUE) {
-                for (int row = 0; row < matrix.length; row++) {
-                    if (matrix[row][col] < Float.MAX_VALUE) {
-                        matrix[row][col] -= minValInCol;
-                    }
-                }
-            } else {
-                initialCovCols[col] = true;
-            }
-        }
+    double[] min = new double[dim];
+    for (int j = 0; j < dim; j++) {
+      min[j] = Double.POSITIVE_INFINITY;
     }
-
-    /**
-     * Init starred zeroes. For each column find the first zero if there is no
-     * other starred zero in that row then star the zero, cover the column
-     * and row and go onto the next column
-     */
-    //create an initial matching
-    private void initStars(float costMatrix[][]) {
-
-        boolean[] rowHasStarredZero = new boolean[costMatrix.length];
-        boolean[] colHasStarredZero = new boolean[costMatrix[0].length];
-
-        for (int row = 0; row < costMatrix.length; row++) {
-            for (int col = 0; col < costMatrix[row].length; col++) {
-                if (0 == costMatrix[row][col] &&
-                        !rowHasStarredZero[row] &&
-                        !colHasStarredZero[col]) {
-                    starsByRow[row] = col;
-                    starsByCol[col] = row;
-                    rowHasStarredZero[row] = true;
-                    colHasStarredZero[col] = true;
-                    break; // move onto the next row
-                }
-            }
+    for (int w = 0; w < dim; w++) {
+      for (int j = 0; j < dim; j++) {
+        if (costMatrix[w][j] < min[j]) {
+          min[j] = costMatrix[w][j];
         }
+      }
     }
-
-    /**
-     * Just marke the columns covered for any column containing a starred zero
-     */
-    private void coverColumnsOfStarredZeroes() {
-        for (int col = 0; col < starsByCol.length; col++) {
-
-            assert !(coveredCols[col] && starsByCol[col] != -1) :
-                    "We shouldn't have covered a starred column; col:" + col;
-
-            if (starsByCol[col] != -1) {
-                coverColumn(col, true);
-            }
-        }
+    for (int w = 0; w < dim; w++) {
+      for (int j = 0; j < dim; j++) {
+        costMatrix[w][j] -= min[j];
+      }
     }
+  }
 
-    /**
-     * Finds some uncovered zero and primes it.
-     */
-    private int[] primeSomeUncoveredZero(float matrix[][], int[] primesByRow) {
-
-        // find an uncovered zero and prime it
-        for (int i = 0; i < matrix.length; i++) {
-            if (coveredRows[i]) {
-                continue;
-            }
-
-            for (int j = 0; j < matrix[i].length; j++) {
-                // if it's a zero and the column is not covered
-                if (0 == matrix[i][j] && !coveredCols[j]) {
-                    // ok this is an unstarred zero
-                    // prime it
-                    primesByRow[i] = j;
-                    return new int[]{i, j};
-                }
-            }
-        }
-        return null;
+  /**
+   * Update labels with the specified slack by adding the slack value for
+   * committed workers and by subtracting the slack value for committed jobs. In
+   * addition, update the minimum slack values appropriately.
+   */
+  protected void updateLabeling(double slack) {
+    for (int w = 0; w < dim; w++) {
+      if (committedWorkers[w]) {
+        labelByWorker[w] += slack;
+      }
     }
-
-    private void incrementSetOfStarredZeroes(
-            int[] unpairedZeroPrime,
-            int[] primesByRow) {
-
-        // build the alternating zero sequence (prime, star, prime, star, etc)
-        int i, j = unpairedZeroPrime[1];
-
-        Set<int[]> zeroSequence = new HashSet<int[]>();
-        zeroSequence.add(unpairedZeroPrime);
-        boolean paired = false;
-        do {
-            i = starsByCol[j];
-            paired = -1 != i && zeroSequence.add(new int[]{i, j});
-            if (!paired) {
-                break;
-            }
-
-            j = primesByRow[i];
-            paired = -1 != j && zeroSequence.add(new int[]{i, j});
-
-        } while (paired);
-
-
-        // unstar each starred zero of the sequence
-        // and star each primed zero of the sequence
-        for (int[] zero : zeroSequence) {
-            if (starsByCol[zero[1]] == zero[0]) {
-                starsByCol[zero[1]] = -1;
-                starsByRow[zero[0]] = -1;
-            }
-
-            if (primesByRow[zero[0]] == zero[1]) {
-                starsByRow[zero[0]] = zero[1];
-                starsByCol[zero[1]] = zero[0];
-            }
-        }
+    for (int j = 0; j < dim; j++) {
+      if (parentWorkerByCommittedJob[j] != -1) {
+        labelByJob[j] -= slack;
+      } else {
+        minSlackValueByJob[j] -= slack;
+      }
     }
-
-    /**
-     * @return true if making more zeroes was possible.
-     */
-    private boolean makeMoreZeroes(float[][] matrix) {
-
-        // find the minimum uncovered value
-        float minUncoveredValue = Float.MAX_VALUE;
-        for (int i = 0; i < matrix.length; i++) {
-            if (!coveredRows[i]) {
-                for (int j = 0; j < matrix[i].length; j++) {
-                    if (!coveredCols[j] && matrix[i][j] < minUncoveredValue) {
-                        minUncoveredValue = matrix[i][j];
-                    }
-                }
-            }
-        }
-
-        if (minUncoveredValue >= Float.MAX_VALUE) {
-            return false;
-        }
-
-        // add the min value to all covered rows
-        for (int row = 0; row < coveredRows.length; row++) {
-            if (coveredRows[row]) {
-                for (int col = 0; col < matrix[row].length; col++) {
-                    if (matrix[row][col] < Float.MAX_VALUE) {
-                        matrix[row][col] += minUncoveredValue;
-                    }
-                }
-            }
-        }
-
-        // subtract the min value from all uncovered columns
-        for (int col = 0; col < coveredCols.length; col++) {
-            if (!coveredCols[col]) {
-                for (int row = 0; row < matrix.length; row++) {
-                    if (matrix[row][col] < Float.MAX_VALUE) {
-                        matrix[row][col] -= minUncoveredValue;
-                    }
-                }
-            }
-        }
-
-        return true;
-    }
+  }
 }

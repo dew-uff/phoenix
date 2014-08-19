@@ -72,7 +72,13 @@ public class HungarianList extends Hungarian<Similar> {
         return diff;
     }
 
-    /**
+    public void printResult() {
+		for(int i=0; i < result.length; i++) {
+			System.out.println("["+result[i][0]+","+result[i][1]+"]");
+		}
+	}
+
+	/**
      * Método responsável para criar os resultado da comparação de todos os
      * subelementos do elemento comparado
      * @param pai 
@@ -95,8 +101,12 @@ public class HungarianList extends Hungarian<Similar> {
         for (int i = 0; i < result.length; i++) {
             int indiceElementoEsquerdo = result[i][0];
             int indiceElementoDireito = result[i][1];
+            
+            // means the there are more columns than rows
+            if (indiceElementoEsquerdo == -1 || indiceElementoDireito == -1) 
+            	continue;
 
-            float maiorSimilaridadeCorrente = originalMatrix[indiceElementoEsquerdo][indiceElementoDireito];
+            double maiorSimilaridadeCorrente = originalMatrix[indiceElementoEsquerdo][indiceElementoDireito];
 
             /**
              * esta condição é necessária para que só aparece na tela os
@@ -166,9 +176,9 @@ public class HungarianList extends Hungarian<Similar> {
      * Este método poderá ser apagado no futuro. É apenas um guia para ajudar no
      * desenvolvimento.
      */
-    private void visualizarMatrixSimilaridade() {
+    public void visualizarMatrixSimilaridade() {
         for (int i = 0; i < originalMatrix.length; i++) {
-            for (int j = 0; j < originalMatrix.length; j++) {
+            for (int j = 0; j < originalMatrix[0].length; j++) {
                 System.out.print("A[ " + i + " ][" + j + "] = " + originalMatrix[i][j] + "           ");
             }
             System.out.println("");

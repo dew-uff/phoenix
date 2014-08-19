@@ -15,7 +15,9 @@ public class LcsXML extends LongestCommonSubsequence<Similar> {
     public LcsXML(XML from, XML to) {
         this.x = SimilarNode.getElementNodes(from.getDocument().getChildNodes());
         this.y = SimilarNode.getElementNodes(to.getDocument().getChildNodes());
+        long timestamp = System.currentTimeMillis();
         this.diffXML = calculateDiff();
+        System.out.println("********* Processing time: " + (System.currentTimeMillis() - timestamp) + "ms.");
     }
 
     private XML calculateDiff() {

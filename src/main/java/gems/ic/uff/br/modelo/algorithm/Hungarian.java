@@ -5,10 +5,10 @@ import gems.ic.uff.br.modelo.similar.Similar;
 
 public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm {
 
-    protected float[][] originalMatrix;
+    protected double[][] originalMatrix;
     protected int[][] result;
     protected Diff[][] calculaSimilaridadeDosElementosCorrentes;
-    protected float similaridadeCalculada = -1;
+    protected double similaridadeCalculada = -1;
 
     private void calculateHungarian() {
         if (result == null) {
@@ -16,40 +16,39 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
             //Matriz normalizada com todos os valores encontrados para encontrar
             //o conjunto de elementos
             // com maior similaridade.
-            float[][] matrixNormalizada = normalizarMatrix(copiarMatrix(originalMatrix));
+            double[][] matrixNormalizada = normalizarMatrix(copiarMatrix(originalMatrix));
 
-            HungarianAlgorithm algorithm = new HungarianAlgorithm();
-            result = algorithm.computeAssignments(matrixNormalizada);
+            HungarianAlgorithm algorithm = new HungarianAlgorithm(matrixNormalizada);
+            int[] results = algorithm.execute();
+            result = new int[results.length][];
+            for(int i=0; i < results.length; i++) {
+            	result[i] = new int[]{i,results[i]}; 
+            }
         }
     }
 
-    private float[][] createSimilarityMatrix() {
-        int length = this.lengthOfX() > this.lengthOfY() ? this.lengthOfX() : this.lengthOfY();
-        float[][] matrix;
+    private double[][] createSimilarityMatrix() {
+        double[][] matrix;
 
-        matrix = new float[length][length];
-        calculaSimilaridadeDosElementosCorrentes = new Diff[length][length];
+        matrix = new double[lengthOfX()][lengthOfY()];
+        calculaSimilaridadeDosElementosCorrentes = new Diff[lengthOfX()][lengthOfY()];
         for (int i = 0; i < matrix.length; i++) {
             Diff diffCorrente = null;
             for (int j = 0; j < matrix[i].length; j++) {
-                if (i >= lengthOfX() || j >= lengthOfY()) {
-                    matrix[i][j] = 0;
-                } else {
-                    Similar valueX = valueOfX(i);
-                    Similar valueY = valueOfY(j);
+                Similar valueX = valueOfX(i);
+                Similar valueY = valueOfY(j);
 
-                    diffCorrente = valueX.similar(valueY);
-                    float similarity = diffCorrente.getSimilarity();
-                    matrix[i][j] = (similarity > similarThreshold) ? similarity : 0;
-                    calculaSimilaridadeDosElementosCorrentes[i][j] = diffCorrente;
-                }
+                diffCorrente = valueX.similar(valueY);
+                double similarity = diffCorrente.getSimilarity();
+                matrix[i][j] = (similarity > similarThreshold) ? similarity : 0;
+                calculaSimilaridadeDosElementosCorrentes[i][j] = diffCorrente;
             }
         }
         return matrix;
     }
 
-    private float[][] normalizarMatrix(float[][] matrix) {
-        float maiorElementoMatrix = 0;
+    private double[][] normalizarMatrix(double[][] matrix) {
+        double maiorElementoMatrix = 0;
 
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
@@ -68,11 +67,11 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
         return matrix;
     }
 
-    private float[][] copiarMatrix(float[][] originalMatrix) {
-        float[][] matrix = new float[originalMatrix.length][originalMatrix.length];
+    private double[][] copiarMatrix(double[][] originalMatrix) {
+        double[][] matrix = new double[originalMatrix.length][originalMatrix[0].length];
 
         for (int i = 0; i < originalMatrix.length; i++) {
-            for (int j = 0; j < originalMatrix.length; j++) {
+            for (int j = 0; j < originalMatrix[0].length; j++) {
                 matrix[i][j] = originalMatrix[i][j];
             }
         }
@@ -84,21 +83,26 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
     public float similaridade() {
         if (similaridadeCalculada == -1) {
         	calculateHungarian();
-            float similarity = 0;
+            double similarity = 0;
 
             for (int i = 0; i < result.length; i++) {
-                similarity += originalMatrix[result[i][0]][result[i][1]];
+            	int row = result[i][0];
+            	int col = result[i][1];
+            	if (row != -1 && col != -1) {
+            		similarity += originalMatrix[row][col];
+            	}
             }
-            similaridadeCalculada = similarity / result.length;
+            int length = lengthOfX()>lengthOfY()?lengthOfX():lengthOfY(); 
+            similaridadeCalculada = similarity / length;
         }
 
-        return similaridadeCalculada;
+        return (float) similaridadeCalculada;
     }
 
     //METODO OBSOLOTE. NAO IREI APAGAR AGORA POIS EXISTEM TESTES QUE AINDA O USAM
-    public float[][] resultWithSimilarity() {
+    public double[][] resultWithSimilarity() {
         calculateHungarian();
-        float[][] matrix = new float[result.length][3];
+        double[][] matrix = new double[result.length][3];
 
         for (int i = 0; i < result.length; i++) {
             matrix[i][0] = result[i][0];
