@@ -40,7 +40,7 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
 
                 diffCorrente = valueX.similar(valueY);
                 double similarity = diffCorrente.getSimilarity();
-                matrix[i][j] = (similarity > similarThreshold) ? similarity : 0;
+                matrix[i][j] = (similarity >= similarThreshold) ? similarity : 0;
                 calculaSimilaridadeDosElementosCorrentes[i][j] = diffCorrente;
             }
         }

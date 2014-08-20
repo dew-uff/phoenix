@@ -34,7 +34,7 @@ public abstract class AbstractAlgorithm<VALUE extends Similar> {
     }
 
     protected boolean isXYSimilar(int i, int j) {
-        return similar(valueOfXInternal(i), valueOfYInternal(j)) > similarThreshold;
+        return similar(valueOfXInternal(i), valueOfYInternal(j)) >= similarThreshold;
     }
 
     public abstract float similaridade();
