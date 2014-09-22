@@ -40,7 +40,7 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
 
                 diffCorrente = valueX.similar(valueY);
                 double similarity = diffCorrente.getSimilarity();
-                matrix[i][j] = (similarity >= similarThreshold) ? similarity : 0;
+                matrix[i][j] = similarity;
                 calculaSimilaridadeDosElementosCorrentes[i][j] = diffCorrente;
             }
         }
@@ -89,7 +89,10 @@ public abstract class Hungarian<VALUE extends Similar> extends AbstractAlgorithm
             	int row = result[i][0];
             	int col = result[i][1];
             	if (row != -1 && col != -1) {
-            		similarity += originalMatrix[row][col];
+            	    if (originalMatrix[row][col] < similarThreshold) {
+                        originalMatrix[row][col] = 0;
+            	    }
+                    similarity += originalMatrix[row][col];
             	}
             }
             int length = lengthOfX()>lengthOfY()?lengthOfX():lengthOfY(); 
