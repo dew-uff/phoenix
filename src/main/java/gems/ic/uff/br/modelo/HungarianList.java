@@ -209,7 +209,11 @@ public class HungarianList extends Hungarian<Similar> {
                         && isElementValue(sideElementValue)) {
 
                     Element valueNode = (Element) DiffXML.createNode("value");
-                    valueNode.setAttributeNS(Diff.NAMESPACE, Diff.DIFF_PREFIX + side, sideElementValue);
+                    String qname = Diff.DIFF_LEFT;
+                    if (side.equals("right")) {
+                        qname = Diff.DIFF_RIGHT;
+                    }
+                    valueNode.setAttributeNS(Diff.NAMESPACE, qname, sideElementValue);
                     x.getDiffNode().appendChild(valueNode);
 
                 } else if (filho.getNodeType() == Node.ELEMENT_NODE) {

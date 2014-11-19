@@ -1,7 +1,7 @@
 package gems.ic.uff.br.modelo;
 
 import gems.ic.uff.br.modelo.similar.SimilarNode;
-import java.util.Stack;
+
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -9,14 +9,18 @@ import org.w3c.dom.NodeList;
 public class Diff {
 
     public static final String NAMESPACE = "ic.uff.br/xmldiff";
-    public static final String DIFF_PREFIX = "diff:";
+
+    public static final String DIFF_LEFT = "diff:left";
+    public static final String DIFF_RIGHT = "diff:right";
+    public static final String DIFF_SIMILARITY = "diff:similarity";
+    public static final String DIFF_VALUE="diff:value";
     public static final String DIFF_SIDE = "diff:side";
+
     public static final String LEFT_PREFIX = "left:";
     public static final String RIGHT_PREFIX = "right:";
+
     private float similarity;
     private Node diffNode;
-    private SimilarNode leftNode;
-    private SimilarNode rightNode;
 
     //Esses construtores são POGs!
     public Diff(float similarity) {
@@ -25,19 +29,14 @@ public class Diff {
 
     public Diff(Node node) {
         this.diffNode = DiffXML.getInstance().getDocument().createElement(node.getNodeName());
-        this.leftNode = new SimilarNode(node);
     }
 
     public Diff(Node leftNode, Node rightNode) {
         this.diffNode = DiffXML.getInstance().getDocument().createElement(leftNode.getNodeName());
-        this.leftNode = new SimilarNode(leftNode);
-        this.rightNode = new SimilarNode(rightNode);
     }
 
     public Diff(SimilarNode left, SimilarNode right) {
         this.diffNode = DiffXML.getInstance().getDocument().createElement(left.getNode().getNodeName());
-        this.leftNode = left;
-        this.rightNode = right;
     }
 
     private boolean isElementValue(String valor) {
@@ -62,15 +61,15 @@ public class Diff {
                     if (isElementValue(leftElementValue)) {
 
                         Element valueNode = (Element) DiffXML.createNode("value");
-                        valueNode.setAttributeNS(NAMESPACE, DIFF_PREFIX + "left", leftElementValue);
+                        valueNode.setAttributeNS(NAMESPACE, DIFF_LEFT, leftElementValue);
                         if (isElementValue(rightElementValue)) {
-                            valueNode.setAttributeNS(NAMESPACE, DIFF_PREFIX + "right", rightElementValue);
+                            valueNode.setAttributeNS(NAMESPACE, DIFF_RIGHT, rightElementValue);
                         }
                         this.diffNode.appendChild(valueNode);
 
                     } else if (isElementValue(rightElementValue)) {
                         Element valueNode = (Element) DiffXML.createNode("value");
-                        valueNode.setAttributeNS(NAMESPACE, DIFF_PREFIX + "right", rightElementValue);
+                        valueNode.setAttributeNS(NAMESPACE, DIFF_RIGHT, rightElementValue);
 
                         this.diffNode.appendChild(valueNode);
                     }
@@ -135,7 +134,7 @@ public class Diff {
     }
 
     public void addSimilarityAttribute() {
-        ((Element) this.diffNode).setAttributeNS(NAMESPACE, DIFF_PREFIX + "similarity", Float.toString(similarity));
+        ((Element) this.diffNode).setAttributeNS(NAMESPACE, DIFF_SIMILARITY, Float.toString(similarity));
     }
 
     public void addSideAttribute(String nodeSide) {

@@ -7,7 +7,9 @@ import gems.ic.uff.br.settings.SettingsHelper;
 public class PhoenixCLI {
     
     private static String xmlfilepath1 = null, 
-                          xmlfilepath2 = null;
+                          xmlfilepath2 = null,
+                          outputFile = null;
+    
     
     private static float threshold = 0.7f;
     
@@ -110,6 +112,14 @@ public class PhoenixCLI {
                     showErrorAndExit("Wrong value for option 'AutomaticWeightAllocation': must be 'true' or 'false'!");
                 }
                 break;
+
+            case 'o':
+            case 'O':
+                outputFile = arg.substring(2);
+                if (outputFile == null || outputFile.length() == 0) {
+                    showErrorAndExit("Wrong value for option 'OutputFile'");
+                }
+                break;
                 
             default:
                 showErrorAndExit("Invalid Option: " + arg);
@@ -125,13 +135,14 @@ public class PhoenixCLI {
         System.out.println("\t-nVALUE : Name similarity Required. VALUE must be a 'true' or 'false'. (Default: true)");
         System.out.println("\t-iVALUE : Ignore trivial similarities. VALUE must be a 'true' or 'false'. (Default: true)");
         System.out.println("\t-nVALUE : Automatic weight allocation. VALUE must be a 'true' or 'false'. (Default: true)");
+        System.out.println("\t-oFILE  : Output to a file instead of standard output.");
         System.out.println();
         System.exit(0);
     }
 
     private static void showUsage() {
         System.out.println("\nUsage: PhoenixCLI [options] <xmlfile1> <xmlfile2>");
-        System.out.println("\tUse '-h' for options listing.");
+        System.out.println("\tUse '-h' for options listing.\n");
         System.exit(0);
     }
     
