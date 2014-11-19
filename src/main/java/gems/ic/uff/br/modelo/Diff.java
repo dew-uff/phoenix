@@ -8,15 +8,15 @@ import org.w3c.dom.NodeList;
 
 public class Diff {
 
-    public static final String NAMESPACE = "ic.uff.br/xmldiff";
+    public static final String DIFF_NAMESPACE = "ic.uff.br/xmldiff";
+    public static final String DIFF_NAMESPACE_LEFT = "ic.uff.br/xmldiff/left";
+    public static final String DIFF_NAMESPACE_RIGHT = "ic.uff.br/xmldiff/right";
     public static final String DIFF_PREFIX = "diff:";
     public static final String DIFF_SIDE = "diff:side";
     public static final String LEFT_PREFIX = "left:";
     public static final String RIGHT_PREFIX = "right:";
     private float similarity;
     private Node diffNode;
-    private SimilarNode leftNode;
-    private SimilarNode rightNode;
 
     //Esses construtores são POGs!
     public Diff(float similarity) {
@@ -25,19 +25,14 @@ public class Diff {
 
     public Diff(Node node) {
         this.diffNode = DiffXML.getInstance().getDocument().createElement(node.getNodeName());
-        this.leftNode = new SimilarNode(node);
     }
 
     public Diff(Node leftNode, Node rightNode) {
         this.diffNode = DiffXML.getInstance().getDocument().createElement(leftNode.getNodeName());
-        this.leftNode = new SimilarNode(leftNode);
-        this.rightNode = new SimilarNode(rightNode);
     }
 
     public Diff(SimilarNode left, SimilarNode right) {
         this.diffNode = DiffXML.getInstance().getDocument().createElement(left.getNode().getNodeName());
-        this.leftNode = left;
-        this.rightNode = right;
     }
 
     private boolean isElementValue(String valor) {
@@ -62,15 +57,15 @@ public class Diff {
                     if (isElementValue(leftElementValue)) {
 
                         Element valueNode = (Element) DiffXML.createNode("value");
-                        valueNode.setAttributeNS(NAMESPACE, DIFF_PREFIX + "left", leftElementValue);
+                        valueNode.setAttributeNS(DIFF_NAMESPACE, DIFF_PREFIX + "left", leftElementValue);
                         if (isElementValue(rightElementValue)) {
-                            valueNode.setAttributeNS(NAMESPACE, DIFF_PREFIX + "right", rightElementValue);
+                            valueNode.setAttributeNS(DIFF_NAMESPACE, DIFF_PREFIX + "right", rightElementValue);
                         }
                         this.diffNode.appendChild(valueNode);
 
                     } else if (isElementValue(rightElementValue)) {
                         Element valueNode = (Element) DiffXML.createNode("value");
-                        valueNode.setAttributeNS(NAMESPACE, DIFF_PREFIX + "right", rightElementValue);
+                        valueNode.setAttributeNS(DIFF_NAMESPACE, DIFF_PREFIX + "right", rightElementValue);
 
                         this.diffNode.appendChild(valueNode);
                     }
@@ -118,28 +113,28 @@ public class Diff {
 
             // *** fim ***    
             if (leftElementAttributeValue.isEmpty() || rightElementAttributeValue.isEmpty()) {
-                if (leftElementAttributeValue.isEmpty()) {
-                    ((Element) this.diffNode).setAttributeNS(NAMESPACE, LEFT_PREFIX + attributeName, leftElementAttributeValue);
+                if (!leftElementAttributeValue.isEmpty()) {
+                    ((Element) this.diffNode).setAttributeNS(DIFF_NAMESPACE_LEFT, LEFT_PREFIX + attributeName, leftElementAttributeValue);
                 } else {
-                    ((Element) this.diffNode).setAttributeNS(NAMESPACE, RIGHT_PREFIX + attributeName, rightElementAttributeValue);
+                    ((Element) this.diffNode).setAttributeNS(DIFF_NAMESPACE_RIGHT, RIGHT_PREFIX + attributeName, rightElementAttributeValue);
                 }
             } else {
                 if (leftElementAttributeValue.equals(rightElementAttributeValue)) {
                     ((Element) this.diffNode).setAttribute(attributeName, leftElementAttributeValue);
                 } else {
-                    ((Element) this.diffNode).setAttributeNS(NAMESPACE, LEFT_PREFIX + attributeName, leftElementAttributeValue);
-                    ((Element) this.diffNode).setAttributeNS(NAMESPACE, RIGHT_PREFIX + attributeName, rightElementAttributeValue);
+                    ((Element) this.diffNode).setAttributeNS(DIFF_NAMESPACE_LEFT, LEFT_PREFIX + attributeName, leftElementAttributeValue);
+                    ((Element) this.diffNode).setAttributeNS(DIFF_NAMESPACE_RIGHT, RIGHT_PREFIX + attributeName, rightElementAttributeValue);
                 }
             }
         }
     }
 
     public void addSimilarityAttribute() {
-        ((Element) this.diffNode).setAttributeNS(NAMESPACE, DIFF_PREFIX + "similarity", Float.toString(similarity));
+        ((Element) this.diffNode).setAttributeNS(DIFF_NAMESPACE, DIFF_PREFIX + "similarity", Float.toString(similarity));
     }
 
     public void addSideAttribute(String nodeSide) {
-        ((Element) this.diffNode).setAttributeNS(NAMESPACE, DIFF_SIDE, nodeSide);
+        ((Element) this.diffNode).setAttributeNS(DIFF_NAMESPACE, DIFF_SIDE, nodeSide);
     }
 
     /**
@@ -150,7 +145,7 @@ public class Diff {
      * @param atributo
      */
     public void addAtribute(Node atributo) {
-        ((Element) this.diffNode).setAttributeNS(NAMESPACE, atributo.getNodeName(), atributo.getNodeValue());
+        ((Element) this.diffNode).setAttributeNS(DIFF_NAMESPACE, atributo.getNodeName(), atributo.getNodeValue());
     }
 
     public void addChildren(Diff anotherDiff) {

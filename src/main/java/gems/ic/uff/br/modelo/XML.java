@@ -81,9 +81,9 @@ public class XML {
         
         //Adicionando os namespaces.
         if (root != null) {
-            root.setAttributeNS(ENDERECO_NAMESPACE, "xmlns:diff", "ic.uff.br/xmldiff");
-            root.setAttributeNS(ENDERECO_NAMESPACE, "xmlns:left", "ic.uff.br/xmldiff");
-            root.setAttributeNS(ENDERECO_NAMESPACE, "xmlns:right", "ic.uff.br/xmldiff");
+            root.setAttributeNS(ENDERECO_NAMESPACE, "xmlns:diff", Diff.DIFF_NAMESPACE);
+            root.setAttributeNS(ENDERECO_NAMESPACE, "xmlns:left", Diff.DIFF_NAMESPACE_LEFT);
+            root.setAttributeNS(ENDERECO_NAMESPACE, "xmlns:right", Diff.DIFF_NAMESPACE_RIGHT);
         }
 
         StringWriter writer = new StringWriter();

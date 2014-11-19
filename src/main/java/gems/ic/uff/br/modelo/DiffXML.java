@@ -45,6 +45,6 @@ public class DiffXML {
     }
 
     public static Node createNode(String nodeName) {
-        return getInstance().getDocument().createElementNS(Diff.NAMESPACE, Diff.DIFF_PREFIX + nodeName);
+        return getInstance().getDocument().createElementNS(Diff.DIFF_NAMESPACE, Diff.DIFF_PREFIX + nodeName);
     }
 }
