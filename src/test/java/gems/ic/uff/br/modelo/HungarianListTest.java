@@ -1,18 +1,23 @@
 package gems.ic.uff.br.modelo;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import gems.ic.uff.br.modelo.similar.Similar;
 import gems.ic.uff.br.modelo.similar.SimilarNode;
+import gems.ic.uff.br.settings.SettingsHelper;
 
+import java.io.File;
 import java.io.StringReader;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.xml.sax.InputSource;
-
-import static org.junit.Assert.*;
-import org.junit.Before;
 
 public class HungarianListTest {
 
@@ -20,6 +25,27 @@ public class HungarianListTest {
     private List<Similar> otherSimilarList;
 
     public HungarianListTest() {
+    }
+    
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        SettingsHelper.setNameSimilarityRequired(true);
+        SettingsHelper.setIgnoreTrivialSimilarities(false);
+        SettingsHelper.setAutomaticWeightAllocation(false);
+        SettingsHelper.setNameSimilarityWeight(0.25f);
+        SettingsHelper.setAttributeSimilarityWeight(0.25f);
+        SettingsHelper.setChildrenSimilarityWeight(0.25f);
+        SettingsHelper.setValueSimilarityWeight(0.25f);
+    }
+    
+    @AfterClass
+    public static void cleanAfterClass() {
+        // make sure settings file does not exist
+        File file = new File(SettingsHelper.SETTINGS_FILEPATH);
+        if (file.exists()) {
+            file.delete();
+        }
+        SettingsHelper.dispose();
     }
 
     @Before

@@ -1,18 +1,43 @@
 package gems.ic.uff.br.modelo.similar;
 
+import static org.junit.Assert.assertEquals;
 import gems.ic.uff.br.modelo.Diff;
-import org.xml.sax.InputSource;
+import gems.ic.uff.br.settings.SettingsHelper;
 
+import java.io.File;
 import java.io.StringReader;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
+import org.xml.sax.InputSource;
 
 public class SimilarNodeTest {
 
     public SimilarNodeTest() {
+    }
+    
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        SettingsHelper.setNameSimilarityRequired(true);
+        SettingsHelper.setIgnoreTrivialSimilarities(false);
+        SettingsHelper.setAutomaticWeightAllocation(false);
+        SettingsHelper.setNameSimilarityWeight(0.25f);
+        SettingsHelper.setAttributeSimilarityWeight(0.25f);
+        SettingsHelper.setChildrenSimilarityWeight(0.25f);
+        SettingsHelper.setValueSimilarityWeight(0.25f);
+    }
+    
+    @AfterClass
+    public static void cleanAfterClass() {
+        // make sure settings file does not exist
+        File file = new File(SettingsHelper.SETTINGS_FILEPATH);
+        if (file.exists()) {
+            file.delete();
+        }
+        SettingsHelper.dispose();
     }
 
     public SimilarNode createSimilarNode(String xml) {
