@@ -7,8 +7,9 @@ import gems.ic.uff.br.settings.SettingsHelper;
 public class PhoenixCLI {
     
     private static String xmlfilepath1 = null, 
-                          xmlfilepath2 = null,
-                          outputFile = null;
+                          xmlfilepath2 = null;
+                          // TODO to be implemented
+                          //outputFile = null;
     
     
     private static float threshold = 0.7f;
@@ -112,7 +113,7 @@ public class PhoenixCLI {
                     showErrorAndExit("Wrong value for option 'AutomaticWeightAllocation': must be 'true' or 'false'!");
                 }
                 break;
-
+/*          TODO to be implemented
             case 'o':
             case 'O':
                 outputFile = arg.substring(2);
@@ -120,7 +121,7 @@ public class PhoenixCLI {
                     showErrorAndExit("Wrong value for option 'OutputFile'");
                 }
                 break;
-                
+*/
             default:
                 showErrorAndExit("Invalid Option: " + arg);
                 
@@ -135,7 +136,8 @@ public class PhoenixCLI {
         System.out.println("\t-nVALUE : Name similarity Required. VALUE must be a 'true' or 'false'. (Default: true)");
         System.out.println("\t-iVALUE : Ignore trivial similarities. VALUE must be a 'true' or 'false'. (Default: true)");
         System.out.println("\t-nVALUE : Automatic weight allocation. VALUE must be a 'true' or 'false'. (Default: true)");
-        System.out.println("\t-oFILE  : Output to a file instead of standard output.");
+        // TODO to be implemented
+        //System.out.println("\t-oFILE  : Output to a file instead of standard output.");
         System.out.println();
         System.exit(0);
     }
