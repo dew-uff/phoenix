@@ -54,11 +54,10 @@ public class ElementSimilarity {
 
         elementNameSimilarity = elementsNameSimilarity(e1, e2);
 
-        boolean nameSimilarityRequired = SettingsHelper.getNameSimilarityRequired();
-
-        // only continue if necessary
-        if ((nameSimilarityRequired && elementNameSimilarity == MAXIMUM_SIMILARITY) 
-                || (!nameSimilarityRequired)) {
+        // skip means the elements names are equal.
+        // it is set with this value to later decide whether this component should
+        // be considered or not, depending on the ignoreTrivial parameter.
+        if (elementNameSimilarity == SKIP_SIMILARITY) {
 
             childrenSimilarity = elementsChildrenSimilarity(e1, e2);
             
@@ -110,7 +109,7 @@ public class ElementSimilarity {
         String name1 = e1.getNodeName();
         String name2 = e2.getNodeName();
         
-        return LcsSimilarity.calculateStringSimilarity(name1,name2);
+        return (name1.equals(name2))?SKIP_SIMILARITY:0.0;
     }
     
     private static double elementsValueSimilarity(Element e1, Element e2) throws ComparisonException {
@@ -249,7 +248,6 @@ public class ElementSimilarity {
         double similarity = 0.0;
 
         boolean ignoreTrivial = SettingsHelper.getIgnoreTrivialSimilarities();
-        boolean nameSimilarityRequired = SettingsHelper.getNameSimilarityRequired();
 
         double nameWeight = 1;
         double valueWeight = 1;
@@ -262,11 +260,16 @@ public class ElementSimilarity {
             attributeWeight = SettingsHelper.getAttributeSimilarityWeight();
             childrenWeight = SettingsHelper.getChildrenSimilarityWeight();
         }
-            
-        if (nameSimilarityRequired) {
-            nameWeight = 0;
+        
+        if (elementNameSimilarity == SKIP_SIMILARITY) {
+            if (ignoreTrivial) {
+                nameWeight = 0;
+            }
+            else {
+                elementNameSimilarity = MAXIMUM_SIMILARITY;
+            }
         }
-
+            
         if (attributeSimilarity == SKIP_SIMILARITY) {
             if (ignoreTrivial) {
                 attributeWeight = 0;

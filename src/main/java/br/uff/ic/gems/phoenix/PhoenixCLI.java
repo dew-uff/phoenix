@@ -13,8 +13,7 @@ public class PhoenixCLI {
     
     private static double threshold = 0.7f;
     
-    private static boolean nameRequired = true,
-                           ignoreTrivial = true,
+    private static boolean ignoreTrivial = true,
                            automaticAllocation = true;
 
     public static void main(String[] args) {
@@ -26,7 +25,6 @@ public class PhoenixCLI {
         
         processArguments(args);
         
-        SettingsHelper.setNameSimilarityRequired(nameRequired);
         SettingsHelper.setIgnoreTrivialSimilarities(ignoreTrivial);
         SettingsHelper.setAutomaticWeightAllocation(automaticAllocation);
         SettingsHelper.setSimilarityThreshold(threshold);
@@ -65,8 +63,7 @@ public class PhoenixCLI {
 
     private static void logInfo() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Phoenix parameters: nameSimilarityRequired=" + SettingsHelper.getNameSimilarityRequired());
-        sb.append(" | ignoreTrivial=" + SettingsHelper.getIgnoreTrivialSimilarities());
+        sb.append("Phoenix parameters: ignoreTrivial=" + SettingsHelper.getIgnoreTrivialSimilarities());
         sb.append(" | similarityThreshold=" + SettingsHelper.getSimilarityThreshold());
         sb.append(" | automaticWeightAllocation=" + SettingsHelper.getAutomaticWeightAllocation());
         if (!SettingsHelper.getAutomaticWeightAllocation()) {
@@ -114,17 +111,6 @@ public class PhoenixCLI {
                 }
                 catch (Exception e) {
                     showErrorAndExit("Wrong value for option 'Threshold': must be a number in [0..1] range!");
-                }
-                break;
-                
-            case 'n':
-            case 'N':
-                try {
-                    String value = arg.split("=")[1];
-                    nameRequired = Boolean.parseBoolean(value);
-                }
-                catch (Exception e) {
-                    showErrorAndExit("Wrong value for option 'NameSimilarityRequired': must be 'true' or 'false'!");
                 }
                 break;
             

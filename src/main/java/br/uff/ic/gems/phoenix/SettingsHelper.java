@@ -26,7 +26,6 @@ public class SettingsHelper {
     public static final String ATTRIBUTE_WEIGHT_LABEL = "AttributeSimilarityWeight";
     public static final String VALUE_WEIGHT_LABEL = "ValueSimilarityWeight";
     public static final String CHILDREN_WEIGHT_LABEL = "ChildrenSimilarityWeight";
-    public static final String NAME_SIMILARITY_REQUIRED_LABEL = "NameSimilarityRequired";
     public static final String AUTOMATIC_WEIGHT_ALLOCATION_LABEL = "AutomaticWeightAllocation";
     public static final String IGNORE_TRIVIAL_SIMILARITIES_LABEL = "IgnoreTrivialSimilarities";
     public static final String THRESHOLD_LABEL = "SimilarityThreshold";
@@ -36,7 +35,6 @@ public class SettingsHelper {
     public static final double ATTRIBUTE__WEIGHT_HARD_DEFAULT = 0.25;
     public static final double VALUE_WEIGHT_HARD_DEFAULT = 0.25;
     public static final double CHILDREN_WEIGHT_HARD_DEFAULT = 0.25;
-    public static final boolean NAME_SIMILARITY_REQUIRED_HARD_DEFAULT = false;
     public static final boolean AUTOMATIC_WEIGHT_ALLOCATION_HARD_DEFAULT = false;
     public static final boolean IGNORE_TRIVIAL_SIMILARITIES_HARD_DEFAULT = false;
     public static final double THRESHOLD_HARD_DEFAULT = 0.0;
@@ -85,21 +83,6 @@ public class SettingsHelper {
      */
     static public void dispose() {
         properties = null;
-    }
-
-    /**
-     * The value for the Name Similarity Required setting
-     * 
-     * @return true if setting is turned on, false otherwise
-     */
-    public static boolean getNameSimilarityRequired() {
-        if (properties == null) {
-            init();
-        }
-        String value = properties
-                .getProperty(NAME_SIMILARITY_REQUIRED_LABEL);
-        return (value != null) ? Boolean.parseBoolean(value)
-                : NAME_SIMILARITY_REQUIRED_HARD_DEFAULT;
     }
 
     /**
@@ -200,20 +183,6 @@ public class SettingsHelper {
         String value = properties.getProperty(THRESHOLD_LABEL);
         return (value != null) ? Double.parseDouble(value)
                 : THRESHOLD_HARD_DEFAULT;
-    }
-
-    /**
-     * Set value for the Name Similarity Required setting
-     * 
-     * @param value the value for the setting
-     */
-    public static void setNameSimilarityRequired(boolean value) {
-        if (properties == null) {
-            init();
-        }
-        properties.setProperty(NAME_SIMILARITY_REQUIRED_LABEL,
-                (new Boolean(value)).toString());
-        save();
     }
 
     /**
@@ -321,14 +290,14 @@ public class SettingsHelper {
      */
     public static boolean areSettingsOk() {
 
-        boolean nameSimilarityRequired = getNameSimilarityRequired();
+        boolean automaticAllocation = getAutomaticWeightAllocation();
         double nameWeight = getNameSimilarityWeight();
         double valueWeight = getValueSimilarityWeight();
         double attributeWeight = getAttributeSimilarityWeight();
         double childrenWeight = getChildrenSimilarityWeight();
 
-        if (nameSimilarityRequired) {
-            return (valueWeight + attributeWeight + childrenWeight) == 1.0;
+        if (automaticAllocation) {
+            return true;
         } else {
             return (nameWeight + valueWeight + attributeWeight + childrenWeight) == 1.0;
         }
