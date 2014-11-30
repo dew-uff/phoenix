@@ -30,12 +30,15 @@ public class ElementSimilarity {
     private static float SKIP_SIMILARITY = -1.0f;
 
     private double similarity = 0.0;
+    private boolean ignoreThreshold;
     
     private AttributeDiffNode[] attributes;
     private ElementDiffNode[] children;
     
-    public ElementSimilarity() {
+    public ElementSimilarity(boolean ignoreThreshold) {
+        this.ignoreThreshold = ignoreThreshold;
     }
+
     
     public ElementSimilarityResult compare(Element e1, Element e2) throws ComparisonException {
         
@@ -83,7 +86,7 @@ public class ElementSimilarity {
         
         ElementSimilarityResult esr = null;
         
-        if (similarity < threshold) {
+        if (similarity == 0.0 || (!ignoreThreshold && similarity < threshold)) {
             // elements are dissimilar
             OneSideElementDiffNode left = new OneSideElementDiffNode(e1,DiffNode.SIDE_LEFT);
             OneSideElementDiffNode right = new OneSideElementDiffNode(e2, DiffNode.SIDE_RIGHT);

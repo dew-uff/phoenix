@@ -74,7 +74,7 @@ public class HungarianSimilarity {
             for (int j = 0; j < matrix[i].length; j++) {
                 Element e1 = (Element) nodes1.get(i);
                 Element e2 = (Element) nodes2.get(j);
-                ElementSimilarity es = new ElementSimilarity();
+                ElementSimilarity es = new ElementSimilarity(false);
                 tempResultMatrix[i][j] = es.compare(e1, e2);
                 // get the real similarity even if it does not reach threshold
                 // this is to guarantee HungarianAlgorithm results

@@ -29,6 +29,7 @@ public class SettingsHelper {
     public static final String AUTOMATIC_WEIGHT_ALLOCATION_LABEL = "AutomaticWeightAllocation";
     public static final String IGNORE_TRIVIAL_SIMILARITIES_LABEL = "IgnoreTrivialSimilarities";
     public static final String THRESHOLD_LABEL = "SimilarityThreshold";
+    public static final String IGNORE_THRESHOLD_ON_ROOT = "RootIgnoreThreshold";
 
     // default values for each setting
     public static final double NAME_WEIGHT_HARD_DEFAULT = 0.25;
@@ -38,6 +39,7 @@ public class SettingsHelper {
     public static final boolean AUTOMATIC_WEIGHT_ALLOCATION_HARD_DEFAULT = false;
     public static final boolean IGNORE_TRIVIAL_SIMILARITIES_HARD_DEFAULT = false;
     public static final double THRESHOLD_HARD_DEFAULT = 0.0;
+    public static final boolean IGNORE_THRESHOLD_ON_ROOT_HARD_DEFAULT = true;
 
     // this singleton instance
     private static Properties properties = null;
@@ -184,6 +186,21 @@ public class SettingsHelper {
         return (value != null) ? Double.parseDouble(value)
                 : THRESHOLD_HARD_DEFAULT;
     }
+    
+    /**
+     * The value for the Ignore Threshold on Root setting
+     * 
+     * @return true if setting is turned on, false otherwise
+     */
+    public static boolean getIgnoreThresholdOnRoot() {
+        if (properties == null) {
+            init();
+        }
+        String value = properties
+                .getProperty(IGNORE_THRESHOLD_ON_ROOT);
+        return (value != null) ? Boolean.parseBoolean(value)
+                : IGNORE_THRESHOLD_ON_ROOT_HARD_DEFAULT;
+    }
 
     /**
      * Set value for the Automatic Weight Allocation setting
@@ -280,6 +297,20 @@ public class SettingsHelper {
         }
         properties.setProperty(THRESHOLD_LABEL,
                 (new Float(value)).toString());
+        save();
+    }
+    
+    /**
+     * Set value for the Ignore Threshold on Root setting
+     * 
+     * @param value the value for the setting
+     */
+    public static void setIgnoreThresholdOnRoot(boolean value) {
+        if (properties == null) {
+            init();
+        }
+        properties.setProperty(IGNORE_THRESHOLD_ON_ROOT,
+                (new Boolean(value)).toString());
         save();
     }
     

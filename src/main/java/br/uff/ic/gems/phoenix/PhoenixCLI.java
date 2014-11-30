@@ -14,7 +14,8 @@ public class PhoenixCLI {
     private static double threshold = 0.7f;
     
     private static boolean ignoreTrivial = true,
-                           automaticAllocation = true;
+                           automaticAllocation = true,
+                           ignoreThresholdOnRoot = true;
 
     public static void main(String[] args) {
         
@@ -28,6 +29,7 @@ public class PhoenixCLI {
         SettingsHelper.setIgnoreTrivialSimilarities(ignoreTrivial);
         SettingsHelper.setAutomaticWeightAllocation(automaticAllocation);
         SettingsHelper.setSimilarityThreshold(threshold);
+        SettingsHelper.setIgnoreThresholdOnRoot(ignoreThresholdOnRoot);
         
         if (xmlfilepath1 == null || xmlfilepath2 == null) {
             showErrorAndExit("Missing argument(s)");
@@ -65,6 +67,7 @@ public class PhoenixCLI {
         StringBuilder sb = new StringBuilder();
         sb.append("Phoenix parameters: ignoreTrivial=" + SettingsHelper.getIgnoreTrivialSimilarities());
         sb.append(" | similarityThreshold=" + SettingsHelper.getSimilarityThreshold());
+        sb.append(" | ignoreThresholdOnRoot=" + SettingsHelper.getIgnoreThresholdOnRoot());
         sb.append(" | automaticWeightAllocation=" + SettingsHelper.getAutomaticWeightAllocation());
         if (!SettingsHelper.getAutomaticWeightAllocation()) {
             sb.append(" | nameWeight=" + SettingsHelper.getNameSimilarityWeight());
@@ -135,6 +138,17 @@ public class PhoenixCLI {
                     showErrorAndExit("Wrong value for option 'AutomaticWeightAllocation': must be 'true' or 'false'!");
                 }
                 break;
+
+            case 'r':
+            case 'R':
+                try {
+                    String value = arg.split("=")[1];
+                    ignoreThresholdOnRoot = Boolean.parseBoolean(value);
+                }
+                catch (Exception e) {
+                    showErrorAndExit("Wrong value for option 'RootIgnoreThreshold': must be 'true' or 'false'!");
+                }
+                break;
                 
             default:
                 showErrorAndExit("Invalid Option: " + arg);
@@ -150,6 +164,7 @@ public class PhoenixCLI {
         System.out.println("\t-n=VALUE : Name similarity Required. VALUE must be a 'true' or 'false'. (Default: true)");
         System.out.println("\t-i=VALUE : Ignore trivial similarities. VALUE must be a 'true' or 'false'. (Default: true)");
         System.out.println("\t-n=VALUE : Automatic weight allocation. VALUE must be a 'true' or 'false'. (Default: true)");
+        System.out.println("\t-r=VALUE : Ignore Threshold on Root. VALUE must be a 'true' or 'false'. (Default: true)");
         System.out.println();
         System.exit(0);
     }

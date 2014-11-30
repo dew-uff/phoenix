@@ -72,7 +72,7 @@ public class PhoenixDiffCalculator {
         // compare diff roots
         Element e1 = document1.getDocumentElement();
         Element e2 = document2.getDocumentElement();
-        ElementSimilarity ec = new ElementSimilarity();
+        ElementSimilarity ec = new ElementSimilarity(SettingsHelper.getIgnoreThresholdOnRoot());
         ElementSimilarityResult result = ec.compare(e1, e2);
 
         LOG.info("Time to compare the documents: " + (System.currentTimeMillis() - timestamp) + " ms.");
