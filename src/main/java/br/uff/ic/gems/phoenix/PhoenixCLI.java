@@ -7,15 +7,18 @@ import br.uff.ic.gems.phoenix.exception.PhoenixDiffException;
 public class PhoenixCLI {
     
     private static Logger LOG = Logger.getLogger(PhoenixCLI.class.getName());
-    
+
     private static String xmlfilepath1 = null, 
                           xmlfilepath2 = null;
-    
+
     private static double threshold = 0.7f;
     
     private static boolean ignoreTrivial = true,
                            automaticAllocation = true,
-                           ignoreThresholdOnRoot = true;
+                           ignoreThresholdOnRoot = true,
+                           allowDataTypeSimilarity = true;
+    
+    private static String dateFormat = "eng";
 
     public static void main(String[] args) {
         
@@ -30,6 +33,8 @@ public class PhoenixCLI {
         SettingsHelper.setAutomaticWeightAllocation(automaticAllocation);
         SettingsHelper.setSimilarityThreshold(threshold);
         SettingsHelper.setIgnoreThresholdOnRoot(ignoreThresholdOnRoot);
+        SettingsHelper.setAllowDataTypeSimilarity(allowDataTypeSimilarity);
+        SettingsHelper.setDateFormat(dateFormat);
         
         if (xmlfilepath1 == null || xmlfilepath2 == null) {
             showErrorAndExit("Missing argument(s)");
@@ -69,6 +74,9 @@ public class PhoenixCLI {
         sb.append(" | similarityThreshold=" + SettingsHelper.getSimilarityThreshold());
         sb.append(" | ignoreThresholdOnRoot=" + SettingsHelper.getIgnoreThresholdOnRoot());
         sb.append(" | automaticWeightAllocation=" + SettingsHelper.getAutomaticWeightAllocation());
+        sb.append(" | allowDataTypeSimilarity=" + SettingsHelper.getAllowDataTypeSimilarity());
+        if(SettingsHelper.getAllowDataTypeSimilarity())
+            sb.append(" | dateFormat=" + SettingsHelper.getDateFormat());
         if (!SettingsHelper.getAutomaticWeightAllocation()) {
             sb.append(" | nameWeight=" + SettingsHelper.getNameSimilarityWeight());
             sb.append(" | valueWeight=" + SettingsHelper.getValueSimilarityWeight());
@@ -139,6 +147,29 @@ public class PhoenixCLI {
                 }
                 break;
 
+            case 's':
+            case 'S':
+                try {
+                    String value = arg.split("=")[1];
+                    allowDataTypeSimilarity = Boolean.parseBoolean(value);
+                }
+                catch (Exception e) {
+                    showErrorAndExit("Wrong value for option 'Allow Data Type Similarity': must be 'true' or 'false'!");
+                }
+                break;
+                
+            case 'f':
+            case 'F':
+                try {
+                    dateFormat = arg.split("=")[1];
+                    if( !( dateFormat.equalsIgnoreCase("pt") || dateFormat.equalsIgnoreCase("eng")) )
+                        throw new Exception();
+                }
+                catch (Exception e) {
+                    showErrorAndExit("Wrong value for option 'Date format': must be 'eng' or 'pt'!");
+                }
+                break;
+                
             case 'r':
             case 'R':
                 try {
@@ -163,8 +194,10 @@ public class PhoenixCLI {
         System.out.println("\t-t=VALUE : Similarity threshold value. VALUE must be a number in [0..1] range. (Default: 0.7)");
         System.out.println("\t-n=VALUE : Name similarity Required. VALUE must be a 'true' or 'false'. (Default: true)");
         System.out.println("\t-i=VALUE : Ignore trivial similarities. VALUE must be a 'true' or 'false'. (Default: true)");
-        System.out.println("\t-n=VALUE : Automatic weight allocation. VALUE must be a 'true' or 'false'. (Default: true)");
+        System.out.println("\t-a=VALUE : Automatic weight allocation. VALUE must be a 'true' or 'false'. (Default: true)");
         System.out.println("\t-r=VALUE : Ignore Threshold on Root. VALUE must be a 'true' or 'false'. (Default: true)");
+        System.out.println("\t-s=VALUE : Allow data types similarity. VALUE must be a 'true' or 'false'. (Default: true)");
+        System.out.println("\t-f=VALUE : Date format. VALUE must be 'eng' or 'pt'. (Default: eng)");
         System.out.println();
         System.exit(0);
     }
