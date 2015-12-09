@@ -30,6 +30,8 @@ public class SettingsHelper {
     public static final String IGNORE_TRIVIAL_SIMILARITIES_LABEL = "IgnoreTrivialSimilarities";
     public static final String THRESHOLD_LABEL = "SimilarityThreshold";
     public static final String IGNORE_THRESHOLD_ON_ROOT = "RootIgnoreThreshold";
+    public static final String ALLOW_DATA_TYPE = "AllowDataTypeSimilarity";
+    public static final String DATE_FORMAT = "DateFormat";
 
     // default values for each setting
     public static final double NAME_WEIGHT_HARD_DEFAULT = 0.25;
@@ -40,7 +42,9 @@ public class SettingsHelper {
     public static final boolean IGNORE_TRIVIAL_SIMILARITIES_HARD_DEFAULT = false;
     public static final double THRESHOLD_HARD_DEFAULT = 0.0;
     public static final boolean IGNORE_THRESHOLD_ON_ROOT_HARD_DEFAULT = true;
-
+    public static final boolean ALLOW_DATA_TYPE_SIMILARITY_DEFAULT = true;
+    public static final String DATE_FORMAT_DEFAULT = "eng";
+    
     // this singleton instance
     private static Properties properties = null;
 
@@ -201,6 +205,36 @@ public class SettingsHelper {
         return (value != null) ? Boolean.parseBoolean(value)
                 : IGNORE_THRESHOLD_ON_ROOT_HARD_DEFAULT;
     }
+    
+    /**
+     * The value for the Allow Data Type Similarity setting
+     * 
+     * @return true if setting is turned on, false otherwise
+     */
+    public static boolean getAllowDataTypeSimilarity() {
+        if (properties == null) {
+            init();
+        }
+        String value = properties
+                .getProperty(ALLOW_DATA_TYPE);
+        return (value != null) ? Boolean.parseBoolean(value)
+                : ALLOW_DATA_TYPE_SIMILARITY_DEFAULT;
+    }
+    
+    /**
+     * The value for the Date Format setting
+     * 
+     * @return String of date format (eng/pt)
+     */
+    public static String getDateFormat() {
+        if (properties == null) {
+            init();
+        }
+        String value = properties
+                .getProperty(DATE_FORMAT);
+        return (value != null) ? value
+                : DATE_FORMAT_DEFAULT;
+    }
 
     /**
      * Set value for the Automatic Weight Allocation setting
@@ -311,6 +345,33 @@ public class SettingsHelper {
         }
         properties.setProperty(IGNORE_THRESHOLD_ON_ROOT,
                 (new Boolean(value)).toString());
+        save();
+    }
+    
+    /**
+     * Set value for the Allow Data Type Similarity setting
+     * 
+     * @param value the value for the setting
+     */
+    public static void setAllowDataTypeSimilarity(boolean value) {
+        if (properties == null) {
+            init();
+        }
+        properties.setProperty(ALLOW_DATA_TYPE,
+                (new Boolean(value)).toString());
+        save();
+    }
+    
+    /**
+     * Set value for the Date Format setting
+     * 
+     * @param value the value for the setting
+     */
+    public static void setDateFormat(String value) {
+        if (properties == null) {
+            init();
+        }
+        properties.setProperty(DATE_FORMAT, value);
         save();
     }
     

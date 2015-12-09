@@ -125,7 +125,7 @@ public class ElementSimilarity {
         } 
 
         if (value1 != null && value2 != null) {
-            return LcsSimilarity.calculateStringSimilarity(value1, value2);
+            return SimilarityWrapper.calculateSimilarity(value1, value2);
         }
 
         return 0.0;
@@ -170,8 +170,8 @@ public class ElementSimilarity {
                 if (attributeLeftValue.equals(attributeRightValue)) {
                     similarity += MAXIMUM_SIMILARITY;
                 } else {
-                    // calculate similarity based on LCS between values
-                    similarity += LcsSimilarity.calculateStringSimilarity(attributeLeftValue, attributeRightValue);
+                    // calculate similarity
+                    similarity += SimilarityWrapper.calculateSimilarity(attributeLeftValue, attributeRightValue);
                 }
             }
             else {
