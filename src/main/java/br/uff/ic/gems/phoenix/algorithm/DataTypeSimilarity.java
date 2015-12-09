@@ -90,8 +90,8 @@ public class DataTypeSimilarity {
             return similarity;
         } catch (NumberFormatException e) {
 
-            if (_rightNode.equalsIgnoreCase("true") || _rightNode.equalsIgnoreCase("false")
-                    && _leftNode.equalsIgnoreCase("true") || _leftNode.equalsIgnoreCase("false")) {
+            if ((_rightNode.equalsIgnoreCase("true") || _rightNode.equalsIgnoreCase("false"))
+                    && (_leftNode.equalsIgnoreCase("true") || _leftNode.equalsIgnoreCase("false"))) {
 
                 boolean BRightNode = Boolean.valueOf(_rightNode);
                 boolean BLeftNode = Boolean.valueOf(_leftNode);
