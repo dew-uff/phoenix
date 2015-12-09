@@ -4,12 +4,11 @@ import br.uff.ic.gems.phoenix.SettingsHelper;
 import br.uff.ic.gems.phoenix.exception.ComparisonException;
 import br.uff.ic.gems.phoenix.similarity.LcsSimilarity;
 import static java.lang.Math.abs;
-
-import java.util.Date;
-import java.util.List;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 /*
@@ -21,8 +20,6 @@ import java.util.TimeZone;
  */
 public class DataTypeSimilarity {
 
-    private double similarity;
-    
     private static final List<SimpleDateFormat> engDateFormats = new ArrayList<SimpleDateFormat>() {
         {
             //add(new SimpleDateFormat("y-M-d'T'H:m:s.SZ"));
@@ -42,7 +39,7 @@ public class DataTypeSimilarity {
             add(new SimpleDateFormat("M d y"));
         }
     };
-    
+
     private static final List<SimpleDateFormat> ptDateFormats = new ArrayList<SimpleDateFormat>() {
         {
             //add(new SimpleDateFormat("y-M-d'T'H:m:s.SZ"));
@@ -60,7 +57,7 @@ public class DataTypeSimilarity {
             add(new SimpleDateFormat("d M y"));
         }
     };
-    
+
     static {
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     }
@@ -68,7 +65,7 @@ public class DataTypeSimilarity {
     private List<SimpleDateFormat> getDateFormats() {
         return SettingsHelper.getDateFormat().equalsIgnoreCase("pt") ? ptDateFormats : engDateFormats;
     }
-    
+
     /**
      * Função que verifica qual o tipo do conteúdo do nó Senão conseguir
      * coverter para Double, Boolean ou Date, então será tratado como String
@@ -76,70 +73,61 @@ public class DataTypeSimilarity {
      * @param _rightNode conteúdo do lado direito
      * @param _leftNode conteúdo do lado esquerdo
      * @return similaridade entre o _rightNode e o _leftNode
+     * @throws br.uff.ic.gems.phoenix.exception.ComparisonException
      */
     public double verifyTypeAndCalculateSimilarity(String _rightNode, String _leftNode) throws ComparisonException {
-        double DRightNode, DLeftNode;
 
+        // Number
         try {
-            String auxRightNode = _rightNode.replace(",", ".");
-            String auxLeftNode = _leftNode.replace(",", ".");
-            DRightNode = Double.parseDouble(auxRightNode);
-            DLeftNode = Double.parseDouble(auxLeftNode);
+            double DRightNode = Double.parseDouble(_rightNode.replace(",", "."));
+            double DLeftNode = Double.parseDouble(_leftNode.replace(",", "."));
 
-            similarity = NumberSimilarity(abs(DRightNode), abs(DLeftNode));
-            return similarity;
+            return NumberSimilarity(abs(DRightNode), abs(DLeftNode));
         } catch (NumberFormatException e) {
+            // Not a Number
+        }
 
-            if (_rightNode.equalsIgnoreCase("true") || _rightNode.equalsIgnoreCase("false")
-                    && _leftNode.equalsIgnoreCase("true") || _leftNode.equalsIgnoreCase("false")) {
+        // Boolean
+        String rightBool = _rightNode.trim();
+        String leftBool = _leftNode.trim();
+        if ((rightBool.equalsIgnoreCase("true") || rightBool.equalsIgnoreCase("false"))
+                && (leftBool.equalsIgnoreCase("true") || leftBool.equalsIgnoreCase("false"))) {
 
-                boolean BRightNode = Boolean.valueOf(_rightNode);
-                boolean BLeftNode = Boolean.valueOf(_leftNode);
-                
-                if (BRightNode == BLeftNode) {
-                    return 1;
-                } else {
-                    return 0;
-                }
-            } else { // tenta converter para data
-                Date dateX = new Date();
-                Date dateY = new Date();
-                int indexDate1, indexDate2;
-                indexDate1 = indexDate2 = 0;
-                String auxRightNode = _rightNode.replaceAll("\"", "");
-                String auxLeftNode = _leftNode.replaceAll("\"", "");
+            boolean BRightNode = Boolean.valueOf(rightBool);
+            boolean BLeftNode = Boolean.valueOf(leftBool);
 
-                for (SimpleDateFormat format : getDateFormats()) {
-                    try {
-                        format.setLenient(false);
-                        dateX = format.parse(auxRightNode);
-                        break;
-                    } catch (ParseException f) {
-                        indexDate1++;
-                    }
-                }
+            return BRightNode == BLeftNode ? 1.0 : 0.0;
+        }
+        
+        // Date
+        Date dateRight = null;
+        Date dateLeft;
 
-                for (SimpleDateFormat format : getDateFormats()) {
-                    try {
-                        format.setLenient(false);
-                        dateY = format.parse(auxLeftNode);
-                        if (indexDate1 < getDateFormats().size() && indexDate2 < getDateFormats().size()) {
-                            similarity = NumberSimilarity(abs((double) dateX.getTime()), abs((double) dateY.getTime()));
-                            //System.out.println("\ncase 3 data: " + similarity);
-                            //System.out.println("(DATE) Similarity: "+ similarity +" -> R: "+ _rightNode + " - L: "+ _leftNode);
-                            //System.out.println("DATE_DEBUG3: "+ dateX.toGMTString() +" ---- "+ dateY.toGMTString());
-                            return similarity;
-                        }
-                    } catch (ParseException f) {
-                        indexDate2++;
-                    }
+        for (SimpleDateFormat format : getDateFormats()) {
+            try {
+                format.setLenient(false);
+                dateRight = format.parse(_rightNode);
+                break;
+            } catch (ParseException f) {
+                // Parse Fail
+            }
+        }
+
+        if (dateRight != null) {
+            for (SimpleDateFormat format : getDateFormats()) {
+                try {
+                    format.setLenient(false);
+                    dateLeft = format.parse(_leftNode);
+                    
+                    return NumberSimilarity(abs((double) dateRight.getTime()), abs((double) dateLeft.getTime()));
+                } catch (ParseException f) {
+                    // Parse Fail
                 }
             }
-            // se nenhum tipo deu certo, sera tradado como string
-            similarity = LcsSimilarity.calculateStringSimilarity(_leftNode, _rightNode);
-
-            return similarity;
         }
+
+        // String (Lcs)
+        return LcsSimilarity.calculateStringSimilarity(_leftNode, _rightNode);
     }
 
     /**
