@@ -15,6 +15,8 @@ import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 import br.uff.ic.gems.phoenix.exception.XmlParserException;
+import java.io.StringReader;
+import org.xml.sax.InputSource;
 
 public class XmlParser {
     
@@ -27,7 +29,11 @@ public class XmlParser {
 
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 
-            doc = docBuilder.parse(new File(file));
+            if (file.endsWith(".xml")) { //Arquivo
+                doc = docBuilder.parse(file);
+            } else { //String
+                doc = docBuilder.parse(new InputSource(new StringReader(file)));
+            }
 
             removeWhitespaceNodes(doc.getDocumentElement());
         }
