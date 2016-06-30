@@ -16,7 +16,8 @@ public class PhoenixCLI {
     private static boolean ignoreTrivial = true,
                            automaticAllocation = true,
                            ignoreThresholdOnRoot = true,
-                           allowDataTypeSimilarity = true;
+                           allowDataTypeSimilarity = true,
+                           ignoreCaseOnSimilarity = true;
     
     private static String dateFormat = "eng";
 
@@ -35,6 +36,7 @@ public class PhoenixCLI {
         SettingsHelper.setIgnoreThresholdOnRoot(ignoreThresholdOnRoot);
         SettingsHelper.setAllowDataTypeSimilarity(allowDataTypeSimilarity);
         SettingsHelper.setDateFormat(dateFormat);
+        SettingsHelper.setIgnoreCaseOnSimilarity(ignoreCaseOnSimilarity);
         
         if (xmlfilepath1 == null || xmlfilepath2 == null) {
             showErrorAndExit("Missing argument(s)");
@@ -77,6 +79,7 @@ public class PhoenixCLI {
         sb.append(" | allowDataTypeSimilarity=" + SettingsHelper.getAllowDataTypeSimilarity());
         if(SettingsHelper.getAllowDataTypeSimilarity())
             sb.append(" | dateFormat=" + SettingsHelper.getDateFormat());
+        sb.append(" | ignoreCaseOnSimilarity=" + SettingsHelper.getIgnoreCaseOnSimilarity());
         if (!SettingsHelper.getAutomaticWeightAllocation()) {
             sb.append(" | nameWeight=" + SettingsHelper.getNameSimilarityWeight());
             sb.append(" | valueWeight=" + SettingsHelper.getValueSimilarityWeight());
@@ -181,6 +184,17 @@ public class PhoenixCLI {
                 }
                 break;
                 
+            case 'c':
+            case 'C':
+                try {
+                    String value = arg.split("=")[1];
+                    ignoreCaseOnSimilarity = Boolean.parseBoolean(value);
+                }
+                catch (Exception e) {
+                    showErrorAndExit("Wrong value for option 'IgnoreCaseOnSimilarity': must be 'true' or 'false'!");
+                }
+                break;
+                
             default:
                 showErrorAndExit("Invalid Option: " + arg);
                 
@@ -198,6 +212,7 @@ public class PhoenixCLI {
         System.out.println("\t-r=VALUE : Ignore Threshold on Root. VALUE must be a 'true' or 'false'. (Default: true)");
         System.out.println("\t-s=VALUE : Allow data types similarity. VALUE must be a 'true' or 'false'. (Default: true)");
         System.out.println("\t-f=VALUE : Date format. VALUE must be 'eng' or 'pt'. (Default: eng)");
+        System.out.println("\t-c=VALUE : Ignore case on similarity. VALUE must be a 'true' or 'false'. (Default: true)");
         System.out.println();
         System.exit(0);
     }

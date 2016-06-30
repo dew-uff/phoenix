@@ -32,6 +32,7 @@ public class SettingsHelper {
     public static final String IGNORE_THRESHOLD_ON_ROOT = "RootIgnoreThreshold";
     public static final String ALLOW_DATA_TYPE = "AllowDataTypeSimilarity";
     public static final String DATE_FORMAT = "DateFormat";
+    public static final String IGNORE_CASE_ON_SIMILARITY = "IgnoreCaseOnSimilarity";
 
     // default values for each setting
     public static final double NAME_WEIGHT_HARD_DEFAULT = 0.25;
@@ -44,6 +45,7 @@ public class SettingsHelper {
     public static final boolean IGNORE_THRESHOLD_ON_ROOT_HARD_DEFAULT = true;
     public static final boolean ALLOW_DATA_TYPE_SIMILARITY_DEFAULT = true;
     public static final String DATE_FORMAT_DEFAULT = "eng";
+    public static final boolean IGNORE_CASE_ON_SIMILARITY_DEFAULT = true;
     
     // this singleton instance
     private static Properties properties = null;
@@ -235,6 +237,21 @@ public class SettingsHelper {
         return (value != null) ? value
                 : DATE_FORMAT_DEFAULT;
     }
+    
+    /**
+     * The value for the Ignore Case on Similarity setting
+     * 
+     * @return true if setting is turned on, false otherwise
+     */
+    public static boolean getIgnoreCaseOnSimilarity() {
+        if (properties == null) {
+            init();
+        }
+        String value = properties
+                .getProperty(IGNORE_CASE_ON_SIMILARITY);
+        return (value != null) ? Boolean.parseBoolean(value)
+                : IGNORE_CASE_ON_SIMILARITY_DEFAULT;
+    }
 
     /**
      * Set value for the Automatic Weight Allocation setting
@@ -372,6 +389,20 @@ public class SettingsHelper {
             init();
         }
         properties.setProperty(DATE_FORMAT, value);
+        save();
+    }
+    
+    /**
+     * Set value for the Ignore Case on Similarity setting
+     * 
+     * @param value the value for the setting
+     */
+    public static void setIgnoreCaseOnSimilarity(boolean value) {
+        if (properties == null) {
+            init();
+        }
+        properties.setProperty(IGNORE_CASE_ON_SIMILARITY,
+                (new Boolean(value)).toString());
         save();
     }
     
