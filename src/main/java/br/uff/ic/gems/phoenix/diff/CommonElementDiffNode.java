@@ -1,5 +1,6 @@
 package br.uff.ic.gems.phoenix.diff;
 
+import br.uff.ic.gems.phoenix.similarity.ElementSimilarity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -10,6 +11,16 @@ public class CommonElementDiffNode extends ElementDiffNode{
     
     private AttributeDiffNode[] attributes = null;
     private ElementDiffNode[] children = null;
+    
+    protected double valueSimilarity = 0.0;
+    
+    public void setValueSimilarity(double similarity) {
+        this.valueSimilarity = similarity;
+    }
+    
+    public double getValueSimilarity() {
+        return valueSimilarity;
+    }
     
     public CommonElementDiffNode(Node left, Node right) {
         this.left = left;
@@ -60,7 +71,7 @@ public class CommonElementDiffNode extends ElementDiffNode{
         // TODO optimize this. we should not compare again to construct result
         String valueLeft = left.hasChildNodes()?left.getFirstChild().getNodeValue():null;
         String valueRight = right.hasChildNodes()?right.getFirstChild().getNodeValue():null;
-        if (valueLeft != null && valueRight != null && valueLeft.equals(valueRight)) {
+        if (ElementSimilarity.MAXIMUM_SIMILARITY == getValueSimilarity()) {
             newElem.setTextContent(valueLeft);
         }
         else if (valueLeft != null || valueRight != null) {

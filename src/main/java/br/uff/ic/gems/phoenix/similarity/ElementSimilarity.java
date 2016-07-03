@@ -26,14 +26,15 @@ public class ElementSimilarity {
     
     private static Logger LOG = Logger.getLogger(ElementSimilarity.class.getName());
 
-    private static float MAXIMUM_SIMILARITY = 1.0f;
-    private static float SKIP_SIMILARITY = -1.0f;
+    public static float MAXIMUM_SIMILARITY = 1.0f;
+    public static float SKIP_SIMILARITY = -1.0f;
 
     private double similarity = 0.0;
     private boolean ignoreThreshold;
     
     private AttributeDiffNode[] attributes;
     private ElementDiffNode[] children;
+    private double valueSimilarity = 0.0;
     
     public ElementSimilarity(boolean ignoreThreshold) {
         this.ignoreThreshold = ignoreThreshold;
@@ -50,9 +51,10 @@ public class ElementSimilarity {
 
         similarity = 0.0;
         
+        valueSimilarity = 0.0;
+        
         double elementNameSimilarity = 0.0,
                attributeSimilarity = 0.0,
-               valueSimilarity = 0.0,
                childrenSimilarity = 0.0;
 
         elementNameSimilarity = elementsNameSimilarity(e1, e2);
@@ -101,6 +103,7 @@ public class ElementSimilarity {
             diff.addAttributes(attributes);
             diff.addChildren(children);
             diff.setSimilarity(similarity);
+            diff.setValueSimilarity(valueSimilarity);
             esr = new ElementSimilarityResult(diff, similarity);
         }
         
@@ -165,14 +168,16 @@ public class ElementSimilarity {
             if (!attributeLeftValue.isEmpty() && !attributeRightValue.isEmpty()) {
                 
                 attributes[i] = new CommonAttributeDiffNode(attributeLeft, attributeRight);
-
+                
                 // if both values are equal
                 if (attributeLeftValue.equals(attributeRightValue)) {
-                    similarity += MAXIMUM_SIMILARITY;
+                    attributes[i].setSimilarity(MAXIMUM_SIMILARITY);
                 } else {
                     // calculate similarity
-                    similarity += SimilarityWrapper.calculateSimilarity(attributeLeftValue, attributeRightValue);
+                    attributes[i].setSimilarity(SimilarityWrapper.calculateSimilarity(attributeLeftValue, attributeRightValue));
                 }
+                
+                similarity += attributes[i].getSimilarity();
             }
             else {
                 if (!attributeLeftValue.isEmpty()) {
