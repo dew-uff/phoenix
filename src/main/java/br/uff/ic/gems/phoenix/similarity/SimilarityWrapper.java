@@ -10,6 +10,11 @@ public class SimilarityWrapper {
             
     public static double calculateSimilarity(String s1, String s2) throws ComparisonException {
         
+        if(SettingsHelper.getIgnoreCaseOnSimilarity()) {
+            s1 = s1.toLowerCase();
+            s2 = s2.toLowerCase();
+        }
+        
         if(SettingsHelper.getAllowDataTypeSimilarity())
             return DataTypeSim.verifyTypeAndCalculateSimilarity(s1, s2);
         else

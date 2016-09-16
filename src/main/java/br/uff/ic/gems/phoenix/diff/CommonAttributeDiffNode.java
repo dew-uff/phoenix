@@ -1,5 +1,6 @@
 package br.uff.ic.gems.phoenix.diff;
 
+import br.uff.ic.gems.phoenix.similarity.ElementSimilarity;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -22,8 +23,8 @@ public class CommonAttributeDiffNode extends AttributeDiffNode {
     public void linkToElement(Document doc, Element parent) {
         
         String valueLeft = left.getNodeValue();
-        String valueRight = right.getNodeValue();
-        if (valueLeft.equals(valueRight)) {
+        //String valueRight = right.getNodeValue();
+        if (ElementSimilarity.MAXIMUM_SIMILARITY == getSimilarity()) {
             parent.setAttribute(left.getNodeName(), valueLeft);
         } else {
             parent.setAttributeNS(DIFF_NAMESPACE_LEFT, LEFT_PREFIX + left.getNodeName(), left.getNodeValue());
